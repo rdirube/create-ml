@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import {Injector, NgModule} from '@angular/core';
 
 import { AppComponent } from './app.component';
-import {FlexModule} from '@angular/flex-layout';
+import {ExtendedModule, FlexModule} from '@angular/flex-layout';
 import {createCustomElement} from '@angular/elements';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatDividerModule} from '@angular/material/divider';
@@ -11,10 +11,20 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatStepperModule} from '@angular/material/stepper';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatButtonModule} from '@angular/material/button';
+import {MatListModule} from '@angular/material/list';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import { GameInfoFormComponent } from './components/game-info-form/game-info-form.component';
+import {MatInputModule} from '@angular/material/input';
+import {NgxUploaderModule} from 'ngx-uploader';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    GameInfoFormComponent
   ],
   imports: [
     BrowserModule,
@@ -25,7 +35,16 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     MatFormFieldModule,
     ReactiveFormsModule,
     MatIconModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatProgressSpinnerModule,
+    MatStepperModule,
+    MatMenuModule,
+    MatButtonModule,
+    MatListModule,
+    ExtendedModule,
+    MatTooltipModule,
+    MatInputModule,
+    NgxUploaderModule
   ],
   providers: [],
   bootstrap: [AppComponent]

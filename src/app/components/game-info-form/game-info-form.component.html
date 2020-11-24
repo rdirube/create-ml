@@ -1,0 +1,40 @@
+<form [formGroup]="form" fxFlex="grow" fxLayout="row" fxLayoutGap="4%" fxLayoutAlign="center start" autocomplete="off">
+  <div fxFlex="60" fxLayout="column" fxLayoutGap="4%">
+    <mat-form-field color="primary" class="full-width">
+      <mat-label>Nombre del juego</mat-label>
+      <input matInput placeholder="Seres vivos - 5to A" formControlName="name">
+      <mat-icon *ngIf="form.get('name').valid" matSuffix class="valid-form-icon">check_circle</mat-icon>
+    </mat-form-field>
+    <mat-form-field color="primary" class="full-width">
+      <mat-label>Descripción</mat-label>
+      <textarea style="overflow: hidden"
+                cdkTextareaAutosize
+                #autosize="cdkTextareaAutosize"
+                cdkAutosizeMinRows="2"
+                cdkAutosizeMaxRows="5"
+                matInput placeholder="Agrega una descripción" formControlName="description"></textarea>
+      <mat-icon matSuffix class="valid-form-icon" *ngIf="form.get('description').valid">check_circle</mat-icon>
+      <mat-hint align="end">{{form.get('description').value?.length || 0}}/500</mat-hint>
+    </mat-form-field>
+    <mat-form-field color="primary" class="full-width">
+      <mat-label>Idioma</mat-label>
+      <input matInput placeholder="Seres vivos - 5to A" formControlName="language">
+      <mat-icon *ngIf="form.get('language').valid" matSuffix class="valid-form-icon">check_circle</mat-icon>
+    </mat-form-field>
+  </div>
+<!--  <div fxLayout="column" fxFlexFill fxFlex="40" fxLayoutAlign="center center" fxLayoutGap="2%">-->
+<!--    <app-choice-showable *ngIf="form.get('image').value"-->
+<!--                         [source]="form.get('image').value.data?.base64 || ($image) || ''"-->
+<!--                         [showable]="{showableType: 'image', value: form.get('image').value.data?.base64 || ($image) || ''}" class="cover-image-size"></app-choice-showable>-->
+<!--    <div *ngIf="!form.get('image').value" class="cover-image-size border-dashed" ></div>-->
+<!--    <input [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect (uploadOutput)="uploadFile($event); form.markAsDirty()">-->
+<!--    <div>-->
+<!--      <button fxLayout="row" fxLayoutAlign="space-between center center" mat-raised-button>-->
+<!--&lt;!&ndash;      <button fxLayout="row" fxLayoutAlign="space-between center center" mat-raised-button (click)="imageInput.click()">&ndash;&gt;-->
+<!--        <mat-icon matPrefix>cloud_upload</mat-icon>-->
+<!--        Seleccionar-->
+<!--        <mat-icon matTooltip="Eliminar" matSuffix *ngIf="form.get('image').value" (click)="form.get('image').setValue(''); $event.stopPropagation(); form.markAsDirty();">clear</mat-icon>-->
+<!--      </button>-->
+<!--    </div>-->
+<!--  </div>-->
+</form>

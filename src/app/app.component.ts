@@ -1,5 +1,7 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Subscription} from 'rxjs';
+import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-root',
@@ -12,15 +14,19 @@ export class AppComponent implements OnInit {
   @Input() inputVar: string;
   @Output() testOutput = new EventEmitter<any>();
 
-
   @Input() public form: FormGroup;
   @Input() public infoFormGroup: FormGroup;
   @Input() public exercisesQuantity: number;
   public triviaTypes: { name: string, value: 'classic' | 'test' }[];
-
+  public saving: boolean;
+  currentChoice: number;
+  choicesFormArray: FormArray;
+  gameConfig: MueroPorSaberGame;
+  public gameForm: FormGroup;
+  public settingsSubscription: Subscription;
 
   settingsFormGroup: FormGroup;
-
+  public background: SafeStyle;
 
   onClickSendOutput(): void {
     this.testOutput.emit({
@@ -29,17 +35,11 @@ export class AppComponent implements OnInit {
   }
 
 
-  constructor(private _formBuilder: FormBuilder) {
-    this.infoFormGroup = this._formBuilder.group({
-      name: [' game name ', [Validators.required, Validators.maxLength(256)]],
-      // todo validator de max peso
-      image: [''],
-      // tags: [this.game.tags || []],
-      // language: [this.game.language || 'es'],
-      // level: [this.game.level || 1],
-      description: ['game description', [Validators.required, Validators.maxLength(500)]]
-    });
-    this.settingsFormGroup = this._formBuilder.group({
+  constructor(private formBuilder: FormBuilder,
+              private sanitizer: DomSanitizer,
+              private cdr: ChangeDetectorRef) {
+    this.currentChoice = 0;
+    this.settingsFormGroup = this.formBuilder.group({
       triviaType: ['classic'],
       host: ['gauss'],
       isRandom: [false],
@@ -50,15 +50,201 @@ export class AppComponent implements OnInit {
       maxPlayers: [this.game.settings ? this.getSettingsPropertyValueOf('maxPlayers', '8') : 8,
         [Validators.min(1), Validators.max(8), Validators.required]], */
     });
+    this.gameConfig = {
+      choices: [],
+      settings: {
+        goal: 10,
+        host: 'gauss',
+        randomOrder: false,
+        type: 'classic',
+      },
+      resourceUid: '123'
+    };
+    this.choicesFormArray = this.formBuilder.array(this.gameConfig.choices.map((choice, index) => {
+      const form = this.formBuilder.group({index: [index]});
+      // this.mueroPorSaberService.addControls(choice, form);
+      return form;
+    }));
+
   }
 
   ngOnInit(): void {
     this.triviaTypes = [{name: 'Clásico', value: 'classic'}, {name: 'Examen', value: 'test'}];
+    this.initForms();
   }
+
+  private initForms(): void {
+    this.initBasicInformation();
+    this.initChoicesInformation();
+    this.initSettingsForm();
+    this.gameForm = this.formBuilder.group({
+      basic: this.infoFormGroup,
+      exercises: this.choicesFormArray,
+      settings: this.settingsFormGroup
+    });
+  }
+
+  private initSettingsForm(): void {
+    this.settingsFormGroup = this.formBuilder.group({
+      triviaType: [this.gameConfig.settings.type],
+      host: [this.gameConfig.settings.host],
+      isRandom: [this.gameConfig.settings.randomOrder],
+      goal: [this.gameConfig.settings.goal,
+        [Validators.min(5), Validators.max(20), Validators.required]],
+    });
+    this.settingsSubscription = this.settingsFormGroup.valueChanges.subscribe((e) => {
+      this.background = this.sanitizer.bypassSecurityTrustStyle(
+        '#365074 url("https://storage.googleapis.com/common-ox-assets/mini-lessons/muero-por-saber/stars.jpg") repeat'
+      );
+    });
+  }
+
+
+  private initChoicesInformation(): void {
+    this.choicesFormArray.insert(0, this.formBuilder.group({
+      index: [0]
+    }));
+    if (this.choicesFormArray.controls.length === 0) {
+      this.addChoice();
+    }
+    console.log(this.choicesFormArray);
+  }
+
+  private initBasicInformation(): void {
+    this.infoFormGroup = this.formBuilder.group({
+      name: [' game name ', [Validators.required, Validators.maxLength(256)]],
+      // todo validator de max peso
+      image: [''],
+      // tags: [this.game.tags || []],
+      language: ['ES-AR'],
+      // level: [this.game.level || 1],
+      description: ['game description', [Validators.required, Validators.maxLength(500)]]
+    });
+  }
+
 
   updateHost(imagePath: string): void {
     this.form.get('host').patchValue(imagePath);
     this.form.get('host').markAsDirty();
   }
 
+
+  public addChoice(index?: number): void {
+    if (index === undefined) {
+      index = this.gameConfig.choices.length;
+    }
+    this.choicesFormArray.insert(index >= 0 ? index : this.choicesFormArray.length, this.formBuilder.group({
+      index: [index || 0]
+    }));
+    const choice: ChoiceExercise = {
+      options: [
+        {isCorrect: true, elementsToShow: [{showableType: 'text', value: ''}], id: 0},
+        {isCorrect: false, elementsToShow: [{showableType: 'text', value: ''}], id: 0}
+      ],
+      elementsToShow: [{showableType: 'text', value: ''}],
+      id: 0
+    };
+    this.gameConfig.choices = this.gameConfig.choices.slice(0, index).concat([choice]).concat(this.gameConfig.choices.slice(index));
+    this.currentChoice = index >= 0 ? index : (this.choicesFormArray.length - 1);
+    this.cdr.detectChanges();
+  }
+
+  removeChoice(index: number): void {
+    /*    const id = this.choicesFormArray.controls[index].get('id').value;
+        if (id) {
+          this.game.removedChoiceIds.push(id);
+        }*/
+    this.choicesFormArray.markAsDirty();
+    this.choicesFormArray.removeAt(index);
+    if (this.currentChoice >= this.choicesFormArray.controls.length) {
+      this.currentChoice = this.choicesFormArray.length - 1;
+    }
+  }
+
+
+  saveGameAndExit(): void {
+    console.log('saveGameAndExit');
+    console.log('saveGameAndExit');
+    console.log('saveGameAndExit');
+    console.log('saveGameAndExit');
+  }
+  saveGame(): void {
+    console.log('saveGame');
+    console.log('saveGame');
+    console.log('saveGame');
+    console.log('saveGame');
+  }
+
+}
+
+export interface MueroPorSaberGame {
+  // ownerId?: number;
+  /* id?: number;
+  level?: number;
+  name?: string;
+  image?: string;
+  tags?: Tag[];
+  description?: string;
+   */
+  choices: ChoiceExercise [];
+  // language?: string;
+  settings: TriviaSettings;
+
+  resourceUid?: string;
+
+  // removedChoiceIds: number[];
+  // orderExerciseIds: number[];
+  // microLessonId: number;
+}
+
+export interface TriviaPropertyType {
+  id: number;
+  name: string;
+}
+
+export interface TriviaProperty {
+  id: number;
+  triviaPropertyType: TriviaPropertyType;
+  value: string;
+}
+
+export interface TriviaSettings {
+  triviaType?: TriviaType;
+  triviaProperties?: TriviaProperty[];
+
+  type?: 'classic' | 'test'; // 'Clásico' | 'Examen'
+  minPlayers?: number;
+  maxPlayers?: number;
+  host?: 'gauss' | 'cortazar' | 'yaci' | 'eulogia';
+  goal?: number;
+  randomOrder?: boolean;
+}
+
+export interface TriviaType {
+  id: number;
+  name: string;
+  requiredPropertyTypes: TriviaPropertyType[];
+}
+
+export interface ChoiceExercise extends ShowableElement {
+  id: number;
+  elementsToShow: Showable[];
+  options: Option[];
+}
+
+export interface Showable {
+  id?: number;
+  showableType: 'video' | 'image' | 'text' | 'audio';
+  value: string;
+}
+
+export interface ShowableElement {
+  id: number;
+  elementsToShow: Showable[];
+}
+
+export interface Option extends ShowableElement {
+  elementsToShow: Showable[];
+  id: number;
+  isCorrect: boolean;
 }

@@ -6,87 +6,96 @@
 <!--      <div class="tempButton" (click)="onClickSendOutput()">Send output</div>-->
 <!--      <div >the input value for inputVar is: {{inputVar}}</div>-->
 <!--</div>-->
-<div fxLayout="row"  fxFlex="grow" fxLayoutGap="2%" style="padding-bottom: 4%; background: red">
-  <div fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap="1%">
-    <div class="full-width" fxLayout="column" fxLayoutAlign="center start" fxLayoutGap="1%" fxFlexFill>
-      <span>Anfitrión:</span>
-      <!--   <app-choice-showable fxLayout="row" style="height: 20vw; padding: 2%" class="gauss full-width" [showable]="{showableType: 'image', value: }">
 
-        </app-choice-showable> -->
-<!--      <app-image-viewer style="height: 20vw; padding: 2%" class="gauss full-width" [directSource]="'https://storage.googleapis.com/common-ox-assets/mini-lessons/muero-por-saber/' + form.get('host').value + '.svg'">-->
 
-<!--      </app-image-viewer>-->
-      <div fxLayout="row wrap" class="full-width" fxLayoutAlign="center center" fxLayoutGap="1%">
-        <button color="primary" [class.selected]="form.get('host').value === 'gauss'" (click)="updateHost('gauss')" mat-stroked-button="">Gauss</button>
-        <button color="primary" [class.selected]="form.get('host').value === 'cortazar'" (click)="updateHost('cortazar')" mat-stroked-button="">Cortázar</button>
-        <button color="primary" [class.selected]="form.get('host').value === 'yaci'" (click)="updateHost('yaci')" mat-stroked-button="">Yací</button>
-        <button color="primary" [class.selected]="form.get('host').value === 'eulogia'" (click)="updateHost('eulogia')" mat-stroked-button="">Euologia</button>
-      </div>
-    </div>
+<div class="create-container" fxFlex="grow" fxLayout="column" fxLayoutGap="1%" fxLayoutAlign="center center">
+  <div class="full-width header-creator-logo" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1%">
+    <img fxFlex="grow"  src="https://storage.googleapis.com/common-ox-assets/wumbox-icons/custom-icons/triviox.svg" />
+    <h2 matSubheader class="title">¡Crea tu propia triva!</h2>
   </div>
-  <mat-divider [inset]="true" [vertical]="true"></mat-divider>
-  <div fxFlex="50" fxLayout="column" fxLayoutAlign="center start">
-    <div class="full-width" fxLayout="row" fxLayoutAlign="center center"><h3><i>Resumen</i></h3></div>
-    <div class="full-width" style="padding: 2%;" fxLayout="column" fxLayoutAlign="center start" fxLayoutGap="2%" >
-
-      <mat-divider [inset]="true"></mat-divider>
-      <div><b>Nombre:</b>  {{infoFormGroup.get('name').value}}</div>
-      <div><b>Descripción:</b> {{infoFormGroup.get('description').value}}</div>
-      <!-- <div><b>Orden aleatorio:</b> {{form.get('isRandom').value ? 'sí' : 'no'}}</div> -->
-      <mat-divider [inset]="true"></mat-divider>
-      <div><b>Cantidad de ejercicios:</b> {{exercisesQuantity}}</div>
-      <div *ngIf="exercisesQuantity / form.get('goal').value < 2" style="color: #ff7633">
-        <b>¡Atención!</b> Hay muy pocos ejercicios para llegar a {{form.get('goal').value}} puntos. Las preguntas se repetirán.
-        Se recomienda que haya al menos {{form.get('goal').value}} ejercicios. Puedes guardar y luego cargar más.
+  <mat-horizontal-stepper *ngIf="gameConfig && gameForm" [selectedIndex]="0" [linear]="!gameForm.valid"  fxFlex="grow" [ngClass.lt-lg]="{'full-width': true}" [ngClass.gt-md]="{'three-quarter-width': true}" #stepper style="position: relative; padding: 1%;">
+    <mat-step [stepControl]="infoFormGroup">
+      <ng-template matStepLabel>Información</ng-template>
+      <div fxFlex="grow" fxLayout="column" fxLayoutAlign="center center" style="padding-top: 2%" fxLayoutGap="2%">
+        <app-game-info-form fxFlex="90" class="three-quarter-width" [resourceUid]="gameConfig.resourceUid" [form]="infoFormGroup"></app-game-info-form>
+        <div fxLayout="row" class="full-width" fxLayoutAlign="end center"> <!--style="position: absolute; bottom: 2vh; right: 2vh"-->
+          <button class="navigate-button" matStepperNext mat-raised-button >Continuar <mat-icon>navigate_next</mat-icon></button>
+        </div>
       </div>
-    </div>
-    <mat-divider></mat-divider>
-    <mat-accordion class="full-width">
-      <mat-expansion-panel [expanded]="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            <mat-icon>settings</mat-icon>
-            Opciones avanzadas
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <form [formGroup]="form" fxLayout="column" class="full-width" fxLayoutGap="5%">
-          <!-- <mat-form-field>
-            <mat-select  placeholder="Tipo de trivia" [formControlName]="'triviaType'" >
-              <mat-option *ngFor="let triviaType of triviaTypes" [value]="triviaType.value">
-                {{triviaType.name}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field> -->
-          <div fxLayout="column">
-            <mat-checkbox  [formControlName]="'isRandom'" class="full-width">
-              Ejercicios en orden aleatorio
-            </mat-checkbox>
-            <mat-hint>(Si no está tiltdado, el orden de los ejercicios será como están cargados)</mat-hint>
+    </mat-step>
+    <mat-step [stepControl]="choicesFormArray" >
+      <ng-template matStepLabel>Ejercicios</ng-template>
+      <div  fxFlex="grow" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px">
+        <div class="full-width" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="4px">
+          <button matTooltip="Ejercicio anterior" fxHide.gt-sm mat-icon-button [disabled]="currentChoice === 0" (click)="currentChoice = currentChoice - 1">
+            <mat-icon>navigate_before</mat-icon>
+          </button>
+          <span fxLayout="row" fxLayoutGap="5px" style="padding-left: 10px">
+            <button class="add-button" mat-raised-button (click)="addChoice()"> <mat-icon >add_circle_outline</mat-icon> Agregar ejercicio</button>
+            <button class="add-button" mat-icon-button mat-raised-button  [matMenuTriggerFor]="addMenu"><mat-icon>arrow_drop_down</mat-icon></button>
+          </span>
+          <div fxFlex="grow" fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="4px">
+            <a fxLayout="row wrap" fxLayoutAlign="center center" (click)="currentChoice = i" *ngFor="let choiceForm of choicesFormArray.controls, let i = index" [class.selected-index]="i === currentChoice" [class.index-form]="i !== currentChoice" [ngClass]="{'valid-form-icon': choiceForm.valid}">
+              {{i + 1}}
+            </a>
           </div>
-
-
-          <mat-form-field appearance="standard" class="full-width">
-            <mat-label>Respuestas correctas para ganar</mat-label>
-            <input min="5" max="20" matInput [formControlName]="'goal'" type="number" placeholder="Objetivo de respuestas">
-            <mat-hint align="start">Las respuestas para ganar deben ser entre 5 y 20</mat-hint>
-          </mat-form-field>
-          <!-- <div fxLayout="column" *ngIf="isPropertyRequired('maxPlayers');else onePlayer">
-            <div  fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
-              <mat-form-field appearance="standard" >
-                <mat-label>Máxima cantidad de jugadores</mat-label>
-                <input min="1" max="8" matInput [formControlName]="'maxPlayers'" type="number" placeholder="Máx">
-              </mat-form-field>
-            </div>
+          <button matTooltip="Ejercicio siguiente" fxHide.gt-sm (click)="currentChoice = currentChoice + 1" mat-icon-button [disabled]="currentChoice === choicesFormArray.length - 1">
+            <mat-icon>navigate_next</mat-icon>
+          </button>
+          <mat-menu #addMenu="matMenu">
+            <button (click)="addChoice()" mat-menu-item>Agregar al final</button>
+            <button [matMenuTriggerFor]="positionsMenu" mat-menu-item>Agregar en</button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="removeChoice(currentChoice)" [disabled]="choicesFormArray.controls.length === 1"><mat-icon>delete</mat-icon>Eliminar actual</button>
+          </mat-menu>
+          <mat-menu #positionsMenu="matMenu">
+            <button (click)="addChoice(i)" mat-menu-item *ngFor="let _ of choicesFormArray.controls, let i = index">{{i + 1}}</button>
+          </mat-menu>
+          <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="5px">
+            <button color="primary" fxLayout="row" mat-raised-button [disabled]="saving || !gameForm.dirty || gameForm.invalid" (click)="saveGame()"><mat-icon *ngIf="!saving">save</mat-icon>  {{saving ? 'Guardando...' : 'Guardar'}}</button>
+            <mat-spinner *ngIf="saving" [diameter]="20"></mat-spinner>
           </div>
-          <ng-template #onePlayer>
-            <h4>En este modo, el juego será de a un sólo jugador.</h4>
-          </ng-template>
- -->
+        </div>
+        <mat-divider [inset]="true"></mat-divider>
+        <div fxFlex="grow" fxLayout="row" fxLayoutAlign="space-between" class="full-width" fxLayoutGap="1%">
+          <div fxHide.lt-md fxLayout="column" fxLayoutAlign="center center" (click)="currentChoice = currentChoice - 1">
+            <button matTooltip="Ejercicio anterior" mat-icon-button [disabled]="currentChoice === 0">
+              <mat-icon>navigate_before</mat-icon>
+            </button>
+          </div>
+          <div class="full-width" fxLayout="column" fxLayoutAlign="center center">
+            <!-- {{'currentChoice: ' + currentChoice }} -->
+            <div>app-muero-por-saber-exercise-form</div>
+<!--            <app-muero-por-saber-exercise-form [formData]="{form: choicesFormArray.at(currentChoice), initialDatas: gameConfig.choices[currentChoice]}" class="full-width"></app-muero-por-saber-exercise-form>-->
+          </div>
+          <div fxHide.lt-md fxLayout="column" (click)="currentChoice = currentChoice + 1" fxLayoutAlign="center center">
+            <button matTooltip="Ejercicio siguiente" mat-icon-button [disabled]="currentChoice === choicesFormArray.length - 1">
+              <mat-icon>navigate_next</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="full-width" fxLayoutAlign="space-between" >
+          <button class="navigate-button" matStepperPrevious mat-raised-button > <mat-icon>navigate_before</mat-icon> Volver</button>
+          <button class="navigate-button" matStepperNext mat-raised-button >Continuar <mat-icon>navigate_next</mat-icon></button>
+        </div>
+      </div>
 
-        </form>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </div>
-
-
+    </mat-step>
+    <mat-step [stepControl]="infoFormGroup">
+      <ng-template matStepLabel>Configuración</ng-template>
+      <div class="full-width" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="2%">
+        <div> settings form</div>
+<!--        <app-muero-por-saber-settings-form [infoFormGroup]="infoFormGroup" [exercisesQuantity]="choicesFormArray.length" [form]="settingsFormGroup" class="full-width"></app-muero-por-saber-settings-form>-->
+        <div class="full-width" fxLayout="row" fxLayoutAlign="space-between center">
+          <button class="navigate-button" mat-raised-button matStepperPrevious><mat-icon>navigate_before</mat-icon>Volver</button>
+          <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5px">
+            <button color="primary" fxLayout="row" mat-raised-button [disabled]="saving || !gameForm.dirty || gameForm.invalid" (click)="saveGameAndExit()"><mat-icon *ngIf="!saving">save</mat-icon>  {{saving ? 'Guardando...' : 'Guardar y salir'}}</button>
+            <mat-spinner *ngIf="saving" [diameter]="20"></mat-spinner>
+          </div>
+        </div>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+  <mat-spinner *ngIf="!gameConfig" color="accent"></mat-spinner>
 </div>
+

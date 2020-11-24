@@ -1,0 +1,18 @@
+.input-file {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.valid-form-icon {
+  color: #2bb59d;
+}
+.cover-image-size {
+  width: 20vw; height: 30vw; max-width: 200px; max-height: 300px;
+}
+.border-dashed {
+  border: black dashed 2px;
+}

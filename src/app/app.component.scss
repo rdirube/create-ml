@@ -31,3 +31,47 @@
   90% { transform: translate(1px, 2px) rotate(0deg); }
   100% { transform: translate(1px, 1px) rotate(0deg); }
 }
+:host {
+  display: flex;
+  flex: 1 1 100%;
+  height: 100%; margin: 0; min-height: 100%; min-width: 100%; width: 100%;
+  // background: #562f47 url("assets/mini-lessons/muero-por-saber/background.svg") no-repeat bottom;
+  background-size: 100 100 ;
+}
+
+.create-container {
+  background-color: rgba(200,198,202,0.03); font-size: 120%; padding-bottom: 2%;
+}
+
+.selected-index {
+  text-decoration: underline;
+  border-radius: 100%;
+  background-color: rgba(197, 203, 217, 0.61);
+  width: 30px;
+  height: 30px;
+  color: white;
+}
+.index-form {
+  color: coral;
+}
+.valid-form-icon {
+  color: #2bb59d;
+}
+.add-button {
+  min-height: 40px;
+  background-color: #87bbf9;
+  color: white;
+}
+
+.navigate-button {
+  min-height: 40px;
+  background-color: #c7d5f9;
+  color: black;
+}
+.title {
+  color: black;
+  font: oblique 26px Roboto, "Helvetica Neue", sans-serif;
+}
+.header-creator-logo {
+  height: 220px; padding: 3%;
+}
