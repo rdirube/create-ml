@@ -1,0 +1,39 @@
+<form autocomplete="off" *ngIf="form" [formGroup]="form" fxLayout="column" fxLayoutGap="2%" >
+  <!--<div fxLayout="row" fxLayoutAlign="end" class="full-width">
+    <button mat-stroked-button color="warn" (click)="removeChoice(currentChoice)" [disabled]="choicesFormArray.controls.length === 1"><mat-icon>delete</mat-icon>Eliminar</button>
+  </div>-->
+  <div class="full-width " fxLayoutGap="1%" fxLayout="column">
+    <span fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5px"><b>Enunciado</b> <mat-icon *ngIf="form.get('statement').valid" class="valid-form-icon" matSuffix>check_circle</mat-icon></span>
+    <!--
+        <mat-divider [inset]="true"></mat-divider>
+    -->
+
+    <app-showable-form class="statement-container" [form]="form.get('statement')"  ></app-showable-form>
+  </div>
+  <div class="full-width" fxLayout="column" fxLayoutGap="1%">
+                <span fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5px">
+                  <b>Opciones</b> <span fxLayout="row" fxLayoutAlign="center center" *ngIf="getCurrentOptionsFormArray().hasError('atLeastOneAnswerIsCorrect')" class="wrong-message"> Debe haber al menos una opción correcta</span> <mat-icon *ngIf="getCurrentOptionsFormArray().valid" class="valid-form-icon" matSuffix>check_circle</mat-icon>
+                </span>
+    <!--
+        <mat-divider [inset]="true"></mat-divider>
+    -->
+
+    <div *ngFor="let option of getCurrentOptionsFormArray().controls, let i = index" class="full-width options-container" [ngClass]="{'correct': option.get('isCorrect').value}" fxLayout="row" fxLayoutAlign="start center">
+      <form class="full-width" [formGroup]="option" fxLayoutAlign="start center" fxLayoutGap="1%" fxLayout="row" fxFlex="grow">
+        <b>{{ i + 1 + '.'}}</b>
+        <mat-checkbox [color]="'primary'" [labelPosition]="'after'" [formControlName]="'isCorrect'">
+                <span fxHide.lt-md style="font-weight: 400">
+                  Es correcta
+                </span>
+        </mat-checkbox>
+        <app-showable-form class="full-width" style="min-height: 100px; max-height: 100px" [form]="option.get('showable')"></app-showable-form>
+      </form>
+      <button mat-icon-button (click)="removeOption(i)" [disabled]="getCurrentOptionsFormArray().controls.length === 2"><mat-icon>close</mat-icon></button>
+    </div>
+    <mat-divider [inset]="true"></mat-divider>
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <button class="add-button" mat-raised-button [disabled]="getCurrentOptionsFormArray().controls.length >= 4" (click)="addOption()" color="accent"> <mat-icon>add</mat-icon> Agregar opción</button>
+    </div>
+  </div>
+
+</form>

@@ -2,6 +2,7 @@ import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from 
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
+import {ChoiceExercise, MueroPorSaberGame} from './models/types';
 
 @Component({
   selector: 'app-root',
@@ -138,10 +139,10 @@ export class AppComponent implements OnInit {
     }));
     const choice: ChoiceExercise = {
       options: [
-        {isCorrect: true, elementsToShow: [{showableType: 'text', value: ''}], id: 0},
-        {isCorrect: false, elementsToShow: [{showableType: 'text', value: ''}], id: 0}
+        {isCorrect: true, elementsToShow: [{showableType: [ {type: 'text', value: ''}]}], id: 0},
+        {isCorrect: false, elementsToShow: [{showableType: [ {type: 'text', value: ''}]}], id: 0}
       ],
-      elementsToShow: [{showableType: 'text', value: ''}],
+      elementsToShow: [{showableType: [ {type: 'text', value: ''}]}],
       id: 0
     };
     this.gameConfig.choices = this.gameConfig.choices.slice(0, index).concat([choice]).concat(this.gameConfig.choices.slice(index));
@@ -177,74 +178,3 @@ export class AppComponent implements OnInit {
 
 }
 
-export interface MueroPorSaberGame {
-  // ownerId?: number;
-  /* id?: number;
-  level?: number;
-  name?: string;
-  image?: string;
-  tags?: Tag[];
-  description?: string;
-   */
-  choices: ChoiceExercise [];
-  // language?: string;
-  settings: TriviaSettings;
-
-  resourceUid?: string;
-
-  // removedChoiceIds: number[];
-  // orderExerciseIds: number[];
-  // microLessonId: number;
-}
-
-export interface TriviaPropertyType {
-  id: number;
-  name: string;
-}
-
-export interface TriviaProperty {
-  id: number;
-  triviaPropertyType: TriviaPropertyType;
-  value: string;
-}
-
-export interface TriviaSettings {
-  triviaType?: TriviaType;
-  triviaProperties?: TriviaProperty[];
-
-  type?: 'classic' | 'test'; // 'Clásico' | 'Examen'
-  minPlayers?: number;
-  maxPlayers?: number;
-  host?: 'gauss' | 'cortazar' | 'yaci' | 'eulogia';
-  goal?: number;
-  randomOrder?: boolean;
-}
-
-export interface TriviaType {
-  id: number;
-  name: string;
-  requiredPropertyTypes: TriviaPropertyType[];
-}
-
-export interface ChoiceExercise extends ShowableElement {
-  id: number;
-  elementsToShow: Showable[];
-  options: Option[];
-}
-
-export interface Showable {
-  id?: number;
-  showableType: 'video' | 'image' | 'text' | 'audio';
-  value: string;
-}
-
-export interface ShowableElement {
-  id: number;
-  elementsToShow: Showable[];
-}
-
-export interface Option extends ShowableElement {
-  elementsToShow: Showable[];
-  id: number;
-  isCorrect: boolean;
-}

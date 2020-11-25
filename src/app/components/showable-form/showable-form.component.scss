@@ -1,0 +1,19 @@
+.input-file {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+.valid-form-icon {
+  color: white;
+}
+.wrong-message {
+  color: white;
+  text-align: center;
+}
+.correct .wrong-message {
+  color: #ff614c;
+  text-align: center;
+}

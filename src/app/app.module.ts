@@ -8,7 +8,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
@@ -20,11 +20,18 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import { GameInfoFormComponent } from './components/game-info-form/game-info-form.component';
 import {MatInputModule} from '@angular/material/input';
 import {NgxUploaderModule} from 'ngx-uploader';
+import {MatSelectModule} from '@angular/material/select';
+import { SettingsFormComponent } from './components/settings-form/settings-form.component';
+import { ExerciseFormComponent } from './components/exercise-form/exercise-form.component';
+import { ShowableFormComponent } from './components/showable-form/showable-form.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    GameInfoFormComponent
+    GameInfoFormComponent,
+    SettingsFormComponent,
+    ExerciseFormComponent,
+    ShowableFormComponent
   ],
   imports: [
     BrowserModule,
@@ -44,7 +51,9 @@ import {NgxUploaderModule} from 'ngx-uploader';
     ExtendedModule,
     MatTooltipModule,
     MatInputModule,
-    NgxUploaderModule
+    NgxUploaderModule,
+    MatSelectModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

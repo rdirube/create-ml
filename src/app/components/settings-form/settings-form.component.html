@@ -1,0 +1,56 @@
+<div fxLayout="row"  fxFlex="grow" fxLayoutGap="2%" style="padding-bottom: 4%">
+  <div fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap="1%">
+    <div class="full-width" fxLayout="column" fxLayoutAlign="center start" fxLayoutGap="3%" fxFlexFill>
+<!--      <app-image-viewer style="height: 20vw; padding: 2%" class="gauss full-width" [directSource]="'https://storage.googleapis.com/common-ox-assets/mini-lessons/muero-por-saber/' + form.get('host').value + '.svg'">-->
+<!--      </app-image-viewer>-->
+      <img class="full-width" [src]="form.get('host').value" alt="barco">
+      <div fxLayout="row wrap" class="full-width" fxLayoutAlign="center center" fxLayoutGap="1%">
+        <span style="padding-right: 5%">Temática:</span>
+        <button color="primary" [class.selected]="form.get('host').value === 'circus'" (click)="updateHost('circus')" mat-stroked-button="">Circo</button>
+        <button color="primary" [class.selected]="form.get('host').value === 'lab'" (click)="updateHost('lab')" mat-stroked-button="">Laboratorio</button>
+        <button color="primary" [class.selected]="form.get('host').value === 'boat'" (click)="updateHost('boat')" mat-stroked-button="">Barco</button>
+      </div>
+    </div>
+  </div>
+  <mat-divider [inset]="true" [vertical]="true"></mat-divider>
+  <div fxFlex="50" fxLayout="column" fxLayoutAlign="center start">
+    <div class="full-width" fxLayout="row" fxLayoutAlign="center center"><h3><i>Resumen</i></h3></div>
+    <div class="full-width" style="padding: 2%;" fxLayout="column" fxLayoutAlign="center start" fxLayoutGap="2%" >
+
+      <mat-divider [inset]="true"></mat-divider>
+      <div><b>Nombre:</b>  {{infoFormGroup.get('name').value}}</div>
+      <div><b>Descripción:</b> {{infoFormGroup.get('description').value}}</div>
+      <!-- <div><b>Orden aleatorio:</b> {{form.get('isRandom').value ? 'sí' : 'no'}}</div> -->
+      <mat-divider [inset]="true"></mat-divider>
+      <div><b>Cantidad de ejercicios:</b> {{exercisesQuantity}}</div>
+      <div *ngIf="exercisesQuantity / form.get('goal').value < 2" style="color: #ff7633">
+        <b>¡Atención!</b> Hay muy pocos ejercicios para llegar a {{form.get('goal').value}} puntos. Las preguntas se repetirán.
+        Se recomienda que haya al menos {{form.get('goal').value}} ejercicios. Puedes guardar y luego cargar más.
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-accordion class="full-width">
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>settings</mat-icon>
+            Opciones avanzadas
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <form [formGroup]="form" fxLayout="column" class="full-width" fxLayoutGap="5%">
+          <div fxLayout="column">
+            <mat-checkbox  [formControlName]="'isRandom'" class="full-width">
+              Ejercicios en orden aleatorio
+            </mat-checkbox>
+            <mat-hint>(Si no está tiltdado, el orden de los ejercicios será como están cargados)</mat-hint>
+          </div>
+          <mat-form-field appearance="standard" class="full-width">
+            <mat-label>Cantidad de ejercicios a resolver</mat-label>
+            <input min="1" matInput [formControlName]="'goal'" type="number" placeholder="Objetivo de respuestas">
+            <mat-hint align="start">La cantidad de ejercicios a resolver debe ser mayor o igual a 1</mat-hint>
+          </mat-form-field>
+        </form>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</div>

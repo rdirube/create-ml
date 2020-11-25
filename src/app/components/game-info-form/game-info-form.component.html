@@ -18,7 +18,12 @@
     </mat-form-field>
     <mat-form-field color="primary" class="full-width">
       <mat-label>Idioma</mat-label>
-      <input matInput placeholder="Seres vivos - 5to A" formControlName="language">
+<!--      <input matInput placeholder="Seres vivos - 5to A" formControlName="language">-->
+      <mat-select>
+        <mat-option *ngFor="let lang of ['ES-AR', 'EN-USA']" [value]="lang">
+          {{lang}}
+        </mat-option>
+      </mat-select>
       <mat-icon *ngIf="form.get('language').valid" matSuffix class="valid-form-icon">check_circle</mat-icon>
     </mat-form-field>
   </div>
