@@ -6,12 +6,10 @@
 <!--      <div class="tempButton" (click)="onClickSendOutput()">Send output</div>-->
 <!--      <div >the input value for inputVar is: {{inputVar}}</div>-->
 <!--</div>-->
-
-
 <div class="create-container" fxFlex="grow" fxLayout="column" fxLayoutGap="1%" fxLayoutAlign="center center">
   <div class="full-width header-creator-logo" fxFlex="32" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1%">
     <img fxFlex="grow"  src="https://storage.googleapis.com/common-ox-assets/wumbox-icons/custom-icons/triviox.svg" />
-    <h2 matSubheader class="title">¡Crea tu propia triva!</h2>
+    <h2 matSubheader class="title">¡Crea tu propia Minilesson!</h2>
   </div>
   <mat-horizontal-stepper *ngIf="gameConfig && gameForm" [selectedIndex]="0" [linear]="!gameForm.valid"  fxFlex="66" [ngClass.lt-lg]="{'full-width': true}" [ngClass.gt-md]="{'three-quarter-width': true}" #stepper style="position: relative; padding: 1%;">
     <mat-step [stepControl]="infoFormGroup">
@@ -80,7 +78,6 @@
           <button class="navigate-button" matStepperNext mat-raised-button >Continuar <mat-icon>navigate_next</mat-icon></button>
         </div>
       </div>
-
     </mat-step>
     <mat-step [stepControl]="infoFormGroup">
       <ng-template matStepLabel>Configuración</ng-template>

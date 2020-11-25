@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {UploadOutput} from 'ngx-uploader';
-import {FormGroup} from '@angular/forms';
+import {FormBuilder, FormGroup} from '@angular/forms';
 import {ShowableProperty} from '../../models/types';
 
 @Component({
@@ -15,7 +15,7 @@ export class ShowableFormComponent implements OnInit {
     return this._form;
   }
 
-  @Input()
+  // @Input()
   set form(value: FormGroup) {
     this._form = value;
     // this.currentShowableType = this._form.get('showableTypes').value
@@ -26,12 +26,19 @@ export class ShowableFormComponent implements OnInit {
   public showableTypes: { name: string, icon: string, value: string }[];
   public currentShowableType: { name: string, icon: string, value: string }[];
   toShow: string;
+  @Input() withImage = true;
+  @Input() withText = true;
+  @Input() withAudio = true;
 
-  constructor(private cdr: ChangeDetectorRef) {
+  constructor(private cdr: ChangeDetectorRef,
+              private formBuilder: FormBuilder) {
     this.currentShowableType = [];
-    this.showableTypes = [{name: 'Video', icon: 'play_circle_outline', value: 'video'},
-      {name: 'Imagen', icon: 'image', value: 'image'}, {name: 'Audio', icon: 'audiotrack', value: 'audio'},
-      {name: 'Texto', icon: 'text_fields', value: 'text'}];
+    this.form = this.formBuilder.group({
+      image: '',
+      text: '',
+      audio: '',
+      video: ''
+    });
   }
 
   ngOnInit(): void {
@@ -66,7 +73,7 @@ export class ShowableFormComponent implements OnInit {
 
   clearStatementValue(): void {
     console.log(this._form.get('showableTypes').value);
-    this.toShow = this.currentShowableType.map( x => x.name).join(', ');
+    this.toShow = this.currentShowableType.map(x => x.name).join(', ');
     // this.currentShowableType = this._form.get('showableTypes').value
     //   .map( x => this.showableTypes.find(e => e.value === x).name).join(', ');
     // this._form.get('value').setValue('');
@@ -93,12 +100,12 @@ export class ShowableFormComponent implements OnInit {
   }
 
   updateShowableTypes(): void {
-    this.toShow = this.currentShowableType.map( x => x.name).join(', ');
-    this.currentShowableType.forEach( x => {
+    this.toShow = this.currentShowableType.map(x => x.name).join(', ');
+    this.currentShowableType.forEach(x => {
       console.log();
       const originalValue: ShowableProperty[] = this.form.get('showableTypes').value;
-      const filtered = originalValue.filter( z => this.currentShowableType.some( st => z.type === st.value));
-      this.currentShowableType.filter( z => !filtered.some( f => f.type === z.value)).forEach( z => {
+      const filtered = originalValue.filter(z => this.currentShowableType.some(st => z.type === st.value));
+      this.currentShowableType.filter(z => !filtered.some(f => f.type === z.value)).forEach(z => {
         filtered.push({type: z.value as any, value: ''});
       });
       this.form.get('showableTypes').setValue(filtered);

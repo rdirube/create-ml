@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {FormArray, FormGroup} from '@angular/forms';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CreatorService} from '../../services/creator.service';
 import {ChoiceExercise} from '../../models/types';
 import {MatExpansionPanel} from '@angular/material/expansion';
@@ -13,6 +13,9 @@ import {MatExpansionPanel} from '@angular/material/expansion';
 export class ExerciseFormComponent implements OnInit {
 
   private _form: FormGroup;
+
+  optionPropertiesForm: FormGroup;
+
   get form(): FormGroup {
     return this._form;
   }
@@ -30,7 +33,15 @@ export class ExerciseFormComponent implements OnInit {
 
 
 
-  constructor(private creatorService: CreatorService) { }
+  constructor(private creatorService: CreatorService,
+              private cdr: ChangeDetectorRef,
+              private formBuilder: FormBuilder) {
+    this.optionPropertiesForm = this.formBuilder.group({
+      optionsWithAudio: false,
+      optionsWithText: true,
+      optionsWithImage: true,
+    });
+  }
 
   ngOnInit(): void {
   }
@@ -46,4 +57,5 @@ export class ExerciseFormComponent implements OnInit {
   public getCurrentOptionsFormArray(): FormArray {
     return this._form.get('options') as FormArray;
   }
+
 }
