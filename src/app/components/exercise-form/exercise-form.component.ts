@@ -2,11 +2,13 @@ import {Component, Input, OnInit} from '@angular/core';
 import {FormArray, FormGroup} from '@angular/forms';
 import {CreatorService} from '../../services/creator.service';
 import {ChoiceExercise} from '../../models/types';
+import {MatExpansionPanel} from '@angular/material/expansion';
 
 @Component({
   selector: 'app-exercise-form',
   templateUrl: './exercise-form.component.html',
-  styleUrls: ['./exercise-form.component.scss']
+  styleUrls: ['./exercise-form.component.scss'],
+  viewProviders: [MatExpansionPanel]
 })
 export class ExerciseFormComponent implements OnInit {
 

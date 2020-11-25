@@ -1,75 +1,80 @@
 <div fxFlex="grow" fxLayout="column" fxLayoutAlign="start center" class="full-width" fxLayoutGap="1%">
-<div fxFlex="grow" fxLayout="row" fxLayoutAlign="start center" class="full-width" fxLayoutGap="1%">
-  <div fxLayout="row" fxLayoutAlign="start center" class="full-width" fxLayoutGap="1%">
-    <mat-placeholder>Tipos</mat-placeholder>
-    <mat-form-field fxFlex="50" appearance="fill" color="primary">
-      <mat-select
-        multiple
-        [(ngModel)]="currentShowableType" (selectionChange)="updateShowableTypes()">
-        <mat-select-trigger style="color: white">
-        <span fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="15px">
-          <span>{{toShow}}</span>
-          <!--          {{form.get('showableTypes').value.length > 0 ?-->
-          <!--          form.get('showableTypes').value.join(', '): 'none'}}-->
-        </span>
-        </mat-select-trigger>
-        <mat-option *ngFor="let type of showableTypes" [value]="type">
-        <span fxLayout="row" fxLayoutAlign="start center">
-          <mat-icon>{{type.icon}}</mat-icon>
-          {{type.name}}
-        </span>
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+  <div fxFlex="grow" fxLayout="column" fxLayoutAlign="center start" class="full-width" fxLayoutGap="1%">
 
+    <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10%">
+      <mat-form-field #withText appearance="standard" color="primary" fxFlex="75" class="full-width">
+        <mat-label style="color: white">Texto:</mat-label>
+        <!--      [formControlName]="'value'"  TODO CHECK THIS ONE  -->
 
-</div>
-
-<form [formGroup]="form" fxFlex="grow" fxLayout="column" fxLayoutAlign="start center" class="full-width" fxLayoutGap="1%"
-      autocomplete="off">
-  <div *ngFor="let showable of form.get('showableTypes').value">
-      <mat-form-field *ngIf="showable.type === 'text' || showable.type === 'video'" appearance="standard" color="primary" [fxFlex]="showable.type === 'text' ? 75 : 40">
-        <mat-label style="color: white">{{showable.type === 'text' ? 'Texto' : 'Link del video'}}</mat-label>
-        <input style="color: white" maxlength="256" fxFlex="grow" fxFlexFill matInput [placeholder]="showable.type === 'text' ? 'En verano suele llover.' : 'https://www.youtube.com/watch?v=zgDbp5C74sU'"
-               [formControlName]="'showableTypes[0].value'"  >
-        <mat-icon style="color: white" *ngIf="form.valid" matSuffix >check_circle</mat-icon>
-        <mat-hint style="color: white" *ngIf="showable.type === 'text'" style="font-size: 80%" align="end">{{showable.value.length}}/256</mat-hint>
+        <textarea matInput  style="color: white;" maxlength="256"  [placeholder]="'En verano suele llover.'" ></textarea>
+<!--        <textarea style="color: white" maxlength="256" fxFlex="grow" fxFlexFill matInput-->
+<!--               [placeholder]="'En verano suele llover.'"> -->
+        <mat-icon style="color: white" *ngIf="form.valid" matSuffix>check_circle</mat-icon>
+        <mat-hint style="color: white" style="font-size: 80%" align="end">{{getCurrentStatementValueValue()}}/256
+        </mat-hint>
       </mat-form-field>
+      <div
+        #withImage fxLayoutGap="5px" fxLayout="column" fxLayoutAlign="center center"
+        class="mat-form-field-wrapper showable-property">
+        <input [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect
+               (uploadOutput)="uploadFile($event); form.markAsDirty()">
+        <button color="primary" fxLayout="row" fxLayoutAlign="space-between center center" mat-raised-button
+                (click)="imageInput.click()">
+          <mat-icon matPrefix>cloud_upload</mat-icon>
+          Seleccionar
+        </button>
+        <mat-label style="color: white">Imagen</mat-label>
+        <span *ngIf="form.invalid" class="wrong-message">
+      Carga una imagen
+    </span>
+      </div>
+      <div #withAudio fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="5px"
+           class="showable-property">
+        <input [accept]="'audio/mpeg'" class="input-file" #audioInput type="file" ngFileSelect
+               (uploadOutput)="uploadFile($event); form.markAsDirty()">
+        <button fxLayout="row" fxLayoutAlign="space-between center center" color="primary" mat-raised-button
+                (click)="audioInput.click()">
+          <mat-icon>cloud_upload</mat-icon>
+          Seleccionar
+        </button>
+        <app-record-audio (endAudio)="uploadFile($event); form.markAsDirty()"></app-record-audio>
+        <mat-label style="color: white">Audio</mat-label>
+        <span *ngIf="form.invalid" class="wrong-message">
+      Carga un audio
+    </span>
+      </div>
+    </div>
+
+
   </div>
-  <!--  <mat-form-field *ngIf="getCurrentStatementTypeValue() === 'text' || getCurrentStatementTypeValue() === 'video'" appearance="standard" color="primary" [fxFlex]="getCurrentStatementTypeValue() === 'text' ? 75 : 40">-->
-  <!--    <mat-label style="color: white">{{getCurrentStatementTypeValue() === 'text' ? 'Texto' : 'Link del video'}}</mat-label>-->
-  <!--    <input style="color: white" maxlength="256" fxFlex="grow" fxFlexFill matInput [placeholder]="getCurrentStatementTypeValue() === 'text' ? 'En verano suele llover.' : 'https://www.youtube.com/watch?v=zgDbp5C74sU'" [formControlName]="'value'"  >-->
-  <!--    <mat-icon style="color: white" *ngIf="form.valid" matSuffix >check_circle</mat-icon>-->
-  <!--    <mat-hint style="color: white" *ngIf="getCurrentStatementTypeValue() === 'text'" style="font-size: 80%" align="end">{{getCurrentStatementValueValue().length}}/256</mat-hint>-->
-  <!--  </mat-form-field>-->
-  <!--  <div *ngIf="getCurrentStatementTypeValue() === 'image'" fxLayoutGap="5px" fxLayout="column" fxLayoutAlign="center center" class="mat-form-field-wrapper">-->
-  <!--    <input [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect (uploadOutput)="uploadFile($event); form.markAsDirty()">-->
-  <!--    <button color="primary" fxLayout="row" fxLayoutAlign="space-between center center" mat-raised-button (click)="imageInput.click()">-->
-  <!--      <mat-icon matPrefix>cloud_upload</mat-icon>-->
-  <!--      Seleccionar-->
-  <!--    </button>-->
-  <!--    <span *ngIf="form.invalid" class="wrong-message">-->
-  <!--      Carga una imagen-->
-  <!--    </span>-->
-  <!--  </div>-->
-  <!--  <div *ngIf="getCurrentStatementTypeValue() === 'audio'" fxLayout="column" fxLayoutAlign="center" fxLayoutGap="5px" >-->
-  <!--    <input [accept]="'audio/mpeg'" class="input-file" #audioInput type="file" ngFileSelect (uploadOutput)="uploadFile($event); form.markAsDirty()">-->
-  <!--    <button fxLayout="row" fxLayoutAlign="space-between center center" color="primary" mat-raised-button (click)="audioInput.click()">-->
-  <!--      <mat-icon>cloud_upload</mat-icon>-->
-  <!--      Seleccionar-->
-  <!--    </button>-->
-  <!--&lt;!&ndash;    <app-record-audio (onEndAudio)="uploadFile($event); form.markAsDirty()"></app-record-audio>&ndash;&gt;-->
-  <!--    <span *ngIf="form.invalid" class="wrong-message">-->
-  <!--      Carga un audio-->
-  <!--    </span>-->
-  <!--  </div>-->
-  <!--  <div fxFlexFill fxFlex="grow" fxHide.lt-md fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="5px">-->
-  <!--    <app-choice-showable #showable fxLayout="row" fxLayoutAlign="center center" fxFlex="grow"  fxFlexFill *ngIf="getShowableValue() as showableValue" [showable]="{showableType: getCurrentStatementTypeValue(), value: showableValue}" [source]="showableValue"></app-choice-showable>-->
-  <!--    <span>-->
-  <!--      {{form.get('value').value.name  && form.get('value').value.name.length > 16 ? form.get('value').value.name.substr(0, 16) + '...' : form.get('value').value.name}}-->
-  <!--    </span>-->
-  <!--  </div>-->
-  <!--  <mat-icon *ngIf="form.valid && getCurrentStatementTypeValue() !== 'text' && getCurrentStatementTypeValue() !== 'video'" class="valid-form-icon" matSuffix>check_circle</mat-icon>-->
-</form>
 </div>
+
+<!--<div fxFlex="grow" fxLayout="column" fxLayoutAlign="start center" class="full-width" fxLayoutGap="1%">-->
+<!--<div fxFlex="grow" fxLayout="row" fxLayoutAlign="start center" class="full-width" fxLayoutGap="1%">-->
+<!--  <div fxLayout="row" fxLayoutAlign="start center" class="full-width" fxLayoutGap="1%">-->
+<!--    <mat-placeholder>Tipos</mat-placeholder>-->
+<!--    <mat-form-field fxFlex="50" appearance="fill" color="primary">-->
+<!--      <mat-select-->
+<!--        multiple-->
+<!--        [(ngModel)]="currentShowableType" (selectionChange)="updateShowableTypes()">-->
+<!--        <mat-select-trigger style="color: white">-->
+<!--        <span fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="15px">-->
+<!--          <span>{{toShow}}</span>-->
+<!--          &lt;!&ndash;          {{form.get('showableTypes').value.length > 0 ?&ndash;&gt;-->
+<!--          &lt;!&ndash;          form.get('showableTypes').value.join(', '): 'none'}}&ndash;&gt;-->
+<!--        </span>-->
+<!--        </mat-select-trigger>-->
+<!--        <mat-option *ngFor="let type of showableTypes" [value]="type">-->
+<!--        <span fxLayout="row" fxLayoutAlign="start center">-->
+<!--          <mat-icon>{{type.icon}}</mat-icon>-->
+<!--          {{type.name}}-->
+<!--        </span>-->
+<!--        </mat-option>-->
+<!--      </mat-select>-->
+<!--    </mat-form-field>-->
+<!--  </div>-->
+
+
+<!--</div>-->
+
+<!--</div>-->

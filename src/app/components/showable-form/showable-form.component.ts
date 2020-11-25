@@ -40,7 +40,8 @@ export class ShowableFormComponent implements OnInit {
   }
 
   getCurrentStatementValueValue(): any {
-    return this._form.get('value').value;
+    return -5;
+    // return this._form.get('value').value;
 
   }
 

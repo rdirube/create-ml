@@ -19,6 +19,7 @@ export class SettingsFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.triviaTypes = [{name: 'Clásico', value: 'classic'}, {name: 'Examen', value: 'test'}];
+    this.updateHost('circus');
   }
 
   updateHost(imagePath: string): void {

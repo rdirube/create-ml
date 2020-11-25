@@ -24,6 +24,8 @@ import {MatSelectModule} from '@angular/material/select';
 import { SettingsFormComponent } from './components/settings-form/settings-form.component';
 import { ExerciseFormComponent } from './components/exercise-form/exercise-form.component';
 import { ShowableFormComponent } from './components/showable-form/showable-form.component';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { RecordAudioComponent } from './components/record-audio/record-audio.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,8 @@ import { ShowableFormComponent } from './components/showable-form/showable-form.
     GameInfoFormComponent,
     SettingsFormComponent,
     ExerciseFormComponent,
-    ShowableFormComponent
+    ShowableFormComponent,
+    RecordAudioComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +56,8 @@ import { ShowableFormComponent } from './components/showable-form/showable-form.
     MatInputModule,
     NgxUploaderModule,
     MatSelectModule,
-    FormsModule
+    FormsModule,
+    MatSlideToggleModule
   ],
   providers: [],
   bootstrap: [AppComponent]
