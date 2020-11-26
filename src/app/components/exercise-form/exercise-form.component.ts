@@ -22,7 +22,6 @@ export class ExerciseFormComponent implements OnInit {
   @Input()
   public set formData(value: {form: FormGroup, initialDatas: ChoiceExercise}) {
     this._form = value.form;
-    console.log(value);
     if (!value.form.get('statement')) {
       const initialData = value.initialDatas;
       this.creatorService.addControls(initialData, value.form);

@@ -21,7 +21,11 @@ export class CreatorService {
   private createShowableFormGroup(data?: Showable): FormGroup {
     return this._formBuilder.group({
       id: [data ? data.id : 0],
-      showableTypes: [data ? data.showableType : [ {type: 'text', value: ''}], Validators.required],
+      audio: data ? data.audio : '',
+      image: data ? data.image : '',
+      text: data ? data.text : '',
+      video: data ? data.video : ''
+      // showableTypes: [data ? data : [{audio: '', image: '', text: '', video: ''}], Validators.required],
       // value: [data ? data.value : '', [Validators.required, Validators.maxLength(256)]],
     });
   }

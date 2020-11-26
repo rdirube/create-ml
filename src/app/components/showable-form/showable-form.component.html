@@ -1,4 +1,4 @@
-<form [formGroup]="form">
+<form [formGroup]="form" *ngIf="form">
   <div fxFlex="grow" fxLayout="column" fxLayoutAlign="start center" class="full-width" fxLayoutGap="1%">
     <div fxFlex="grow" fxLayout="column" fxLayoutAlign="center start" class="full-width" fxLayoutGap="1%">
       <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10%">
@@ -8,7 +8,7 @@
           <mat-label style="color: white">Texto:</mat-label>
           <!--      [formControlName]="'value'"  TODO CHECK THIS ONE  -->
           <textarea matInput style="color: white;" maxlength="256"
-                    formControlName="text"
+                    [formControlName]="'text'"
                     [placeholder]="'En verano suele llover.'"></textarea>
           <!--        <textarea style="color: white" maxlength="256" fxFlex="grow" fxFlexFill matInput-->
           <!--               [placeholder]="'En verano suele llover.'"> -->
@@ -20,14 +20,17 @@
           *ngIf="withImage"
           #withImage fxLayoutGap="5px" fxLayout="column" fxLayoutAlign="center center"
           class="mat-form-field-wrapper showable-property">
-          <input [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect
-                 (uploadOutput)="uploadFile($event); form.markAsDirty()">
+          <input
+                           [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect
+                 (uploadOutput)="uploadFile($event, 'image'); form.markAsDirty()">
           <button color="primary" fxLayout="row" fxLayoutAlign="space-between center center" mat-raised-button
                   (click)="imageInput.click()">
             <mat-icon matPrefix>cloud_upload</mat-icon>
             Seleccionar
           </button>
-          <mat-label style="color: white">Imagen</mat-label>
+          <img style="width: 75%" *ngIf="form.get('image').value !== ''"
+               [src]="form.get('image').value.data.base64" />
+          <mat-label style="color: white">{{'Imagen'}}</mat-label>
           <span *ngIf="form.invalid" class="wrong-message">
       Carga una imagen
     </span>
@@ -36,14 +39,22 @@
           *ngIf="withAudio"
           #withAudio fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="5px"
           class="showable-property">
-          <input [accept]="'audio/mpeg'" class="input-file" #audioInput type="file" ngFileSelect
-                 (uploadOutput)="uploadFile($event); form.markAsDirty()">
+          <input
+            [accept]="'audio/mpeg'" class="input-file" #audioInput type="file" ngFileSelect
+                 (uploadOutput)="uploadFile($event, 'audio'); form.markAsDirty()">
           <button fxLayout="row" fxLayoutAlign="space-between center center" color="primary" mat-raised-button
                   (click)="audioInput.click()">
             <mat-icon>cloud_upload</mat-icon>
             Seleccionar
           </button>
-          <app-record-audio (endAudio)="uploadFile($event); form.markAsDirty()"></app-record-audio>
+          <app-record-audio (endAudio)="uploadFile($event, 'audio'); form.markAsDirty()"></app-record-audio>
+          <audio *ngIf="this._form.get('audio').value" #audio (click)="$event.stopPropagation()"   controls
+                 controlsList="novolume"
+                 class="full-width"
+                 controlsList="nodownload">
+            <source  [src]="sanitize.bypassSecurityTrustResourceUrl(this._form.get('audio').value.data.base64)" type="audio/mpeg">
+            Tu navegador no puede reproducir este audio.
+          </audio>
           <mat-label style="color: white">Audio</mat-label>
           <span *ngIf="form.invalid" class="wrong-message">
       Carga un audio

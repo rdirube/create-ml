@@ -10,7 +10,9 @@
             *ngIf="form.get('statement').valid" class="valid-form-icon" matSuffix>check_circle</mat-icon></span>
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <app-showable-form class="statement-container"  fxFlex="grow"></app-showable-form>
+      <app-showable-form
+        [form]="form.get('statement')"
+        class="statement-container"  fxFlex="grow"></app-showable-form>
     </mat-expansion-panel>
     <mat-expansion-panel>
       <mat-expansion-panel-header>

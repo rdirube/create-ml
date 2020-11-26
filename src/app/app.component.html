@@ -25,7 +25,7 @@
       <ng-template matStepLabel>Ejercicios</ng-template>
       <div  fxFlex="grow" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px">
         <div class="full-width" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="4px">
-          <button matTooltip="Ejercicio anterior" fxHide.gt-sm mat-icon-button [disabled]="currentChoice === 0" (click)="currentChoice = currentChoice - 1">
+          <button matTooltip="Ejercicio anterior" fxHide.gt-sm mat-icon-button [disabled]="currentChoice === 0" (click)="changeCurrentChoice(-1)">
             <mat-icon>navigate_before</mat-icon>
           </button>
           <span fxLayout="row" fxLayoutGap="5px" style="padding-left: 10px">
@@ -37,7 +37,7 @@
               {{i + 1}}
             </a>
           </div>
-          <button matTooltip="Ejercicio siguiente" fxHide.gt-sm (click)="currentChoice = currentChoice + 1" mat-icon-button [disabled]="currentChoice === choicesFormArray.length - 1">
+          <button matTooltip="Ejercicio siguiente" fxHide.gt-sm (click)="changeCurrentChoice(1)" mat-icon-button [disabled]="currentChoice === choicesFormArray.length - 1">
             <mat-icon>navigate_next</mat-icon>
           </button>
           <mat-menu #addMenu="matMenu">
@@ -56,7 +56,7 @@
         </div>
         <mat-divider [inset]="true"></mat-divider>
         <div fxFlex="grow" fxLayout="row" fxLayoutAlign="space-between" class="full-width" fxLayoutGap="1%">
-          <div fxHide.lt-md fxLayout="column" fxLayoutAlign="center center" (click)="currentChoice = currentChoice - 1">
+          <div fxHide.lt-md fxLayout="column" fxLayoutAlign="center center" (click)="changeCurrentChoice(-1)">
             <button matTooltip="Ejercicio anterior" mat-icon-button [disabled]="currentChoice === 0">
               <mat-icon>navigate_before</mat-icon>
             </button>
@@ -68,7 +68,7 @@
               [formData]="{form: choicesFormArray.at(currentChoice), initialDatas: gameConfig.choices[currentChoice]}" class="full-width"></app-exercise-form>
 <!--            <app-muero-por-saber-exercise-form [formData]="{form: choicesFormArray.at(currentChoice), initialDatas: gameConfig.choices[currentChoice]}" class="full-width"></app-muero-por-saber-exercise-form>-->
           </div>
-          <div fxHide.lt-md fxLayout="column" (click)="currentChoice = currentChoice + 1" fxLayoutAlign="center center">
+          <div fxHide.lt-md fxLayout="column" (click)="changeCurrentChoice(1)" fxLayoutAlign="center center">
             <button matTooltip="Ejercicio siguiente" mat-icon-button [disabled]="currentChoice === choicesFormArray.length - 1">
               <mat-icon>navigate_next</mat-icon>
             </button>

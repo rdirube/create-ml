@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {UploadOutput} from 'ngx-uploader';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {ShowableProperty} from '../../models/types';
+import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-showable-form',
@@ -15,7 +15,7 @@ export class ShowableFormComponent implements OnInit {
     return this._form;
   }
 
-  // @Input()
+  @Input()
   set form(value: FormGroup) {
     this._form = value;
     // this.currentShowableType = this._form.get('showableTypes').value
@@ -30,15 +30,18 @@ export class ShowableFormComponent implements OnInit {
   @Input() withText = true;
   @Input() withAudio = true;
 
+  public currentAudioTest: SafeResourceUrl;
+
   constructor(private cdr: ChangeDetectorRef,
-              private formBuilder: FormBuilder) {
+              private formBuilder: FormBuilder,
+              public sanitize: DomSanitizer) {
     this.currentShowableType = [];
-    this.form = this.formBuilder.group({
-      image: '',
-      text: '',
-      audio: '',
-      video: ''
-    });
+    // this.form = this.formBuilder.group({
+    //   image: '',
+    //   text: '',
+    //   audio: '',
+    //   video: ''
+    // });
   }
 
   ngOnInit(): void {
@@ -83,32 +86,36 @@ export class ShowableFormComponent implements OnInit {
     return this._form.get('type').value;
   }
 
-  uploadFile($event: UploadOutput): void {
+  uploadFile($event: UploadOutput, prop: string): void {
     if ($event.type !== 'done' && $event.type !== 'addedToQueue') {
       return;
     }
     const nativeFile = $event.nativeFile || $event.file.nativeFile;
     if (nativeFile) {
       const reader = new FileReader();
-      this._form.get('value').setValue('');
+      this._form.get(prop).setValue('');
       reader.onload = (e) => {
-        this._form.get('value').setValue({name: +new Date() + nativeFile.name, data: {file: nativeFile, base64: reader.result}});
+        this._form.get(prop).setValue({name: +new Date() + nativeFile.name, data: {file: nativeFile, base64: reader.result}});
+        // this._form.get('image').setValue({name: +new Date() + nativeFile.name, data: {file: nativeFile, base64: reader.result}});
+        // if (prop === 'audio') {
+        //   this.currentAudioTest = this.sanitize.bypassSecurityTrustResourceUrl(this._form.get(prop).value.data.base64);
+        // }
         this.cdr.detectChanges();
       };
       reader.readAsDataURL(nativeFile);
     }
   }
 
-  updateShowableTypes(): void {
-    this.toShow = this.currentShowableType.map(x => x.name).join(', ');
-    this.currentShowableType.forEach(x => {
-      console.log();
-      const originalValue: ShowableProperty[] = this.form.get('showableTypes').value;
-      const filtered = originalValue.filter(z => this.currentShowableType.some(st => z.type === st.value));
-      this.currentShowableType.filter(z => !filtered.some(f => f.type === z.value)).forEach(z => {
-        filtered.push({type: z.value as any, value: ''});
-      });
-      this.form.get('showableTypes').setValue(filtered);
-    });
-  }
+  // updateShowableTypes(): void {
+  //   this.toShow = this.currentShowableType.map(x => x.name).join(', ');
+  //   this.currentShowableType.forEach(x => {
+  //     console.log();
+  //     const originalValue: ShowableProperty[] = this.form.get('showableTypes').value;
+  //     const filtered = originalValue.filter(z => this.currentShowableType.some(st => z.type === st.value));
+  //     this.currentShowableType.filter(z => !filtered.some(f => f.type === z.value)).forEach(z => {
+  //       filtered.push({type: z.value as any, value: ''});
+  //     });
+  //     this.form.get('showableTypes').setValue(filtered);
+  //   });
+  // }
 }

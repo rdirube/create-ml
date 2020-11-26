@@ -83,6 +83,7 @@ export class AppComponent implements OnInit {
       exercises: this.choicesFormArray,
       settings: this.settingsFormGroup
     });
+    this.cdr.detectChanges();
   }
 
   private initSettingsForm(): void {
@@ -101,10 +102,9 @@ export class AppComponent implements OnInit {
   }
 
   private initChoicesInformation(): void {
-    console.log('initChoicesInformation');
-    this.choicesFormArray.insert(0, this.formBuilder.group({
-      index: [0]
-    }));
+    // this.choicesFormArray.insert(0, this.formBuilder.group({
+    //   index: [0]
+    // }));
     if (this.choicesFormArray.controls.length === 0) {
       this.addChoice();
     }
@@ -128,7 +128,6 @@ export class AppComponent implements OnInit {
   }
 
   public addChoice(index?: number): void {
-    console.log('Adding choice');
     if (index === undefined) {
       index = this.gameConfig.choices.length;
     }
@@ -146,7 +145,6 @@ export class AppComponent implements OnInit {
     this.gameConfig.choices = this.gameConfig.choices.slice(0, index).concat([choice]).concat(this.gameConfig.choices.slice(index));
     this.currentChoice = index >= 0 ? index : (this.choicesFormArray.length - 1);
     this.cdr.detectChanges();
-    console.log(this.choicesFormArray);
   }
 
   removeChoice(index: number): void {
@@ -163,17 +161,26 @@ export class AppComponent implements OnInit {
 
 
   saveGameAndExit(): void {
-    console.log('saveGameAndExit');
-    console.log('saveGameAndExit');
-    console.log('saveGameAndExit');
-    console.log('saveGameAndExit');
+    this.saveGame();
+    // console.log('saveGameAndExit');
+    // console.log('saveGameAndExit');
+    // console.log('saveGameAndExit');
+    // console.log('saveGameAndExit');
   }
+
   saveGame(): void {
     console.log('saveGame');
     console.log('saveGame');
     console.log('saveGame');
     console.log('saveGame');
+    console.log(this.gameConfig);
   }
 
+  changeCurrentChoice(n: number): void {
+    const temp = this.currentChoice + n;
+    if (temp >= 0 && temp < this.choicesFormArray.length) {
+      this.currentChoice = temp;
+    }
+  }
 }
 
