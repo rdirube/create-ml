@@ -100,15 +100,14 @@ export class AppComponent implements OnInit {
     });
   }
 
-
   private initChoicesInformation(): void {
+    console.log('initChoicesInformation');
     this.choicesFormArray.insert(0, this.formBuilder.group({
       index: [0]
     }));
     if (this.choicesFormArray.controls.length === 0) {
       this.addChoice();
     }
-    console.log(this.choicesFormArray);
   }
 
   private initBasicInformation(): void {
@@ -123,14 +122,13 @@ export class AppComponent implements OnInit {
     });
   }
 
-
   updateHost(imagePath: string): void {
     this.form.get('host').patchValue(imagePath);
     this.form.get('host').markAsDirty();
   }
 
-
   public addChoice(index?: number): void {
+    console.log('Adding choice');
     if (index === undefined) {
       index = this.gameConfig.choices.length;
     }
@@ -139,15 +137,16 @@ export class AppComponent implements OnInit {
     }));
     const choice: ChoiceExercise = {
       options: [
-        {isCorrect: true, elementsToShow: [{showableType: [ {type: 'text', value: ''}]}], id: 0},
-        {isCorrect: false, elementsToShow: [{showableType: [ {type: 'text', value: ''}]}], id: 0}
+        {isCorrect: true, elementsToShow: [{audio: '', image: '', text: '', video: ''}], id: 0},
+        {isCorrect: false, elementsToShow: [{audio: '', image: '', text: '', video: ''}], id: 0}
       ],
-      elementsToShow: [{showableType: [ {type: 'text', value: ''}]}],
+      elementsToShow: [{audio: '', image: '', text: '', video: '', id: 0}],
       id: 0
     };
     this.gameConfig.choices = this.gameConfig.choices.slice(0, index).concat([choice]).concat(this.gameConfig.choices.slice(index));
     this.currentChoice = index >= 0 ? index : (this.choicesFormArray.length - 1);
     this.cdr.detectChanges();
+    console.log(this.choicesFormArray);
   }
 
   removeChoice(index: number): void {

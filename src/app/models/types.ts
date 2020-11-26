@@ -53,11 +53,13 @@ export interface ChoiceExercise extends ShowableElement {
   options: Option[];
 }
 
-export type ShowableProperty = {type: 'video' | 'image' | 'text' | 'audio', value: string};
-
 export interface Showable {
   id?: number;
-  showableType: ShowableProperty[];
+  video: string;
+  text: string;
+  image: string;
+  audio: string;
+  // showableType: ShowableProperty[];
 }
 
 export interface ShowableElement {
@@ -66,7 +68,5 @@ export interface ShowableElement {
 }
 
 export interface Option extends ShowableElement {
-  elementsToShow: Showable[];
-  id: number;
   isCorrect: boolean;
 }

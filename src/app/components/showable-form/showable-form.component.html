@@ -1,14 +1,12 @@
 <form [formGroup]="form">
   <div fxFlex="grow" fxLayout="column" fxLayoutAlign="start center" class="full-width" fxLayoutGap="1%">
     <div fxFlex="grow" fxLayout="column" fxLayoutAlign="center start" class="full-width" fxLayoutGap="1%">
-
       <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10%">
         <mat-form-field
           *ngIf="withText"
           #withText appearance="standard" color="primary" fxFlex="75" class="full-width">
           <mat-label style="color: white">Texto:</mat-label>
           <!--      [formControlName]="'value'"  TODO CHECK THIS ONE  -->
-
           <textarea matInput style="color: white;" maxlength="256"
                     formControlName="text"
                     [placeholder]="'En verano suele llover.'"></textarea>

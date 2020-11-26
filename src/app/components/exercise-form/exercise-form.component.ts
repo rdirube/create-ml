@@ -26,11 +26,8 @@ export class ExerciseFormComponent implements OnInit {
     if (!value.form.get('statement')) {
       const initialData = value.initialDatas;
       this.creatorService.addControls(initialData, value.form);
-
     }
   }
-
-
 
 
   constructor(private creatorService: CreatorService,
@@ -58,4 +55,19 @@ export class ExerciseFormComponent implements OnInit {
     return this._form.get('options') as FormArray;
   }
 
+  getIconName(i: string): string {
+    switch (i) {
+      case 'optionsWithText': return 'text_fields';
+      case 'optionsWithImage': return 'image';
+      case 'optionsWithAudio': return 'audiotrack';
+    }
+  }
+
+  getPropertyText(i: string): string {
+    switch (i) {
+      case 'optionsWithText': return 'Texto';
+      case 'optionsWithImage': return 'Imagen';
+      case 'optionsWithAudio': return 'Audio';
+    }
+  }
 }
