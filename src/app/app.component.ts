@@ -35,7 +35,6 @@ export class AppComponent implements OnInit {
     });
   }
 
-
   constructor(private formBuilder: FormBuilder,
               private sanitizer: DomSanitizer,
               private cdr: ChangeDetectorRef) {
@@ -66,7 +65,6 @@ export class AppComponent implements OnInit {
       // this.mueroPorSaberService.addControls(choice, form);
       return form;
     }));
-
   }
 
   ngOnInit(): void {

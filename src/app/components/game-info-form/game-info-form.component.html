@@ -19,7 +19,7 @@
     <mat-form-field color="primary" class="full-width">
       <mat-label>Idioma</mat-label>
 <!--      <input matInput placeholder="Seres vivos - 5to A" formControlName="language">-->
-      <mat-select>
+      <mat-select formControlName="language">
         <mat-option *ngFor="let lang of ['ES-AR', 'EN-USA']" [value]="lang">
           {{lang}}
         </mat-option>
