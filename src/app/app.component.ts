@@ -165,11 +165,9 @@ export class AppComponent implements OnInit {
     // console.log('saveGameAndExit');
     // console.log('saveGameAndExit');
     // console.log('saveGameAndExit');
-    // console.log('saveGameAndExit');
   }
 
   saveGame(): void {
-    console.log('saveGame');
     console.log('saveGame');
     console.log('saveGame');
     console.log('saveGame');

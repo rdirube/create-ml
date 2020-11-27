@@ -1,7 +1,7 @@
 <form [formGroup]="form" *ngIf="form">
   <div fxFlex="grow" fxLayout="column" fxLayoutAlign="start center" class="full-width" fxLayoutGap="1%">
     <div fxFlex="grow" fxLayout="column" fxLayoutAlign="center start" class="full-width" fxLayoutGap="1%">
-      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10%">
+      <div class="full-width" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10%">
         <mat-form-field
           *ngIf="withText"
           #withText appearance="standard" color="primary" fxFlex="75" class="full-width">
@@ -17,6 +17,7 @@
           </mat-hint>
         </mat-form-field>
         <div
+          fxFlex="25"
           *ngIf="withImage"
           #withImage fxLayoutGap="5px" fxLayout="column" fxLayoutAlign="center center"
           class="mat-form-field-wrapper showable-property">
