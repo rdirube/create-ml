@@ -12,6 +12,8 @@ export class GameInfoFormComponent implements OnInit {
   @Input() form: FormGroup;
   @Input() resourceUid: string;
   public $image: string;
+  languages = ['ESP', 'ENG', 'FRE', 'GER', 'ITA', 'POR'];
+
   // private customAddedTags: {id: string, name: string}[];
   /* public tags: {id: number, name: string}[]; */
   constructor() { }

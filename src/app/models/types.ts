@@ -1,21 +1,7 @@
-export interface MueroPorSaberGame {
-  // ownerId?: number;
-  /* id?: number;
-  level?: number;
-  name?: string;
-  image?: string;
-  tags?: Tag[];
-  description?: string;
-   */
+export interface LiftGame {
   choices: ChoiceExercise [];
-  // language?: string;
   settings: TriviaSettings;
-
   resourceUid?: string;
-
-  // removedChoiceIds: number[];
-  // orderExerciseIds: number[];
-  // microLessonId: number;
 }
 
 export interface TriviaPropertyType {
