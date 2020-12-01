@@ -13,7 +13,7 @@ export class SettingsFormComponent implements OnInit {
   @Input('form')
   set setForm(form: FormGroup){
     this.form = form;
-    this.updateHost('circus');
+    this.updateTheme('circus');
   }
   @Input() public infoFormGroup: FormGroup;
   @Input() public exercisesQuantity: number;
@@ -26,7 +26,7 @@ export class SettingsFormComponent implements OnInit {
     this.triviaTypes = [{name: 'Clásico', value: 'classic'}, {name: 'Examen', value: 'test'}];
   }
 
-  updateHost(imagePath: string): void {
+  updateTheme(imagePath: string): void {
     let imgPh;
     switch (imagePath) {
       case 'lab':
@@ -39,10 +39,8 @@ export class SettingsFormComponent implements OnInit {
         imgPh = 'assets/boat-theme.jpg';
         break;
     }
-    this.form.get('host').patchValue(imgPh);
-    // this.form.get('host').patchValue(imagePath);
-    this.form.get('host').markAsDirty();
-    // this.cdr.detectChanges();
+    this.form.get('theme').patchValue(imgPh);
+    this.form.get('theme').markAsDirty();
   }
 
 

@@ -6,13 +6,16 @@
   position: absolute;
   z-index: -1;
 }
+
 .valid-form-icon {
   color: white;
 }
+
 .wrong-message {
   color: white;
   text-align: center;
 }
+
 .correct .wrong-message {
   color: #ff614c;
   text-align: center;
@@ -20,4 +23,10 @@
 
 .showable-property {
   padding: 3%;
+}
+
+.showable-add-property-icon {
+  border: solid 1px #706f6f;
+  padding: 1%;
+  border-radius: 3px;
 }

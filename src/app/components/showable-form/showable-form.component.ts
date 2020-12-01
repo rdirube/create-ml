@@ -118,4 +118,7 @@ export class ShowableFormComponent implements OnInit {
   //     this.form.get('showableTypes').setValue(filtered);
   //   });
   // }
+  removeProp(prop: string): void {
+    this.form.get(prop).setValue('');
+  }
 }

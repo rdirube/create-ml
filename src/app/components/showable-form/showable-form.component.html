@@ -1,9 +1,66 @@
 <form [formGroup]="form" *ngIf="form">
   <div fxFlex="grow" fxLayout="column" fxLayoutAlign="start center" class="full-width" fxLayoutGap="1%">
     <div fxFlex="grow" fxLayout="column" fxLayoutAlign="center start" class="full-width" fxLayoutGap="1%">
+      <div
+        fxLayout.xs="column"
+        fxLayout="row"
+        class="full-width" fxLayoutAlign="start space-between" fxLayoutGap="2%">
+        <div fxFlex="45" fxFlex.xs="70" fxLayout="column">
+          <div style="height: 35%; margin-top: 3%" fxLayout="row" fxLayoutAlign="space-evenly center">
+            <input
+              [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect
+              (uploadOutput)="uploadFile($event, 'image'); form.markAsDirty()">
+            <img (click)="imageInput.click()" class="showable-add-property-icon" style="width: 15%" src="assets/image-placeholder4.png"/>
+            <input
+              [accept]="'audio/mpeg'" class="input-file" #audioInput type="file" ngFileSelect
+              (uploadOutput)="uploadFile($event, 'audio'); form.markAsDirty()">
+            <img (click)="audioInput.click()" class="showable-add-property-icon" style="width: 15%" src="assets/sound.png"/>
+<!--            <img class="showable-add-property-icon" style="width: 15%" src="assets/record-audio.png"/>-->
+            <app-record-audio class="showable-add-property-icon" (endAudio)="uploadFile($event, 'audio'); form.markAsDirty()"></app-record-audio>
+          </div>
+          <mat-form-field
+            *ngIf="withText"
+            #withText appearance="standard" color="primary" fxFlex="75" class="full-width">
+            <mat-label style="color: white">Texto:</mat-label>
+            <!--      [formControlName]="'value'"  TODO CHECK THIS ONE  -->
+            <textarea matInput style="color: white;" maxlength="256"
+                      [formControlName]="'text'"
+                      [placeholder]="'En verano suele llover.'"></textarea>
+            <!--        <textarea style="color: white" maxlength="256" fxFlex="grow" fxFlexFill matInput-->
+            <!--               [placeholder]="'En verano suele llover.'"> -->
+            <mat-icon style="color: white" *ngIf="form.valid" matSuffix>check_circle</mat-icon>
+            <mat-hint style="color: white" style="font-size: 80%" align="end">{{form.get('text').value.length}}/256
+            </mat-hint>
+          </mat-form-field>
+        </div>
+        <div fxFlex="45"
+              style="height: 100%; margin-top: 3%"
+             fxLayout="column" fxLayoutAlign="start start" fxLayoutGap="2%">
+          <div *ngIf="form.get('image').value !== ''" class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
+            <img style="width: 48%"  [src]="form.get('image').value.data.base64"/>
+            <img (click)="removeProp('image')" style=" width: 10%" src="assets/trash.png"/>
+          </div>
+          <div *ngIf="this._form.get('audio').value" class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
+            <audio style="max-height: 80%; width: 50%"  #audio (click)="$event.stopPropagation()" controls
+                   controlsList="novolume"
+                   class="full-width"
+                   controlsList="nodownload">
+              <source [src]="sanitize.bypassSecurityTrustResourceUrl(this._form.get('audio').value.data.base64)"
+                      type="audio/mpeg">
+              Tu navegador no puede reproducir este audio.
+            </audio>
+<!--            <img style="max-height: 80%; width: 25%"  src="assets/image-placeholder4.png"/>-->
+            <img style=" width: 10%" (click)="removeProp('audio')" src="assets/trash.png"/>
+          </div>
+        </div>
+      </div>
       <div class="full-width"
+           fxHide
            fxLayout="row"
            fxLayout.xs="column" fxLayoutAlign="start center" fxLayoutGap="10%">
+        <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="1%">
+          <img style="width: 75%" src="assets/image-placeholder.png"/>
+        </div>
         <mat-form-field
           *ngIf="withText"
           #withText appearance="standard" color="primary" fxFlex="75" class="full-width">
@@ -22,19 +79,22 @@
           fxFlex="25"
           fxFlex.xs="63"
           *ngIf="withImage"
+          style="height: 100%;"
           #withImage fxLayoutGap="5px" fxLayout="column" fxLayoutAlign="center center"
           class="mat-form-field-wrapper showable-property">
           <input
-                           [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect
-                 (uploadOutput)="uploadFile($event, 'image'); form.markAsDirty()">
+            [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect
+            (uploadOutput)="uploadFile($event, 'image'); form.markAsDirty()">
           <button color="primary" fxLayout="row" fxLayoutAlign="space-between center center" mat-raised-button
                   (click)="imageInput.click()">
             <mat-icon matPrefix>cloud_upload</mat-icon>
             Seleccionar
           </button>
-          <img style="width: 75%" *ngIf="form.get('image').value !== ''"
-               [src]="form.get('image').value.data.base64" />
-          <mat-label style="color: white">{{'Imagen'}}</mat-label>
+          <div fxFlex="grow" fxLayoutAlign="center center ">
+            <img style="width: 75%" *ngIf="form.get('image').value !== ''"
+                 [src]="form.get('image').value.data.base64"/>
+          </div>
+          <!--          <mat-label style="color: white">{{'Imagen'}}</mat-label>-->
           <span *ngIf="form.invalid" class="wrong-message">
       Carga una imagen
     </span>
@@ -45,18 +105,19 @@
           class="showable-property">
           <input
             [accept]="'audio/mpeg'" class="input-file" #audioInput type="file" ngFileSelect
-                 (uploadOutput)="uploadFile($event, 'audio'); form.markAsDirty()">
+            (uploadOutput)="uploadFile($event, 'audio'); form.markAsDirty()">
           <button fxLayout="row" fxLayoutAlign="space-between center center" color="primary" mat-raised-button
                   (click)="audioInput.click()">
             <mat-icon>cloud_upload</mat-icon>
             Seleccionar
           </button>
           <app-record-audio (endAudio)="uploadFile($event, 'audio'); form.markAsDirty()"></app-record-audio>
-          <audio *ngIf="this._form.get('audio').value" #audio (click)="$event.stopPropagation()"   controls
+          <audio *ngIf="this._form.get('audio').value" #audio (click)="$event.stopPropagation()" controls
                  controlsList="novolume"
                  class="full-width"
                  controlsList="nodownload">
-            <source  [src]="sanitize.bypassSecurityTrustResourceUrl(this._form.get('audio').value.data.base64)" type="audio/mpeg">
+            <source [src]="sanitize.bypassSecurityTrustResourceUrl(this._form.get('audio').value.data.base64)"
+                    type="audio/mpeg">
             Tu navegador no puede reproducir este audio.
           </audio>
           <mat-label style="color: white">Audio</mat-label>

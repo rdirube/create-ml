@@ -44,9 +44,9 @@ export class AppComponent implements OnInit {
     this.currentChoice = 0;
     this.settingsFormGroup = this.formBuilder.group({
       triviaType: ['classic'],
-      host: ['gauss'],
+      theme: ['boat'],
       isRandom: [false],
-      goal: [6,
+      exerciseCount: [6,
         [Validators.min(5), Validators.max(20), Validators.required]],
       /* minPlayers: [this.game.settings ? this.getSettingsPropertyValueOf('minPlayers', '1') : 1,
         [Validators.min(1), Validators.max(8), Validators.required]],
@@ -56,10 +56,10 @@ export class AppComponent implements OnInit {
     this.gameConfig = {
       choices: [],
       settings: {
-        goal: 10,
-        host: 'gauss',
+        exerciseCount: 10,
         randomOrder: false,
         type: 'classic',
+        theme: 'boat'
       },
       resourceUid: '123'
     };
@@ -103,14 +103,13 @@ export class AppComponent implements OnInit {
       inheritedPedagogicalObjectives: [], properties,
       customTextTranslations, backupReferences: '', type: ResourceType.MiniLesson, libraryItemType: 'resource', tagIds: {},
     };
-
     this.gameConfig = {
       choices: [],
       settings: {
-        goal: 10,
-        host: 'gauss',
+        exerciseCount: 10,
         randomOrder: false,
         type: 'classic',
+        theme: 'boat'
       },
       resourceUid: this.resource.uid
     };
@@ -135,9 +134,9 @@ export class AppComponent implements OnInit {
   private initSettingsForm(): void {
     this.settingsFormGroup = this.formBuilder.group({
       triviaType: [this.gameConfig.settings.type],
-      host: [this.gameConfig.settings.host],
+      theme: ['boat'],
       isRandom: [this.gameConfig.settings.randomOrder],
-      goal: [this.gameConfig.settings.goal,
+      exerciseCount: [this.gameConfig.settings.exerciseCount,
         [Validators.min(5), Validators.max(20), Validators.required]],
     });
     this.settingsSubscription = this.settingsFormGroup.valueChanges.subscribe((e) => {
@@ -168,9 +167,9 @@ export class AppComponent implements OnInit {
     });
   }
 
-  updateHost(imagePath: string): void {
-    this.form.get('host').patchValue(imagePath);
-    this.form.get('host').markAsDirty();
+  updateTheme(imagePath: string): void {
+    this.form.get('theme').patchValue(imagePath);
+    this.form.get('theme').markAsDirty();
   }
 
   public addChoice(index?: number): void {
@@ -234,8 +233,8 @@ export class AppComponent implements OnInit {
   private setSettingsForm(): void {
     this.gameConfig.settings.type = this.settingsFormGroup.get('triviaType').value;
     this.gameConfig.settings.randomOrder = this.settingsFormGroup.get('isRandom').value;
-    this.gameConfig.settings.goal = +this.settingsFormGroup.get('goal').value;
-    this.gameConfig.settings.host = this.settingsFormGroup.get('host').value;
+    this.gameConfig.settings.exerciseCount = +this.settingsFormGroup.get('exerciseCount').value;
+    this.gameConfig.settings.theme = this.settingsFormGroup.get('theme').value;
   }
 
   private setChoicesForm(toUpload: { info: { type: 'options' | 'statement' | 'cover', fileName: string }, file: File }[]): void {

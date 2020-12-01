@@ -18,12 +18,9 @@ export interface TriviaProperty {
 export interface TriviaSettings {
   triviaType?: TriviaType;
   triviaProperties?: TriviaProperty[];
-
   type?: 'classic' | 'test'; // 'Clásico' | 'Examen'
-  minPlayers?: number;
-  maxPlayers?: number;
-  host?: 'gauss' | 'cortazar' | 'yaci' | 'eulogia';
-  goal?: number;
+  theme: 'circus' | 'boat' | 'lab';
+  exerciseCount: number;
   randomOrder?: boolean;
 }
 

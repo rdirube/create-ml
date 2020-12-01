@@ -1,14 +1,12 @@
 <div fxLayout="row"  fxFlex="grow" fxLayoutGap="2%" style="padding-bottom: 4%">
   <div fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap="1%">
     <div class="full-width" fxLayout="column" fxLayoutAlign="start start" fxLayoutGap="3%" fxFlexFill>
-<!--      <app-image-viewer style="height: 20vw; padding: 2%" class="gauss full-width" [directSource]="'https://storage.googleapis.com/common-ox-assets/mini-lessons/muero-por-saber/' + form.get('host').value + '.svg'">-->
-<!--      </app-image-viewer>-->
-      <img class="full-width" [src]="form.get('host').value" alt="barco">
+      <img class="full-width" [src]="form.get('theme').value" alt="barco">
       <div fxLayout="row wrap" class="full-width" fxLayoutAlign="center center" fxLayoutGap="1%">
         <span style="padding-right: 5%">Temática:</span>
-        <button color="primary" [class.selected]="form.get('host').value === 'circus'" (click)="updateHost('circus')" mat-stroked-button="">Circo</button>
-        <button color="primary" [class.selected]="form.get('host').value === 'lab'" (click)="updateHost('lab')" mat-stroked-button="">Laboratorio</button>
-        <button color="primary" [class.selected]="form.get('host').value === 'boat'" (click)="updateHost('boat')" mat-stroked-button="">Barco</button>
+        <button color="primary" [class.selected]="form.get('theme').value === 'circus'" (click)="updateTheme('circus')" mat-stroked-button="">Circo</button>
+        <button color="primary" [class.selected]="form.get('theme').value === 'lab'" (click)="updateTheme('lab')" mat-stroked-button="">Laboratorio</button>
+        <button color="primary" [class.selected]="form.get('theme').value === 'boat'" (click)="updateTheme('boat')" mat-stroked-button="">Barco</button>
       </div>
     </div>
   </div>
@@ -23,9 +21,9 @@
       <!-- <div><b>Orden aleatorio:</b> {{form.get('isRandom').value ? 'sí' : 'no'}}</div> -->
       <mat-divider [inset]="true"></mat-divider>
       <div><b>Cantidad de ejercicios:</b> {{exercisesQuantity}}</div>
-      <div *ngIf="exercisesQuantity / form.get('goal').value < 2" style="color: #ff7633">
-        <b>¡Atención!</b> Hay muy pocos ejercicios para llegar a {{form.get('goal').value}} puntos. Las preguntas se repetirán.
-        Se recomienda que haya al menos {{form.get('goal').value}} ejercicios. Puedes guardar y luego cargar más.
+      <div *ngIf="exercisesQuantity / form.get('exerciseCount').value < 2" style="color: #ff7633">
+        <b>¡Atención!</b> Hay muy pocos ejercicios para llegar a {{form.get('exerciseCount').value}} puntos. Las preguntas se repetirán.
+        Se recomienda que haya al menos {{form.get('exerciseCount').value}} ejercicios. Puedes guardar y luego cargar más.
       </div>
     </div>
     <mat-divider></mat-divider>
@@ -46,7 +44,7 @@
           </div>
           <mat-form-field appearance="standard" class="full-width">
             <mat-label>Cantidad de ejercicios a resolver</mat-label>
-            <input min="1" matInput [formControlName]="'goal'" type="number" placeholder="Objetivo de respuestas">
+            <input min="1" matInput [formControlName]="'exerciseCount'" type="number" placeholder="Objetivo de respuestas">
             <mat-hint align="start">La cantidad de ejercicios a resolver debe ser mayor o igual a 1</mat-hint>
           </mat-form-field>
         </form>
