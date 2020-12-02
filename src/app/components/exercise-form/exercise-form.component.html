@@ -57,8 +57,8 @@
           <form class="full-width" [formGroup]="option" fxLayoutAlign="center start" fxLayoutGap="1%" fxLayout="column"
                 fxFlex="grow">
             <mat-slide-toggle [color]="'primary'" [labelPosition]="'after'" [formControlName]="'isCorrect'">
-                <span fxHide.lt-md style="font-weight: 400">
-                  Es correcta
+                <span style="font-weight: 400">
+                  {{ option.get('isCorrect').value ? 'Es correcta' : 'Es incorrecta'}}
                 </span>
             </mat-slide-toggle>
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="2%" class="full-width">

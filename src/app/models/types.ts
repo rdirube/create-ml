@@ -1,5 +1,6 @@
 export interface LiftGame {
-  choices: ChoiceExercise [];
+  choices: LiftGameExercise [];
+  // choices: ChoiceExercise [];
   settings: TriviaSettings;
   resourceUid?: string;
 }
@@ -30,9 +31,15 @@ export interface TriviaType {
   requiredPropertyTypes: TriviaPropertyType[];
 }
 
+export interface LiftGameExercise {
+  id: number;
+  statement: Showable;
+  options: Option[];
+}
+
 export interface ChoiceExercise extends ShowableElement {
   id: number;
-  elementsToShow: Showable[];
+  showable: Showable;
   options: Option[];
 }
 
@@ -47,7 +54,7 @@ export interface Showable {
 
 export interface ShowableElement {
   id: number;
-  elementsToShow: Showable[];
+  showable: Showable;
 }
 
 export interface Option extends ShowableElement {

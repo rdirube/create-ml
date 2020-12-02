@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, EventEmitter, HostBinding, Input, OnInit, 
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
-import {ChoiceExercise, LiftGame} from './models/types';
+import {ChoiceExercise, LiftGame, LiftGameExercise} from './models/types';
 import {MicroLessonResourceProperties, Resource, ResourceType} from 'ox-types';
 
 @Component({
@@ -179,12 +179,12 @@ export class AppComponent implements OnInit {
     this.choicesFormArray.insert(index >= 0 ? index : this.choicesFormArray.length, this.formBuilder.group({
       index: [index || 0]
     }));
-    const choice: ChoiceExercise = {
+    const choice: LiftGameExercise = {
       options: [
-        {isCorrect: true, elementsToShow: [{audio: '', image: '', text: '', video: ''}], id: 0},
-        {isCorrect: false, elementsToShow: [{audio: '', image: '', text: '', video: ''}], id: 0}
+        {isCorrect: true, showable: {audio: '', image: '', text: '', video: ''}, id: 0},
+        {isCorrect: false, showable: {audio: '', image: '', text: '', video: ''}, id: 0}
       ],
-      elementsToShow: [{audio: '', image: '', text: '', video: '', id: 0}],
+      statement: {audio: '', image: '', text: '', video: '', id: 0},
       id: 0
     };
     this.gameConfig.choices = this.gameConfig.choices.slice(0, index).concat([choice]).concat(this.gameConfig.choices.slice(index));
@@ -240,6 +240,11 @@ export class AppComponent implements OnInit {
   private setChoicesForm(toUpload: { info: { type: 'options' | 'statement' | 'cover', fileName: string }, file: File }[]): void {
     // this.gameConfig.choices = [];
     console.log(this.choicesFormArray);
+    this.gameConfig.choices =  this.choicesFormArray.controls.map((choiceForm, choiceIndex) => {
+      return { options: choiceForm.get('options').value, id: 1, statement: choiceForm.get('statement').value};
+    });
+    console.log('Ejercicios');
+
     // this.gameConfig.choices = this.choicesFormArray.controls.map((choiceForm, choiceIndex) => {
     //   return { options: choiceForm.get('options'), id: 1, statement: choiceForm.get('statement')};
     // });

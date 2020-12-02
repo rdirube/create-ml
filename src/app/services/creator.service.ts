@@ -13,7 +13,7 @@ export class CreatorService {
   public makeOptionForm(option?: Option, isCorrect = false): FormGroup {
     return this._formBuilder.group({
       id: [option ? option.id : 0],
-      showable: this.createShowableFormGroup(option ? option.elementsToShow[0] : undefined),
+      showable: this.createShowableFormGroup(option ? option.showable[0] : undefined),
       isCorrect: [option ? option.isCorrect : isCorrect],
     });
   }
@@ -37,7 +37,7 @@ export class CreatorService {
   }
 
   public addControls(data: ChoiceExercise, form: FormGroup): void {
-    form.addControl('statement', this.createShowableFormGroup(data ? data.elementsToShow[0] : undefined));
+    form.addControl('statement', this.createShowableFormGroup(data ? data.showable : undefined));
     form.addControl('options', this._formBuilder.array([], Validators.compose([this.atLeastOneAnswerIsCorrect])));
     const formArray = (form.get('options') as FormArray);
     if (!data) {
