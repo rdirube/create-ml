@@ -37,7 +37,7 @@
               style="height: 100%; margin-top: 3%"
              fxLayout="column" fxLayoutAlign="start start" fxLayoutGap="2%">
           <div *ngIf="form.get('image').value !== ''" class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
-            <img style="width: 48%"  [src]="form.get('image').value.data.base64"/>
+            <img style="width: 50%"  [src]="form.get('image').value.data.base64"/>
             <img (click)="removeProp('image')" style=" width: 10%" src="assets/trash.png"/>
           </div>
           <div *ngIf="this._form.get('audio').value" class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
@@ -126,8 +126,6 @@
     </span>
         </div>
       </div>
-
-
     </div>
   </div>
 </form>
