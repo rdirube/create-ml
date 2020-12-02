@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CreatorService} from '../../services/creator.service';
-import {ChoiceExercise} from '../../models/types';
+import {ChoiceExercise, LiftGameExercise} from '../../models/types';
 import {MatExpansionPanel} from '@angular/material/expansion';
 
 @Component({
@@ -20,7 +20,7 @@ export class ExerciseFormComponent implements OnInit {
     return this._form;
   }
   @Input()
-  public set formData(value: {form: FormGroup, initialDatas: ChoiceExercise}) {
+  public set formData(value: {form: FormGroup, initialDatas: LiftGameExercise}) {
     this._form = value.form;
     if (!value.form.get('statement')) {
       const initialData = value.initialDatas;

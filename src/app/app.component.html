@@ -31,13 +31,19 @@
           <button matTooltip="Ejercicio anterior" fxHide.gt-sm mat-icon-button [disabled]="currentChoice === 0" (click)="changeCurrentChoice(-1)">
             <mat-icon>navigate_before</mat-icon>
           </button>
-          <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="2%">
-          <span fxLayout="row" fxLayoutGap="5px" style="padding-left: 10px">
+          <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="2%" class="full-width">
+          <span fxLayout="row" fxLayoutGap="5px" style="padding-left: 10px; height: 100%;">
             <button class="add-button" mat-raised-button (click)="addChoice()"> <mat-icon >add_circle_outline</mat-icon> Agregar ejercicio</button>
             <button class="add-button" mat-icon-button mat-raised-button  [matMenuTriggerFor]="addMenu"><mat-icon>arrow_drop_down</mat-icon></button>
           </span>
-            <div fxFlex="grow" fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="4px">
-              <a fxLayout="row wrap" fxLayoutAlign="center center" (click)="currentChoice = i" *ngFor="let choiceForm of choicesFormArray.controls, let i = index" [class.selected-index]="i === currentChoice" [class.index-form]="i !== currentChoice" [ngClass]="{'valid-form-icon': choiceForm.valid}">
+            <div fxFlex="grow" [fxLayout]="choicesFormArray.controls.length > 25 ? 'row wrap' : 'row'"
+                 [fxLayout.sm]="choicesFormArray.controls.length > 15 ? 'row wrap' : 'row'"
+                 [fxLayout.xs]="choicesFormArray.controls.length > 11 ? 'row wrap' : 'row'"fxLayoutAlign="start center" fxLayoutGap="4px">
+              <a fxLayout="row wrap"
+                 fxLayoutAlign="center center"
+                 (click)="currentChoice = i"
+                 *ngFor="let choiceForm of choicesFormArray.controls, let i = index" [class.selected-index]="i === currentChoice" [class.index-form]="i !== currentChoice"
+                 [ngClass]="{'valid-form-icon': choiceForm.valid}">
                 {{i + 1}}
               </a>
             </div>
@@ -56,7 +62,8 @@
             <button (click)="addChoice(i)" mat-menu-item *ngFor="let _ of choicesFormArray.controls, let i = index">{{i + 1}}</button>
           </mat-menu>
           <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="5px">
-            <button color="primary" fxLayout="row" mat-raised-button [disabled]="saving || !gameForm.dirty || gameForm.invalid" (click)="saveGame()"><mat-icon *ngIf="!saving">save</mat-icon>  {{saving ? 'Guardando...' : 'Guardar'}}</button>
+            <button color="primary" fxLayout="row" mat-raised-button [disabled]="saving || !gameForm.dirty" (click)="saveGame()"><mat-icon *ngIf="!saving">save</mat-icon>  {{saving ? 'Guardando...' : 'Guardar'}}</button>
+<!--            <button color="primary" fxLayout="row" mat-raised-button [disabled]="saving || !gameForm.dirty || gameForm.invalid" (click)="saveGame()"><mat-icon *ngIf="!saving">save</mat-icon>  {{saving ? 'Guardando...' : 'Guardar'}}</button>-->
             <mat-spinner *ngIf="saving" [diameter]="20"></mat-spinner>
           </div>
         </div>
@@ -95,7 +102,8 @@
         <div class="full-width" fxLayout="row" fxLayoutAlign="space-between center">
           <button class="navigate-button" mat-raised-button matStepperPrevious><mat-icon>navigate_before</mat-icon>Volver</button>
           <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5px">
-            <button color="primary" fxLayout="row" mat-raised-button [disabled]="saving || !gameForm.dirty || gameForm.invalid" (click)="saveGameAndExit()"><mat-icon *ngIf="!saving">save</mat-icon>  {{saving ? 'Guardando...' : 'Guardar y salir'}}</button>
+            <button color="primary" fxLayout="row" mat-raised-button [disabled]="saving || !gameForm.dirty" (click)="saveGameAndExit()"><mat-icon *ngIf="!saving">save</mat-icon>  {{saving ? 'Guardando...' : 'Guardar y salir'}}</button>
+<!--            <button color="primary" fxLayout="row" mat-raised-button [disabled]="saving || !gameForm.dirty || gameForm.invalid" (click)="saveGameAndExit()"><mat-icon *ngIf="!saving">save</mat-icon>  {{saving ? 'Guardando...' : 'Guardar y salir'}}</button>-->
             <mat-spinner *ngIf="saving" [diameter]="20"></mat-spinner>
           </div>
         </div>

@@ -6,11 +6,16 @@
 <!--    <mat-expansion-panel>-->
 <!--      <mat-expansion-panel-header>-->
 <!--        <mat-panel-title>-->
-          <span fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5px"><b>Enunciado</b> <mat-icon
+          <span fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5px"><b>Enunciado</b>
+                                <span fxLayout="row" fxLayoutAlign="center center"
+                                      *ngIf="!form.get('statement').valid "
+                                      class="wrong-message"> El enunciado debe tener cargado al menos un texto, imágen o audio </span>
+            <mat-icon
             *ngIf="form.get('statement').valid" class="valid-form-icon" matSuffix>check_circle</mat-icon></span>
 <!--        </mat-panel-title>-->
 <!--      </mat-expansion-panel-header>-->
       <app-showable-form
+        [maxTextLength]="20"
         [form]="form.get('statement')"
         class="statement-container"  fxFlex="grow"></app-showable-form>
 <!--    </mat-expansion-panel>-->
@@ -42,10 +47,15 @@
 <!--    <mat-expansion-panel>-->
 <!--      <mat-expansion-panel-header>-->
 <!--        <mat-panel-title>-->
-                  <span fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5px">
-                  <b>Opciones</b> <span fxLayout="row" fxLayoutAlign="center center"
+                  <span
+                    fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5px">
+                  <b>Opciones</b>
+                    <span fxLayout="row" fxLayoutAlign="center center"
                                         *ngIf="getCurrentOptionsFormArray().hasError('atLeastOneAnswerIsCorrect')"
-                                        class="wrong-message"> Debe haber al menos una opción correcta</span> <mat-icon
+                                        class="wrong-message"> Debe haber una (y única) opción correcta </span>
+                    <span fxLayout="row" fxLayoutAlign="center center"
+                                        *ngIf="getCurrentOptionsFormArray().hasError('atLeastOneProp') && !getCurrentOptionsFormArray().hasError('atLeastOneAnswerIsCorrect')"
+                                        class="wrong-message"> Toda opción debe tener cargada al menos un texto, imágen o audio </span> <mat-icon
                     *ngIf="getCurrentOptionsFormArray().valid" class="valid-form-icon" matSuffix>check_circle</mat-icon>
                 </span>
 <!--        </mat-panel-title>-->
@@ -64,6 +74,7 @@
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="2%" class="full-width">
               <b>{{ i + 1 + '.'}}</b>
               <app-showable-form
+                [maxTextLength]="12"
                 [form]="option.get('showable')"
                 [withAudio]="optionPropertiesForm.get('optionsWithAudio').value"
                 [withImage]="optionPropertiesForm.get('optionsWithImage').value"

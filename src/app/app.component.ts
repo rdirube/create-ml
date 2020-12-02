@@ -4,6 +4,7 @@ import {Subscription} from 'rxjs';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 import {ChoiceExercise, LiftGame, LiftGameExercise} from './models/types';
 import {MicroLessonResourceProperties, Resource, ResourceType} from 'ox-types';
+import {CreatorService} from './services/creator.service';
 
 @Component({
   selector: 'app-root',
@@ -40,6 +41,7 @@ export class AppComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private sanitizer: DomSanitizer,
+              private createService: CreatorService,
               private cdr: ChangeDetectorRef) {
     this.currentChoice = 0;
     this.settingsFormGroup = this.formBuilder.group({
@@ -65,10 +67,12 @@ export class AppComponent implements OnInit {
     };
     this.choicesFormArray = this.formBuilder.array(this.gameConfig.choices.map((choice, index) => {
       const form = this.formBuilder.group({index: [index]});
-      // this.mueroPorSaberService.addControls(choice, form);
+      this.createService.addControls(choice, form);
       return form;
     }));
   }
+
+
 
   ngOnInit(): void {
     this.triviaTypes = [{name: 'Clásico', value: 'classic'}, {name: 'Examen', value: 'test'}];
@@ -90,8 +94,8 @@ export class AppComponent implements OnInit {
 
   private setNewGame(): void {
     const properties: MicroLessonResourceProperties = {
-      customConfig: undefined, format: 'muero-por-saber', miniLessonVersion: 'creation',
-      miniLessonUid: 'Muero por Saber'
+      customConfig: undefined, format: 'lift-game', miniLessonVersion: 'creation',
+      miniLessonUid: 'Lift game'
     };
     const customTextTranslations = {es: {name: {text: ''}, description: {text: ''}, previewData: {path: ''}}};
     const idTest = '12312';
@@ -220,14 +224,25 @@ export class AppComponent implements OnInit {
 
   saveGame(): void {
     console.log('saveGame');
-    console.log('saveGame');
-    console.log('saveGame');
     const toUpload: { info: { type: 'options' | 'statement' | 'cover', fileName: string }, file: File }[] = [];
     this.setInfoForm(toUpload);
     this.setChoicesForm(toUpload);
     this.setSettingsForm();
-    console.log(this.gameConfig);
-    console.log(this.resource);
+    (this.resource.properties as MicroLessonResourceProperties).customConfig = {
+      microLessonLevelConfigurations: [{
+        types: [{mode: 'challenges', value: this.gameConfig.settings.exerciseCount}],
+        minScore: 500,
+        maxScore: 10000,
+        sublevelConfigurations: [],
+        exercisesToUpSubLevel: [this.gameConfig.settings.exerciseCount]
+      }], extraInfo: {
+        theme: this.gameConfig.settings.theme, exerciseCase: 'created',
+        exercisesInOrder: this.gameConfig.choices,
+        randomOrder: this.gameConfig.settings.randomOrder
+      }
+    };
+    // console.log(JSON.stringify(this.resource));
+    console.log(JSON.stringify((this.resource.properties as MicroLessonResourceProperties).customConfig));
   }
 
   private setSettingsForm(): void {
@@ -239,12 +254,9 @@ export class AppComponent implements OnInit {
 
   private setChoicesForm(toUpload: { info: { type: 'options' | 'statement' | 'cover', fileName: string }, file: File }[]): void {
     // this.gameConfig.choices = [];
-    console.log(this.choicesFormArray);
-    this.gameConfig.choices =  this.choicesFormArray.controls.map((choiceForm, choiceIndex) => {
-      return { options: choiceForm.get('options').value, id: 1, statement: choiceForm.get('statement').value};
+    this.gameConfig.choices = this.choicesFormArray.controls.map((choiceForm, choiceIndex) => {
+      return {options: choiceForm.get('options').value, id: 1, statement: choiceForm.get('statement').value};
     });
-    console.log('Ejercicios');
-
     // this.gameConfig.choices = this.choicesFormArray.controls.map((choiceForm, choiceIndex) => {
     //   return { options: choiceForm.get('options'), id: 1, statement: choiceForm.get('statement')};
     // });

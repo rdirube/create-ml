@@ -31,6 +31,7 @@ export class ShowableFormComponent implements OnInit {
   @Input() withAudio = true;
 
   public currentAudioTest: SafeResourceUrl;
+  @Input() maxTextLength;
 
   constructor(private cdr: ChangeDetectorRef,
               private formBuilder: FormBuilder,

@@ -23,17 +23,18 @@
             #withText appearance="standard" color="primary" fxFlex="75" class="full-width">
             <mat-label style="color: white">Texto:</mat-label>
             <!--      [formControlName]="'value'"  TODO CHECK THIS ONE  -->
-            <textarea matInput style="color: white;" maxlength="256"
+            <textarea matInput style="color: white;" maxlength="{{maxTextLength}}"
                       [formControlName]="'text'"
                       [placeholder]="'En verano suele llover.'"></textarea>
             <!--        <textarea style="color: white" maxlength="256" fxFlex="grow" fxFlexFill matInput-->
             <!--               [placeholder]="'En verano suele llover.'"> -->
             <mat-icon style="color: white" *ngIf="form.valid" matSuffix>check_circle</mat-icon>
-            <mat-hint style="color: white" style="font-size: 80%" align="end">{{form.get('text').value.length}}/256
+            <mat-hint style="color: white" style="font-size: 80%" align="end">{{form.get('text').value.length}}/{{maxTextLength}}
             </mat-hint>
           </mat-form-field>
         </div>
         <div fxFlex="45"
+             fxFlex.xs="51"
               style="height: 100%; margin-top: 3%"
              fxLayout="column" fxLayoutAlign="start start" fxLayoutGap="2%">
           <div *ngIf="form.get('image').value !== ''" class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
@@ -66,13 +67,13 @@
           #withText appearance="standard" color="primary" fxFlex="75" class="full-width">
           <mat-label style="color: white">Texto:</mat-label>
           <!--      [formControlName]="'value'"  TODO CHECK THIS ONE  -->
-          <textarea matInput style="color: white;" maxlength="256"
+          <textarea matInput style="color: white;" maxlength="{{maxTextLength}}"
                     [formControlName]="'text'"
                     [placeholder]="'En verano suele llover.'"></textarea>
           <!--        <textarea style="color: white" maxlength="256" fxFlex="grow" fxFlexFill matInput-->
           <!--               [placeholder]="'En verano suele llover.'"> -->
           <mat-icon style="color: white" *ngIf="form.valid" matSuffix>check_circle</mat-icon>
-          <mat-hint style="color: white" style="font-size: 80%" align="end">{{form.get('text').value.length}}/256
+          <mat-hint style="color: white" style="font-size: 80%" align="end">{{form.get('text').value.length}}/{{maxTextLength}}
           </mat-hint>
         </mat-form-field>
         <div

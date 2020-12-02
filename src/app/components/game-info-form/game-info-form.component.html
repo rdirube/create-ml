@@ -1,4 +1,6 @@
-<form [formGroup]="form" fxFlex="grow" fxLayout="row" fxLayoutGap="4%" fxLayoutAlign="center start" autocomplete="off">
+<form [formGroup]="form" fxFlex="grow" fxLayout="row"
+      fxLayout.xs="column"
+      fxLayoutGap="4%" fxLayoutAlign="center start" autocomplete="off">
   <div fxFlex="60" fxLayout="column" fxLayoutGap="4%">
     <mat-form-field color="primary" class="full-width">
       <mat-label>Nombre del juego</mat-label>
@@ -27,19 +29,20 @@
       <mat-icon *ngIf="form.get('language').valid" matSuffix class="valid-form-icon">check_circle</mat-icon>
     </mat-form-field>
   </div>
-<!--  <div fxLayout="column" fxFlexFill fxFlex="40" fxLayoutAlign="center center" fxLayoutGap="2%">-->
-<!--    <app-choice-showable *ngIf="form.get('image').value"-->
-<!--                         [source]="form.get('image').value.data?.base64 || ($image) || ''"-->
-<!--                         [showable]="{showableType: 'image', value: form.get('image').value.data?.base64 || ($image) || ''}" class="cover-image-size"></app-choice-showable>-->
-<!--    <div *ngIf="!form.get('image').value" class="cover-image-size border-dashed" ></div>-->
-<!--    <input [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect (uploadOutput)="uploadFile($event); form.markAsDirty()">-->
-<!--    <div>-->
-<!--      <button fxLayout="row" fxLayoutAlign="space-between center center" mat-raised-button>-->
-<!--&lt;!&ndash;      <button fxLayout="row" fxLayoutAlign="space-between center center" mat-raised-button (click)="imageInput.click()">&ndash;&gt;-->
-<!--        <mat-icon matPrefix>cloud_upload</mat-icon>-->
-<!--        Seleccionar-->
-<!--        <mat-icon matTooltip="Eliminar" matSuffix *ngIf="form.get('image').value" (click)="form.get('image').setValue(''); $event.stopPropagation(); form.markAsDirty();">clear</mat-icon>-->
-<!--      </button>-->
-<!--    </div>-->
-<!--  </div>-->
+  <div fxLayout="column" fxFlexFill fxFlex="40" fxLayoutAlign="center center" fxLayoutGap="2%">
+    <img *ngIf="form.get('image').value"
+                         [src]="form.get('image').value.data?.base64 || ''"
+                          class="cover-image-size" alt="">
+<!--    [source]="form.get('image').value.data?.base64 || ($image) || ''"-->
+    <div *ngIf="!form.get('image').value" class="cover-image-size border-dashed" ></div>
+    <input [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect (uploadOutput)="uploadFile($event); form.markAsDirty()">
+    <div>
+      <button fxLayout="row" fxLayoutAlign="space-between center center" mat-raised-button (click)="imageInput.click()">
+        <mat-icon matPrefix>cloud_upload</mat-icon>
+        Seleccionar
+        <mat-icon matTooltip="Eliminar" matSuffix *ngIf="form.get('image').value" (click)="form.get('image').setValue(''); $event.stopPropagation(); form.markAsDirty();">clear</mat-icon>
+      </button>
+    </div>
+  </div>
+
 </form>
