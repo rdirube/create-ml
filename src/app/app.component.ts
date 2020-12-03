@@ -1,8 +1,8 @@
 import {ChangeDetectorRef, Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
-import {ChoiceExercise, LiftGame, LiftGameExercise} from './models/types';
+import {ChoiceExercise, LiftGame, LiftGameExercise, Showable} from './models/types';
 import {MicroLessonResourceProperties, Resource, ResourceType} from 'ox-types';
 import {CreatorService} from './services/creator.service';
 
@@ -28,7 +28,20 @@ export class AppComponent implements OnInit {
   public gameForm: FormGroup;
   public settingsSubscription: Subscription;
 
-  private resource: Resource;
+  @Output() save: EventEmitter<{ resource: Resource, value: {name: string, file: File}[] }>; // ver files names, sino un array de objetos nombres y file
+  @Output() loadMedia: EventEmitter<{ name: string, value: Observable<string> }[]>; // files names
+  @Input('mediaFilesLoaded')
+  set newMediaFilesLoaded(mediaFiles: { name: string, value: Observable<string> }[]) {
+    // saber si esta en base 64 o url
+    // cuando guarda pasar solo las de base 64
+  }
+
+  @Input('resource')
+  set receivedResource(resource: Resource) {
+
+  }
+
+  private _resource: Resource;
   settingsFormGroup: FormGroup;
   @HostBinding('style.background')
   public background: SafeStyle;
@@ -44,6 +57,7 @@ export class AppComponent implements OnInit {
               private createService: CreatorService,
               private cdr: ChangeDetectorRef) {
     this.currentChoice = 0;
+    this.save = new EventEmitter<{resource: Resource, value: {name: string, file: File}[]}>();
     this.settingsFormGroup = this.formBuilder.group({
       triviaType: ['classic'],
       theme: ['boat'],
@@ -73,7 +87,6 @@ export class AppComponent implements OnInit {
   }
 
 
-
   ngOnInit(): void {
     this.triviaTypes = [{name: 'Clásico', value: 'classic'}, {name: 'Examen', value: 'test'}];
     this.currentChoice = 0;
@@ -100,7 +113,7 @@ export class AppComponent implements OnInit {
     const customTextTranslations = {es: {name: {text: ''}, description: {text: ''}, previewData: {path: ''}}};
     const idTest = '12312';
     const ownerUidTest = 'owid';
-    this.resource = {
+    this._resource = {
       supportedLanguages: {es: true, en: false},
       isPublic: false, ownerUid: ownerUidTest, // this.authService.currentUser.uid,
       uid: idTest, // this.mueroPorSaberService.createId()
@@ -115,9 +128,9 @@ export class AppComponent implements OnInit {
         type: 'classic',
         theme: 'boat'
       },
-      resourceUid: this.resource.uid
+      resourceUid: this._resource.uid
     };
-    (this.resource.properties as MicroLessonResourceProperties).customConfig = this.gameConfig;
+    (this._resource.properties as MicroLessonResourceProperties).customConfig = this.gameConfig;
     // this.game.choices = [];
     this.initForms();
   }
@@ -222,13 +235,29 @@ export class AppComponent implements OnInit {
     // console.log('saveGameAndExit');
   }
 
+  private getFilesFromPropAndSetName(showable: Showable): {file: File, name: string}[] {
+    const files = [];
+    if ((showable.audio as any).data !== undefined) {
+      files.push({file: (showable.audio as any).data.file, name: (showable.audio as any).name});
+      showable.audio = (showable.audio as any).name;
+    }
+    if ((showable.image as any).data !== undefined) {
+      files.push({file: (showable.image as any).data.file, name: (showable.image as any).name});
+      showable.image = (showable.image as any).name;
+    }
+    return files;
+  }
+
   saveGame(): void {
     console.log('saveGame');
     const toUpload: { info: { type: 'options' | 'statement' | 'cover', fileName: string }, file: File }[] = [];
     this.setInfoForm(toUpload);
     this.setChoicesForm(toUpload);
     this.setSettingsForm();
-    (this.resource.properties as MicroLessonResourceProperties).customConfig = {
+    const filesToSave: {file: File, name: string}[] = [].concat(...[].concat(...this.gameConfig.choices
+      .map(x => [x.statement].concat(x.options.map(opt => opt.showable))))
+      .map(x => this.getFilesFromPropAndSetName(x)));
+    (this._resource.properties as MicroLessonResourceProperties).customConfig = {
       microLessonLevelConfigurations: [{
         types: [{mode: 'challenges', value: this.gameConfig.settings.exerciseCount}],
         minScore: 500,
@@ -241,8 +270,8 @@ export class AppComponent implements OnInit {
         randomOrder: this.gameConfig.settings.randomOrder
       }
     };
-    // console.log(JSON.stringify(this.resource));
-    console.log(JSON.stringify((this.resource.properties as MicroLessonResourceProperties).customConfig));
+    this.save.emit({resource: this._resource, value: filesToSave});
+    console.log(JSON.stringify((this._resource.properties as MicroLessonResourceProperties).customConfig));
   }
 
   private setSettingsForm(): void {
@@ -267,9 +296,9 @@ export class AppComponent implements OnInit {
 
   private setInfoForm(toUpload: { info: { type: 'options' | 'statement' | 'cover', fileName: string }, file: File }[]): void {
     // this.gam.level = this.infoFormGroup.get('level').value;
-    this.resource.customTextTranslations.es.name.text = this.infoFormGroup.get('name').value;
+    this._resource.customTextTranslations.es.name.text = this.infoFormGroup.get('name').value;
     // this.game.language = this.infoFormGroup.get('language').value;
-    this.resource.customTextTranslations.es.description.text = this.infoFormGroup.get('description').value;
+    this._resource.customTextTranslations.es.description.text = this.infoFormGroup.get('description').value;
     if (this.infoFormGroup.get('image').value.data) {
       const file = this.infoFormGroup.get('image').value.data.file;
       const fileName = 'file name';
@@ -278,7 +307,7 @@ export class AppComponent implements OnInit {
         info: {type: 'cover', fileName},
         file
       });
-      this.resource.customTextTranslations.es.previewData.path = 'library/items/' + this.resource.uid + '/preview-image-es';
+      this._resource.customTextTranslations.es.previewData.path = 'library/items/' + this._resource.uid + '/preview-image-es';
       // this.game.image = fileName;
     } else {
       // this.parseShowableValue('image', this.infoFormGroup.get('image').value);
