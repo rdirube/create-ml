@@ -77,6 +77,7 @@
           <div class="full-width" fxLayout="column" fxLayoutAlign="center center">
             <!-- {{'currentChoice: ' + currentChoice }} -->
             <app-exercise-form
+              [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
               [formData]="{form: choicesFormArray.at(currentChoice), initialDatas: gameConfig.choices[currentChoice]}" class="full-width"></app-exercise-form>
 <!--            <app-muero-por-saber-exercise-form [formData]="{form: choicesFormArray.at(currentChoice), initialDatas: gameConfig.choices[currentChoice]}" class="full-width"></app-muero-por-saber-exercise-form>-->
           </div>

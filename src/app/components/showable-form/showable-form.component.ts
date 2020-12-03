@@ -1,7 +1,8 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, HostListener, Input, OnInit} from '@angular/core';
 import {UploadOutput} from 'ngx-uploader';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-showable-form',
@@ -10,6 +11,7 @@ import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 })
 export class ShowableFormComponent implements OnInit {
 
+  @Input() mediaFilesAlreadyLoaded: Map<string, Observable<string>>;
   private _form: FormGroup;
   get form(): FormGroup {
     return this._form;
@@ -17,6 +19,7 @@ export class ShowableFormComponent implements OnInit {
 
   @Input()
   set form(value: FormGroup) {
+    console.log('setting form in showable', value);
     this._form = value;
     // this.currentShowableType = this._form.get('showableTypes').value
     //   .map( x => this.showableTypes.find(e => e.value === x.type).name).join(', ');
@@ -122,4 +125,42 @@ export class ShowableFormComponent implements OnInit {
   removeProp(prop: string): void {
     this.form.get(prop).setValue('');
   }
+
+  @HostListener('document:keydown', ['$event'])
+  asdasda($event) {
+    if ($event.key.toLowerCase() === 'p') {
+      console.log(this.form);
+    }
+    if ($event.key.toLowerCase() === 'd') {
+      console.log( 'detectChanges');
+      this.cdr.detectChanges();
+    }
+    if ($event.key.toLowerCase() === 'c') {
+      console.log( 'markAsPristine');
+      this.form.markAsPristine();
+    }
+    if ($event.key.toLowerCase() === 'y') {
+      console.log( 'markAsDirty');
+      this.form.markAsDirty();
+    }
+    if ($event.key.toLowerCase() === 'g') {
+      console.log( 'markAsPending');
+      this.form.markAsPending();
+    }
+    if ($event.key.toLowerCase() === 'e') {
+      this.form.get('image').setValue('https://www.gstatic.com/images/branding/product/2x/photos_96dp.png');
+    }
+    if ($event.key.toLowerCase() === 'n') {
+      console.log( 'Printing el ng if');
+      console.log( this.form);
+      console.log( this.form.get('image').value);
+      console.log( this.form.get('image').value.data);
+      console.log( this.form.get('image').value.data ? this.form.get('image').value.data.base64
+        :
+        'https://www.gstatic.com/images/branding/product/2x/photos_96dp.png');
+
+
+    }
+  }
+
 }

@@ -15,6 +15,7 @@
 <!--        </mat-panel-title>-->
 <!--      </mat-expansion-panel-header>-->
       <app-showable-form
+        [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
         [maxTextLength]="20"
         [form]="form.get('statement')"
         class="statement-container"  fxFlex="grow"></app-showable-form>
@@ -74,6 +75,7 @@
             <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="2%" class="full-width">
               <b>{{ i + 1 + '.'}}</b>
               <app-showable-form
+                [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
                 [maxTextLength]="12"
                 [form]="option.get('showable')"
                 [withAudio]="optionPropertiesForm.get('optionsWithAudio').value"

@@ -60,13 +60,13 @@ import { RecordAudioComponent } from './components/record-audio/record-audio.com
     MatSlideToggleModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
-  // entryComponents: [AppComponent]
+  // bootstrap: [AppComponent]
+  entryComponents: [AppComponent]
 })
 export class AppModule {
   constructor(private injector: Injector) {
     const myElement = createCustomElement(AppComponent, { injector });
     customElements.define('creator-ml', myElement);
   }
-  // ngDoBootstrap(): void {}
+  ngDoBootstrap(): void {}
 }

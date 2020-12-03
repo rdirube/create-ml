@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Observable, Subscription} from 'rxjs';
+import {Observable, of, Subscription} from 'rxjs';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 import {ChoiceExercise, LiftGame, LiftGameExercise, Showable} from './models/types';
 import {MicroLessonResourceProperties, Resource, ResourceType} from 'ox-types';
@@ -14,12 +14,9 @@ import {CreatorService} from './services/creator.service';
 export class AppComponent implements OnInit {
   title = 'create-ml';
 
-  @Input() inputVar: string;
-  @Output() testOutput = new EventEmitter<any>();
-
-  @Input() public form: FormGroup;
-  @Input() public infoFormGroup: FormGroup;
-  @Input() public exercisesQuantity: number;
+  public form: FormGroup;
+  public infoFormGroup: FormGroup;
+  public exercisesQuantity: number;
   public triviaTypes: { name: string, value: 'classic' | 'test' }[];
   public saving: boolean;
   currentChoice: number;
@@ -28,36 +25,37 @@ export class AppComponent implements OnInit {
   public gameForm: FormGroup;
   public settingsSubscription: Subscription;
 
-  @Output() save: EventEmitter<{ resource: Resource, value: {name: string, file: File}[] }>; // ver files names, sino un array de objetos nombres y file
-  @Output() loadMedia: EventEmitter<{ name: string, value: Observable<string> }[]>; // files names
-  @Input('mediaFilesLoaded')
-  set newMediaFilesLoaded(mediaFiles: { name: string, value: Observable<string> }[]) {
-    // saber si esta en base 64 o url
-    // cuando guarda pasar solo las de base 64
+  @Output() save: EventEmitter<{ resource: Resource, value: { name: string, file: File }[] }>
+    = new EventEmitter<{ resource: Resource, value: { name: string, file: File }[] }>();
+  // ver files names, sino un array de objetos nombres y file
+  @Output() loadMedia: EventEmitter<{ name: string, value: Observable<string> }[]>
+    = new EventEmitter<{ name: string, value: Observable<string> }[]>(); // files names
+  @Input()
+  set mediaFilesLoaded(mediaFiles: { name: string, value: Observable<string> }[]) {
+    console.log('media files loaded', mediaFiles);
+    mediaFiles.forEach( x => {
+      this.mediaFilesAlreadyLoaded.set(x.name, x.value);
+    });
   }
 
-  @Input('resource')
+  public mediaFilesAlreadyLoaded: Map<string, Observable<string>> =
+    new Map<string, Observable<string>>();
+  @Input()
   set receivedResource(resource: Resource) {
-
+    console.log('Me llego resource', resource);
+    this._resource = resource;
+    this.setNewGame();
   }
-
   private _resource: Resource;
   settingsFormGroup: FormGroup;
   @HostBinding('style.background')
   public background: SafeStyle;
-
-  onClickSendOutput(): void {
-    this.testOutput.emit({
-      something: 'this is something from creator'
-    });
-  }
 
   constructor(private formBuilder: FormBuilder,
               private sanitizer: DomSanitizer,
               private createService: CreatorService,
               private cdr: ChangeDetectorRef) {
     this.currentChoice = 0;
-    this.save = new EventEmitter<{resource: Resource, value: {name: string, file: File}[]}>();
     this.settingsFormGroup = this.formBuilder.group({
       triviaType: ['classic'],
       theme: ['boat'],
@@ -96,30 +94,17 @@ export class AppComponent implements OnInit {
     // if (triviaId) {
     // this.loadTrivia(triviaId);
     // } else {
-    this.setNewGame();
-    this.initForms();
-    // }
-    // });
     this.background = this.sanitizer.bypassSecurityTrustStyle(
       '#365074 url("https://storage.googleapis.com/common-ox-assets/mini-lessons/muero-por-saber/stars.jpg") repeat'
     );
   }
 
   private setNewGame(): void {
-    const properties: MicroLessonResourceProperties = {
+    this._resource.properties = {
       customConfig: undefined, format: 'lift-game', miniLessonVersion: 'creation',
       miniLessonUid: 'Lift game'
     };
-    const customTextTranslations = {es: {name: {text: ''}, description: {text: ''}, previewData: {path: ''}}};
-    const idTest = '12312';
-    const ownerUidTest = 'owid';
-    this._resource = {
-      supportedLanguages: {es: true, en: false},
-      isPublic: false, ownerUid: ownerUidTest, // this.authService.currentUser.uid,
-      uid: idTest, // this.mueroPorSaberService.createId()
-      inheritedPedagogicalObjectives: [], properties,
-      customTextTranslations, backupReferences: '', type: ResourceType.MiniLesson, libraryItemType: 'resource', tagIds: {},
-    };
+    this._resource.customTextTranslations = {es: {name: {text: ''}, description: {text: ''}, previewData: {path: ''}}};
     this.gameConfig = {
       choices: [],
       settings: {
@@ -131,7 +116,6 @@ export class AppComponent implements OnInit {
       resourceUid: this._resource.uid
     };
     (this._resource.properties as MicroLessonResourceProperties).customConfig = this.gameConfig;
-    // this.game.choices = [];
     this.initForms();
   }
 
@@ -230,33 +214,17 @@ export class AppComponent implements OnInit {
 
   saveGameAndExit(): void {
     this.saveGame();
-    // console.log('saveGameAndExit');
-    // console.log('saveGameAndExit');
-    // console.log('saveGameAndExit');
   }
 
-  private getFilesFromPropAndSetName(showable: Showable): {file: File, name: string}[] {
-    const files = [];
-    if ((showable.audio as any).data !== undefined) {
-      files.push({file: (showable.audio as any).data.file, name: (showable.audio as any).name});
-      showable.audio = (showable.audio as any).name;
-    }
-    if ((showable.image as any).data !== undefined) {
-      files.push({file: (showable.image as any).data.file, name: (showable.image as any).name});
-      showable.image = (showable.image as any).name;
-    }
-    return files;
-  }
+
 
   saveGame(): void {
     console.log('saveGame');
     const toUpload: { info: { type: 'options' | 'statement' | 'cover', fileName: string }, file: File }[] = [];
+    const filesToSave: { file: File, name: string }[] = this.getFilesToSave();
     this.setInfoForm(toUpload);
     this.setChoicesForm(toUpload);
     this.setSettingsForm();
-    const filesToSave: {file: File, name: string}[] = [].concat(...[].concat(...this.gameConfig.choices
-      .map(x => [x.statement].concat(x.options.map(opt => opt.showable))))
-      .map(x => this.getFilesFromPropAndSetName(x)));
     (this._resource.properties as MicroLessonResourceProperties).customConfig = {
       microLessonLevelConfigurations: [{
         types: [{mode: 'challenges', value: this.gameConfig.settings.exerciseCount}],
@@ -271,7 +239,7 @@ export class AppComponent implements OnInit {
       }
     };
     this.save.emit({resource: this._resource, value: filesToSave});
-    console.log(JSON.stringify((this._resource.properties as MicroLessonResourceProperties).customConfig));
+    // console.log(JSON.stringify((this._resource.properties as MicroLessonResourceProperties).customConfig));
   }
 
   private setSettingsForm(): void {
@@ -313,6 +281,37 @@ export class AppComponent implements OnInit {
       // this.parseShowableValue('image', this.infoFormGroup.get('image').value);
       // this.game.image = this.parseShowableValue('image', this.infoFormGroup.get('image').value);
     }
+  }
+
+  private getFilesToSave(): { file: File, name: string }[] {
+    const files = [];
+    for (let i = 0; i < this.choicesFormArray.length; i++) {
+      this.getFilesFromPropAndSetName(this.choicesFormArray.at(i).get('statement') as FormGroup).forEach( x => files.push(x));
+      const options: FormArray = (this.choicesFormArray.at(i).get('options') as FormArray);
+      for (let j = 0; j < options.length; j++) {
+        console.log();
+        this.getFilesFromPropAndSetName(options.at(j).get('showable') as FormGroup).forEach( x => {
+          files.push(x);
+        });
+      }
+    }
+    // [].concat(...[].concat(...this.gameConfig.choices
+    //   .map(x => [x.statement].concat(x.options.map(opt => opt.showable))))
+    //   .map(x => this.getFilesFromPropAndSetName(x)))
+    return files;
+  }
+
+  private getFilesFromPropAndSetName(showable: FormGroup): { file: File, name: string }[] {
+    const files = [];
+    if (showable.get('audio').value.data !== undefined) {
+      files.push({file: showable.get('audio').value.data.file, name: showable.get('audio').value.name});
+      showable.get('audio').setValue(showable.get('audio').value.name);
+    }
+    if (showable.get('image').value.data !== undefined) {
+      files.push({file: showable.get('image').value.data.file, name: showable.get('image').value.name});
+      showable.get('image').setValue(showable.get('image').value.name);
+    }
+    return files;
   }
 }
 

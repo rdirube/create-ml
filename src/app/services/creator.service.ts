@@ -55,8 +55,8 @@ export class CreatorService {
 
 
   public atLeastOneProp(form: FormArray): { atLeastOneProp: boolean } {
-    console.log('Testing... ', (form.get('options') && form.get('options').value.every(x => validProp(x.audio)
-      || validProp(x.text) || validProp(x.image))));
+    // console.log('Testing... ', (form.get('options') && form.get('options').value.every(x => validProp(x.audio)
+    //   || validProp(x.text) || validProp(x.image))));
     return (form.value && form.value.map(x => x.showable).every(x => validProp(x.audio)
       || validProp(x.text) || validProp(x.image))) ? null : {
       atLeastOneProp: true

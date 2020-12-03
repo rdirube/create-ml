@@ -24,8 +24,8 @@ export class SettingsFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.triviaTypes = [{name: 'Clásico', value: 'classic'}, {name: 'Examen', value: 'test'}];
-    console.log(this.form)
-    console.log(this.infoFormGroup)
+    // console.log(this.form)
+    // console.log(this.infoFormGroup)
   }
 
   updateTheme(imagePath: string): void {
