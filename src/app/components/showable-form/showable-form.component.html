@@ -49,89 +49,15 @@
                    controlsList="novolume"
                    class="full-width"
                    controlsList="nodownload">
-<!--              <source [src]="sanitize.bypassSecurityTrustResourceUrl(this._form.get('audio').value.data.base64)"-->
               <source [src]="sanitize.bypassSecurityTrustResourceUrl(form.get('audio').value.data ? form.get('audio').value.data.base64
               : (mediaFilesAlreadyLoaded.get(form.get('audio').value) | async))"
                       type="audio/mpeg">
               Tu navegador no puede reproducir este audio.
             </audio>
-<!--            <img style="max-height: 80%; width: 25%"  src="assets/image-placeholder4.png"/>-->
             <img style=" width: 10%" (click)="removeProp('audio')" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/trash-icon.png"/>
           </div>
         </div>
       </div>
-<!--      <div class="full-width"-->
-<!--           fxHide-->
-<!--           fxLayout="row"-->
-<!--           fxLayout.xs="column" fxLayoutAlign="start center" fxLayoutGap="10%">-->
-<!--        <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="1%">-->
-<!--          <img style="width: 75%" src="assets/image-placeholder.png"/>-->
-<!--        </div>-->
-<!--        <mat-form-field-->
-<!--          *ngIf="withText"-->
-<!--          #withText appearance="standard" color="primary" fxFlex="75" class="full-width">-->
-<!--          <mat-label style="color: white">Texto:</mat-label>-->
-<!--          &lt;!&ndash;      [formControlName]="'value'"  TODO CHECK THIS ONE  &ndash;&gt;-->
-<!--          <textarea matInput style="color: white;" maxlength="{{maxTextLength}}"-->
-<!--                    [formControlName]="'text'"-->
-<!--                    [placeholder]="'En verano suele llover.'"></textarea>-->
-<!--          &lt;!&ndash;        <textarea style="color: white" maxlength="256" fxFlex="grow" fxFlexFill matInput&ndash;&gt;-->
-<!--          &lt;!&ndash;               [placeholder]="'En verano suele llover.'"> &ndash;&gt;-->
-<!--          <mat-icon style="color: white" *ngIf="form.valid" matSuffix>check_circle</mat-icon>-->
-<!--          <mat-hint style="color: white" style="font-size: 80%" align="end">{{form.get('text').value.length}}/{{maxTextLength}}-->
-<!--          </mat-hint>-->
-<!--        </mat-form-field>-->
-<!--        <div-->
-<!--          fxFlex="25"-->
-<!--          fxFlex.xs="63"-->
-<!--          *ngIf="withImage"-->
-<!--          style="height: 100%;"-->
-<!--          #withImage fxLayoutGap="5px" fxLayout="column" fxLayoutAlign="center center"-->
-<!--          class="mat-form-field-wrapper showable-property">-->
-<!--          <input-->
-<!--            [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect-->
-<!--            (uploadOutput)="uploadFile($event, 'image'); form.markAsDirty()">-->
-<!--          <button color="primary" fxLayout="row" fxLayoutAlign="space-between center center" mat-raised-button-->
-<!--                  (click)="imageInput.click()">-->
-<!--            <mat-icon matPrefix>cloud_upload</mat-icon>-->
-<!--            Seleccionar-->
-<!--          </button>-->
-<!--          <div fxFlex="grow" fxLayoutAlign="center center ">-->
-<!--            <img style="width: 75%" *ngIf="form.get('image').value !== ''"-->
-<!--                 [src]="form.get('image').value.data.base64"/>-->
-<!--          </div>-->
-<!--          &lt;!&ndash;          <mat-label style="color: white">{{'Imagen'}}</mat-label>&ndash;&gt;-->
-<!--          <span *ngIf="form.invalid" class="wrong-message">-->
-<!--      Carga una imagen-->
-<!--    </span>-->
-<!--        </div>-->
-<!--        <div-->
-<!--          *ngIf="withAudio"-->
-<!--          #withAudio fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="5px"-->
-<!--          class="showable-property">-->
-<!--          <input-->
-<!--            [accept]="'audio/mpeg'" class="input-file" #audioInput type="file" ngFileSelect-->
-<!--            (uploadOutput)="uploadFile($event, 'audio'); form.markAsDirty()">-->
-<!--          <button fxLayout="row" fxLayoutAlign="space-between center center" color="primary" mat-raised-button-->
-<!--                  (click)="audioInput.click()">-->
-<!--            <mat-icon>cloud_upload</mat-icon>-->
-<!--            Seleccionar-->
-<!--          </button>-->
-<!--          <app-record-audio (endAudio)="uploadFile($event, 'audio'); form.markAsDirty()"></app-record-audio>-->
-<!--          <audio *ngIf="this._form.get('audio').value" #audio (click)="$event.stopPropagation()" controls-->
-<!--                 controlsList="novolume"-->
-<!--                 class="full-width"-->
-<!--                 controlsList="nodownload">-->
-<!--            <source [src]="sanitize.bypassSecurityTrustResourceUrl(this._form.get('audio').value.data.base64)"-->
-<!--                    type="audio/mpeg">-->
-<!--            Tu navegador no puede reproducir este audio.-->
-<!--          </audio>-->
-<!--          <mat-label style="color: white">Audio</mat-label>-->
-<!--          <span *ngIf="form.invalid" class="wrong-message">-->
-<!--      Carga un audio-->
-<!--    </span>-->
-<!--        </div>-->
-<!--      </div>-->
     </div>
   </div>
 </form>
