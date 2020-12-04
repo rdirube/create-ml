@@ -10,13 +10,15 @@
             <input
               [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect
               (uploadOutput)="uploadFile($event, 'image'); form.markAsDirty()">
-            <img (click)="imageInput.click()" class="showable-add-property-icon" style="width: 15%" src="assets/image-placeholder4.png"/>
+            <img (click)="imageInput.click()" class="showable-add-property-icon" style="width: 15%" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/image-icon.png"/>
             <input
               [accept]="'audio/mpeg'" class="input-file" #audioInput type="file" ngFileSelect
               (uploadOutput)="uploadFile($event, 'audio'); form.markAsDirty()">
-            <img (click)="audioInput.click()" class="showable-add-property-icon" style="width: 15%" src="assets/sound.png"/>
-<!--            <img class="showable-add-property-icon" style="width: 15%" src="assets/record-audio.png"/>-->
-            <app-record-audio class="showable-add-property-icon" (endAudio)="uploadFile($event, 'audio'); form.markAsDirty()"></app-record-audio>
+            <img (click)="audioInput.click()" class="showable-add-property-icon" style="width: 15%" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/sound.png"/>
+<!--            <img class="showable-add-property-icon" style="width: 15%" src="assets/record-audio-icon.png"/>-->
+            <app-record-audio class="showable-add-property-icon"
+                              style="width: 17%;"
+                              (endAudio)="uploadFile($event, 'audio'); form.markAsDirty()"></app-record-audio>
           </div>
           <mat-form-field
             *ngIf="withText"
@@ -40,7 +42,7 @@
           <div *ngIf="form.get('image').value !== ''" class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
             <img style="width: 50%"  [src]=" form.get('image').value.data ? form.get('image').value.data.base64
               : (mediaFilesAlreadyLoaded.get(form.get('image').value) | async)"/>
-            <img (click)="removeProp('image')" style=" width: 10%" src="assets/trash.png"/>
+            <img (click)="removeProp('image')" style=" width: 10%" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/trash-icon.png"/>
           </div>
           <div *ngIf="this._form.get('audio').value" class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
             <audio style="max-height: 80%; width: 50%"  #audio (click)="$event.stopPropagation()" controls
@@ -54,7 +56,7 @@
               Tu navegador no puede reproducir este audio.
             </audio>
 <!--            <img style="max-height: 80%; width: 25%"  src="assets/image-placeholder4.png"/>-->
-            <img style=" width: 10%" (click)="removeProp('audio')" src="assets/trash.png"/>
+            <img style=" width: 10%" (click)="removeProp('audio')" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/trash-icon.png"/>
           </div>
         </div>
       </div>

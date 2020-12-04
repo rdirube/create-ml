@@ -40,7 +40,8 @@
 }
 
 .create-container {
-  background-color: rgba(200,198,202,0.03); font-size: 120%; padding-bottom: 2%; overflow-y: scroll;
+  overflow: hidden;
+  background-color: rgba(200,198,202,0.03); font-size: 120%; padding-bottom: 2%;
 }
 
 .selected-index {

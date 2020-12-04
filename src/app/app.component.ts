@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Observable, of, Subscription} from 'rxjs';
+import {Observable, of, Subscription, timer} from 'rxjs';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 import {ChoiceExercise, LiftGame, LiftGameExercise, Showable} from './models/types';
 import {MicroLessonResourceProperties, Resource, ResourceType} from 'ox-types';
@@ -33,19 +33,21 @@ export class AppComponent implements OnInit {
   @Input()
   set mediaFilesLoaded(mediaFiles: { name: string, value: Observable<string> }[]) {
     console.log('media files loaded', mediaFiles);
-    mediaFiles.forEach( x => {
+    mediaFiles.forEach(x => {
       this.mediaFilesAlreadyLoaded.set(x.name, x.value);
     });
   }
 
   public mediaFilesAlreadyLoaded: Map<string, Observable<string>> =
     new Map<string, Observable<string>>();
+
   @Input()
   set receivedResource(resource: Resource) {
     console.log('Me llego resource', resource);
     this._resource = resource;
     this.setNewGame();
   }
+
   private _resource: Resource;
   settingsFormGroup: FormGroup;
   @HostBinding('style.background')
@@ -95,8 +97,18 @@ export class AppComponent implements OnInit {
     // this.loadTrivia(triviaId);
     // } else {
     this.background = this.sanitizer.bypassSecurityTrustStyle(
-      '#365074 url("https://storage.googleapis.com/common-ox-assets/mini-lessons/muero-por-saber/stars.jpg") repeat'
+      '#365074 url("https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/pattern-answer-hunters.png") repeat'
     );
+    timer(1000).subscribe( x => {
+      this._resource = {
+        supportedLanguages: {es: true, en: false},
+        isPublic: false, ownerUid: 'ownerUidTest111111', // this.authService.currentUser.uid,
+        uid: 'idTest', // this.mueroPorSaberService.createId()
+        inheritedPedagogicalObjectives: [], properties: undefined,
+        customTextTranslations: {}, backupReferences: '', type: ResourceType.MiniLesson, libraryItemType: 'resource', tagIds: {},
+      };
+      this.setNewGame();
+    });
   }
 
   private setNewGame(): void {
@@ -140,11 +152,11 @@ export class AppComponent implements OnInit {
       exerciseCount: [this.gameConfig.settings.exerciseCount,
         [Validators.min(5), Validators.max(20), Validators.required]],
     });
-    this.settingsSubscription = this.settingsFormGroup.valueChanges.subscribe((e) => {
-      this.background = this.sanitizer.bypassSecurityTrustStyle(
-        '#365074 url("https://storage.googleapis.com/common-ox-assets/mini-lessons/muero-por-saber/stars.jpg") repeat'
-      );
-    });
+    // this.settingsSubscription = this.settingsFormGroup.valueChanges.subscribe((e) => {
+    //   this.background = this.sanitizer.bypassSecurityTrustStyle(
+    //     '#365074 url("https://storage.googleapis.com/common-ox-assets/mini-lessons/muero-por-saber/stars.jpg") repeat'
+    //   );
+    // });
   }
 
   private initChoicesInformation(): void {
@@ -216,8 +228,6 @@ export class AppComponent implements OnInit {
     this.saveGame();
   }
 
-
-
   saveGame(): void {
     console.log('saveGame');
     const toUpload: { info: { type: 'options' | 'statement' | 'cover', fileName: string }, file: File }[] = [];
@@ -226,15 +236,16 @@ export class AppComponent implements OnInit {
     this.setChoicesForm(toUpload);
     this.setSettingsForm();
     (this._resource.properties as MicroLessonResourceProperties).customConfig = {
+      customMedia: filesToSave.map( x => x.name),
       microLessonLevelConfigurations: [{
         types: [{mode: 'challenges', value: this.gameConfig.settings.exerciseCount}],
         minScore: 500,
         maxScore: 10000,
-        sublevelConfigurations: [],
+        sublevelConfigurations: [this.gameConfig.choices],
         exercisesToUpSubLevel: [this.gameConfig.settings.exerciseCount]
       }], extraInfo: {
-        theme: this.gameConfig.settings.theme, exerciseCase: 'created',
-        exercisesInOrder: this.gameConfig.choices,
+        theme: this.gameConfig.settings.theme,
+        exerciseCase: 'created',
         randomOrder: this.gameConfig.settings.randomOrder
       }
     };
@@ -286,15 +297,15 @@ export class AppComponent implements OnInit {
   private getFilesToSave(): { file: File, name: string }[] {
     const files = [];
     for (let i = 0; i < this.choicesFormArray.length; i++) {
-      this.getFilesFromPropAndSetName(this.choicesFormArray.at(i).get('statement') as FormGroup).forEach( x => files.push(x));
+      this.getFilesFromPropAndSetName(this.choicesFormArray.at(i).get('statement') as FormGroup).forEach(x => files.push(x));
       const options: FormArray = (this.choicesFormArray.at(i).get('options') as FormArray);
       for (let j = 0; j < options.length; j++) {
-        console.log();
-        this.getFilesFromPropAndSetName(options.at(j).get('showable') as FormGroup).forEach( x => {
+        this.getFilesFromPropAndSetName(options.at(j).get('showable') as FormGroup).forEach(x => {
           files.push(x);
         });
       }
     }
+    console.log('files to save', files.map( f => f.name));
     // [].concat(...[].concat(...this.gameConfig.choices
     //   .map(x => [x.statement].concat(x.options.map(opt => opt.showable))))
     //   .map(x => this.getFilesFromPropAndSetName(x)))

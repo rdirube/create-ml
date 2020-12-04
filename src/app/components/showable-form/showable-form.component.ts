@@ -126,41 +126,41 @@ export class ShowableFormComponent implements OnInit {
     this.form.get(prop).setValue('');
   }
 
-  @HostListener('document:keydown', ['$event'])
-  asdasda($event) {
-    if ($event.key.toLowerCase() === 'p') {
-      console.log(this.form);
-    }
-    if ($event.key.toLowerCase() === 'd') {
-      console.log( 'detectChanges');
-      this.cdr.detectChanges();
-    }
-    if ($event.key.toLowerCase() === 'c') {
-      console.log( 'markAsPristine');
-      this.form.markAsPristine();
-    }
-    if ($event.key.toLowerCase() === 'y') {
-      console.log( 'markAsDirty');
-      this.form.markAsDirty();
-    }
-    if ($event.key.toLowerCase() === 'g') {
-      console.log( 'markAsPending');
-      this.form.markAsPending();
-    }
-    if ($event.key.toLowerCase() === 'e') {
-      this.form.get('image').setValue('https://www.gstatic.com/images/branding/product/2x/photos_96dp.png');
-    }
-    if ($event.key.toLowerCase() === 'n') {
-      console.log( 'Printing el ng if');
-      console.log( this.form);
-      console.log( this.form.get('image').value);
-      console.log( this.form.get('image').value.data);
-      console.log( this.form.get('image').value.data ? this.form.get('image').value.data.base64
-        :
-        'https://www.gstatic.com/images/branding/product/2x/photos_96dp.png');
-
-
-    }
-  }
+  // @HostListener('document:keydown', ['$event'])
+  // asdasda($event) {
+  //   if ($event.key.toLowerCase() === 'p') {
+  //     console.log(this.form);
+  //   }
+  //   if ($event.key.toLowerCase() === 'd') {
+  //     console.log( 'detectChanges');
+  //     this.cdr.detectChanges();
+  //   }
+  //   if ($event.key.toLowerCase() === 'c') {
+  //     console.log( 'markAsPristine');
+  //     this.form.markAsPristine();
+  //   }
+  //   if ($event.key.toLowerCase() === 'y') {
+  //     console.log( 'markAsDirty');
+  //     this.form.markAsDirty();
+  //   }
+  //   if ($event.key.toLowerCase() === 'g') {
+  //     console.log( 'markAsPending');
+  //     this.form.markAsPending();
+  //   }
+  //   if ($event.key.toLowerCase() === 'e') {
+  //     this.form.get('image').setValue('https://www.gstatic.com/images/branding/product/2x/photos_96dp.png');
+  //   }
+  //   if ($event.key.toLowerCase() === 'n') {
+  //     console.log( 'Printing el ng if');
+  //     console.log( this.form);
+  //     console.log( this.form.get('image').value);
+  //     console.log( this.form.get('image').value.data);
+  //     console.log( this.form.get('image').value.data ? this.form.get('image').value.data.base64
+  //       :
+  //       'https://www.gstatic.com/images/branding/product/2x/photos_96dp.png');
+  //
+  //
+  //   }
+  // }
 
 }
