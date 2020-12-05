@@ -37,7 +37,6 @@ export class RecordAudioComponent implements AfterViewInit {
     this.timeSubscription = timer(0, 1000).subscribe(value => {
       this.currentTime = value;
       this.cdr.detectChanges();
-
     });
     this.isRecording = true;
     const mediaConstraints: any = {

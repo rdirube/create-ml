@@ -5,21 +5,21 @@
         fxLayout.xs="column"
         fxLayout="row"
         class="full-width" fxLayoutAlign="start space-between" fxLayoutGap="2%">
-        <div fxFlex="45" fxFlex.xs="70" fxLayout="column">
-          <div style="height: 35%; margin-top: 3%" fxLayout="row" fxLayoutAlign="space-evenly center">
-            <input
-              [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect
-              (uploadOutput)="uploadFile($event, 'image'); form.markAsDirty()">
-            <img (click)="imageInput.click()" class="showable-add-property-icon" style="width: 15%" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/image-icon.png"/>
-            <input
-              [accept]="'audio/mpeg'" class="input-file" #audioInput type="file" ngFileSelect
-              (uploadOutput)="uploadFile($event, 'audio'); form.markAsDirty()">
-            <img (click)="audioInput.click()" class="showable-add-property-icon" style="width: 15%" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/sound.png"/>
-<!--            <img class="showable-add-property-icon" style="width: 15%" src="assets/record-audio-icon.png"/>-->
-            <app-record-audio class="showable-add-property-icon"
-                              style="width: 17%;"
-                              (endAudio)="uploadFile($event, 'audio'); form.markAsDirty()"></app-record-audio>
-          </div>
+        <div fxFlex="45" fxFlex.xs="70" fxLayout="column" fxLayoutAlign="start start">
+<!--          <div style="height: 35%; margin-top: 3%" fxLayout="row" fxLayoutAlign="space-evenly center">-->
+<!--            <input-->
+<!--              [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect-->
+<!--              (uploadOutput)="uploadFile($event, 'image'); form.markAsDirty()">-->
+<!--            <img (click)="imageInput.click()" class="showable-add-property-icon" style="width: 15%" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/image-icon.png"/>-->
+<!--            <input-->
+<!--              [accept]="'audio/mpeg'" class="input-file" #audioInput type="file" ngFileSelect-->
+<!--              (uploadOutput)="uploadFile($event, 'audio'); form.markAsDirty()">-->
+<!--            <img (click)="audioInput.click()" class="showable-add-property-icon" style="width: 15%" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/sound.png"/>-->
+<!--&lt;!&ndash;            <img class="showable-add-property-icon" style="width: 15%" src="assets/record-audio-icon.png"/>&ndash;&gt;-->
+<!--            <app-record-audio class="showable-add-property-icon"-->
+<!--                              style="width: 17%;"-->
+<!--                              (endAudio)="uploadFile($event, 'audio'); form.markAsDirty()"></app-record-audio>-->
+<!--          </div>-->
           <mat-form-field
             *ngIf="withText"
             #withText appearance="standard" color="primary" fxFlex="75" class="full-width">
@@ -35,16 +35,27 @@
             </mat-hint>
           </mat-form-field>
         </div>
+
         <div fxFlex="45"
              fxFlex.xs="51"
               style="height: 100%; margin-top: 3%"
              fxLayout="column" fxLayoutAlign="start start" fxLayoutGap="2%">
-          <div *ngIf="form.get('image').value !== ''" class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
-            <img style="width: 50%"  [src]=" form.get('image').value.data ? form.get('image').value.data.base64
+
+          <div *ngIf="form.get('image').value !== ''; else imageElse" class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
+            <img style="max-width: 50%"  [src]=" form.get('image').value.data ? form.get('image').value.data.base64
               : (mediaFilesAlreadyLoaded.get(form.get('image').value) | async)"/>
             <img (click)="removeProp('image')" style=" width: 10%" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/trash-icon.png"/>
           </div>
-          <div *ngIf="this._form.get('audio').value" class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
+          <ng-template #imageElse>
+            <div class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
+              <input
+                [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect
+                (uploadOutput)="uploadFile($event, 'image'); form.markAsDirty()">
+              <img (click)="imageInput.click()" class="showable-add-property-icon" style="width: 15%" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/image-icon.png"/>
+            </div>
+           </ng-template>
+
+          <div *ngIf="this._form.get('audio').value; else soundElse" class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
             <audio style="max-height: 80%; width: 50%"  #audio (click)="$event.stopPropagation()" controls
                    controlsList="novolume"
                    class="full-width"
@@ -56,6 +67,20 @@
             </audio>
             <img style=" width: 10%" (click)="removeProp('audio')" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/trash-icon.png"/>
           </div>
+
+          <ng-template #soundElse>
+            <div class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
+              <input
+                [accept]="'audio/mpeg'" class="input-file" #audioInput type="file" ngFileSelect
+                (uploadOutput)="uploadFile($event, 'audio'); form.markAsDirty()">
+              <img (click)="audioInput.click()" class="showable-add-property-icon" style="width: 15%" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/sound.png"/>
+              <!--            <img class="showable-add-property-icon" style="width: 15%" src="assets/record-audio-icon.png"/>-->
+              <app-record-audio class="showable-add-property-icon"
+                                style="width: 15%;"
+                                (endAudio)="uploadFile($event, 'audio'); form.markAsDirty()"></app-record-audio>
+            </div>
+          </ng-template>
+
         </div>
       </div>
     </div>

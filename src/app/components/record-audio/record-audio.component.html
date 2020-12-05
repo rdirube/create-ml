@@ -1,11 +1,15 @@
 <div fxFlex="grow" fxLayout="row" fxLayoutAlign="center center">
   <audio #audio style="height: 0px; width: 0px"></audio>
+    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="grow" *ngIf="!isRecording" mat-raised-button color="primary"  (click)="startRecording()">
   <img style="width: 100%" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/record-audio-icon.png"/>
 <!--  <button fxLayout="row" fxLayoutAlign="start center" fxFlex="grow" *ngIf="!isRecording" mat-raised-button color="primary"  (click)="startRecording()">-->
 <!--    <mat-icon>keyboard_voice</mat-icon> <span>Grabar</span></button>-->
-  <button fxLayout="row" fxLayoutAlign="start center" fxFlex="grow" *ngIf="isRecording" mat-raised-button color="primary"  (click) ="stopRecording()">
-    <mat-icon>stop</mat-icon>
+  </div>
+  <div fxLayout="column" fxLayoutAlign="start center" fxFlex="48" *ngIf="isRecording" mat-raised-button color="primary"  (click) ="stopRecording()">
+<!--  <button fxLayout="row" fxLayoutAlign="start center" fxFlex="grow" *ngIf="isRecording" mat-raised-button color="primary"  (click) ="stopRecording()">-->
+    <img style="width: 100%" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/record-audio-icon.png"/>
+<!--    <mat-icon>stop</mat-icon>-->
     <span>Frenar</span>
     <span *ngIf="isRecording"> {{currentTime}}/{{maxSeconds}} s</span>
-  </button>
+  </div>
 </div>

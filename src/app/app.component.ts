@@ -97,25 +97,27 @@ export class AppComponent implements OnInit {
     // this.loadTrivia(triviaId);
     // } else {
     this.background = this.sanitizer.bypassSecurityTrustStyle(
-      '#365074 url("https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/pattern-answer-hunters.png") repeat'
+      '#e0d6c6 url("https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/pattern-answer-hunters.png") repeat'
     );
-    timer(1000).subscribe( x => {
-      this._resource = {
-        supportedLanguages: {es: true, en: false},
-        isPublic: false, ownerUid: 'ownerUidTest111111', // this.authService.currentUser.uid,
-        uid: 'idTest', // this.mueroPorSaberService.createId()
-        inheritedPedagogicalObjectives: [], properties: undefined,
-        customTextTranslations: {}, backupReferences: '', type: ResourceType.MiniLesson, libraryItemType: 'resource', tagIds: {},
-      };
-      this.setNewGame();
-    });
+    // timer(1000).subscribe( x => {
+    //   this._resource = {
+    //     supportedLanguages: {es: true, en: false},
+    //     isPublic: false, ownerUid: 'ownerUidTest111111', // this.authService.currentUser.uid,
+    //     uid: 'idTest', // this.mueroPorSaberService.createId()
+    //     inheritedPedagogicalObjectives: [], properties: undefined,
+    //     customTextTranslations: {}, backupReferences: '', type: ResourceType.MiniLesson, libraryItemType: 'resource', tagIds: {},
+    //   };
+    //   this.setNewGame();
+    // });
   }
 
   private setNewGame(): void {
     this._resource.properties = {
-      customConfig: undefined, format: 'lift-game', miniLessonVersion: 'creation',
+      customConfig: undefined,
+      format: 'lift-game', miniLessonVersion: 'with-custom-config-v2',
       miniLessonUid: 'Lift game'
     };
+    (this._resource.properties as MicroLessonResourceProperties).url = 'https://ml-screen-manager.firebaseapp.com';
     this._resource.customTextTranslations = {es: {name: {text: ''}, description: {text: ''}, previewData: {path: ''}}};
     this.gameConfig = {
       choices: [],
@@ -236,14 +238,17 @@ export class AppComponent implements OnInit {
     this.setChoicesForm(toUpload);
     this.setSettingsForm();
     (this._resource.properties as MicroLessonResourceProperties).customConfig = {
-      customMedia: filesToSave.map( x => x.name),
+      customMedia: filesToSave.map(x => x.name),
       microLessonLevelConfigurations: [{
         types: [{mode: 'challenges', value: this.gameConfig.settings.exerciseCount}],
         minScore: 500,
         maxScore: 10000,
-        sublevelConfigurations: [this.gameConfig.choices],
+        sublevelConfigurations: [{
+            exercises: this.gameConfig.choices
+          }],
         exercisesToUpSubLevel: [this.gameConfig.settings.exerciseCount]
       }], extraInfo: {
+        gameUrl: 'https://ml-creators.firebaseapp.com',
         theme: this.gameConfig.settings.theme,
         exerciseCase: 'created',
         randomOrder: this.gameConfig.settings.randomOrder
@@ -305,7 +310,7 @@ export class AppComponent implements OnInit {
         });
       }
     }
-    console.log('files to save', files.map( f => f.name));
+    console.log('files to save', files.map(f => f.name));
     // [].concat(...[].concat(...this.gameConfig.choices
     //   .map(x => [x.statement].concat(x.options.map(opt => opt.showable))))
     //   .map(x => this.getFilesFromPropAndSetName(x)))
