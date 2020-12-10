@@ -282,7 +282,8 @@ export class AppComponent implements OnInit {
       resource: this._resource,
       value: {
         preview: {
-          delete: this.originalPreviewImage !==
+          delete: this.originalPreviewImage !== undefined &&
+            this.originalPreviewImage !==
             this._resource.customTextTranslations[this.textsLanguage].previewData.path,
           file: this.infoFormGroup.get('image').value?.data?.file || undefined
         },
