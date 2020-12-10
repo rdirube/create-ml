@@ -1,11 +1,10 @@
 import {ChangeDetectorRef, Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Observable, of, Subscription, timer} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
-import {ChoiceExercise, LiftGame, LiftGameExercise, Showable} from './models/types';
-import {MicroLessonResourceProperties, Resource, ResourceType} from 'ox-types';
+import {LiftGame, LiftGameExercise} from './models/types';
+import {MicroLessonResourceProperties, Resource} from 'ox-types';
 import {CreatorService} from './services/creator.service';
-import {reflectObjectLiteral} from '@angular/compiler-cli/src/ngtsc/reflection';
 
 @Component({
   selector: 'app-root',
@@ -13,9 +12,9 @@ import {reflectObjectLiteral} from '@angular/compiler-cli/src/ngtsc/reflection';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'create-ml';
 
-  private transLanguage = 'es';
+  title = 'create-ml';
+  private textsLanguage = 'es';
 
   public form: FormGroup;
   public infoFormGroup: FormGroup;
@@ -26,9 +25,22 @@ export class AppComponent implements OnInit {
   gameConfig: LiftGame;
   public gameForm: FormGroup;
   public settingsSubscription: Subscription;
+  // @Output() save: EventEmitter<{ resource: Resource, value: { name: string, file: File }[] }>
+  @Output() save: EventEmitter<{
+    resource: Resource, value: {
+      preview: { delete: boolean, file: File },
+      exercises: { delete: string[], toUpload: { file: File, name: string }[] }
+    }
+  }>
+    = new EventEmitter<{
+    resource: Resource, value: {
+      preview: { delete: boolean, file: File },
+      exercises: { delete: string[], toUpload: { file: File, name: string }[] }
+    }
+  }>();
 
-  @Output() save: EventEmitter<{ resource: Resource, value: { name: string, file: File }[] }>
-    = new EventEmitter<{ resource: Resource, value: { name: string, file: File }[] }>();
+  private originalPreviewImage: string;
+
   // ver files names, sino un array de objetos nombres y file
   @Output() loadMedia: EventEmitter<{ name: string, value: Observable<string> }[]>
     = new EventEmitter<{ name: string, value: Observable<string> }[]>(); // files names
@@ -167,7 +179,7 @@ export class AppComponent implements OnInit {
     //   index: [0]
     // }));
     this.choicesFormArray = this.formBuilder.array(this.gameConfig.choices.map((choice, index) => {
-      const form = this.formBuilder.group({'index': [index] });
+      const form = this.formBuilder.group({'index': [index]});
       this.createService.addControls(choice, form);
       return form;
     }));
@@ -180,13 +192,13 @@ export class AppComponent implements OnInit {
   private initBasicInformation(): void {
     const extraInfo = (this._resource.properties as MicroLessonResourceProperties).customConfig.extraInfo;
     this.infoFormGroup = this.formBuilder.group({
-      name: [this._resource.customTextTranslations[this.transLanguage].name.text, [Validators.required, Validators.maxLength(256)]],
+      name: [this._resource.customTextTranslations[this.textsLanguage].name.text, [Validators.required, Validators.maxLength(256)]],
       // todo validator de max peso
-      image: [this._resource.customTextTranslations[this.transLanguage].previewData.path || ''],
+      image: [this._resource.customTextTranslations[this.textsLanguage].previewData.path || ''],
       // tags: [this.game.tags || []],
       language: [extraInfo ? extraInfo.language : 'ESP'],
       // level: [this.game.level || 1],
-      description: [this._resource.customTextTranslations[this.transLanguage].description.text,
+      description: [this._resource.customTextTranslations[this.textsLanguage].description.text,
         [Validators.required, Validators.maxLength(500)]]
     });
   }
@@ -245,8 +257,11 @@ export class AppComponent implements OnInit {
     this.setInfoForm(toUpload);
     this.setChoicesForm(toUpload);
     this.setSettingsForm();
+    const allMediaUtilised = this.getUsedMedia();
+    const previousMedia = ((this._resource.properties as MicroLessonResourceProperties).customConfig.customMedia || [])
+      .filter( x => allMediaUtilised.includes(x));
     (this._resource.properties as MicroLessonResourceProperties).customConfig = {
-      customMedia: filesToSave.map(x => x.name),
+      customMedia: previousMedia.concat(filesToSave.map(x => x.name)),
       microLessonLevelConfigurations: [{
         types: [{mode: 'challenges', value: this.gameConfig.settings.exerciseCount}],
         minScore: 500,
@@ -263,8 +278,41 @@ export class AppComponent implements OnInit {
         language: this.infoFormGroup.get('language').value
       }
     };
-    this.save.emit({resource: this._resource, value: filesToSave});
+    const objToSave = {
+      resource: this._resource,
+      value: {
+        preview: {
+          delete: this.originalPreviewImage !==
+            this._resource.customTextTranslations[this.textsLanguage].previewData.path,
+          file: this.infoFormGroup.get('image').value?.data?.file || undefined
+        },
+        exercises: {toUpload: filesToSave, delete: this.getMediaLoadedAndNotAssigned(allMediaUtilised)}
+      }
+    };
+    console.log(objToSave);
+    this.save.emit(objToSave);
   }
+
+  private getMediaLoadedAndNotAssigned(allMediaUtilised: string[]): string[] {
+    return Array.from(this.mediaFilesAlreadyLoaded.keys())
+      .filter( x => !allMediaUtilised.includes(x));
+  }
+
+  private getUsedMedia(): string[] {
+    const media = [];
+    for (let i = 0; i < this.choicesFormArray.length; i++) {
+      this.getMediaUrlsFromShowable(this.choicesFormArray.at(i).get('statement') as FormGroup)
+        .forEach(x => media.push(x));
+      const options: FormArray = (this.choicesFormArray.at(i).get('options') as FormArray);
+      for (let j = 0; j < options.length; j++) {
+        this.getMediaUrlsFromShowable(options.at(j).get('showable') as FormGroup).forEach(x => {
+          media.push(x);
+        });
+      }
+    }
+    return media;
+  }
+
 
   private setSettingsForm(): void {
     this.gameConfig.settings.type = this.settingsFormGroup.get('triviaType').value;
@@ -282,9 +330,9 @@ export class AppComponent implements OnInit {
 
   private setInfoForm(toUpload: { info: { type: 'options' | 'statement' | 'cover', fileName: string }, file: File }[]): void {
     // this.gam.level = this.infoFormGroup.get('level').value;
-    this._resource.customTextTranslations[this.transLanguage].name.text = this.infoFormGroup.get('name').value;
+    this._resource.customTextTranslations[this.textsLanguage].name.text = this.infoFormGroup.get('name').value;
     // this.game.language = this.infoFormGroup.get('language').value;
-    this._resource.customTextTranslations[this.transLanguage].description.text = this.infoFormGroup.get('description').value;
+    this._resource.customTextTranslations[this.textsLanguage].description.text = this.infoFormGroup.get('description').value;
     if (this.infoFormGroup.get('image').value.data) {
       const file = this.infoFormGroup.get('image').value.data.file;
       const fileName = 'file name';
@@ -293,7 +341,7 @@ export class AppComponent implements OnInit {
         info: {type: 'cover', fileName},
         file
       });
-      this._resource.customTextTranslations[this.transLanguage].previewData.path = 'library/items/' + this._resource.uid + '/preview-image-es';
+      this._resource.customTextTranslations[this.textsLanguage].previewData.path = 'library/items/' + this._resource.uid + '/preview-image-es';
       // this.game.image = fileName;
     } else {
       // this.parseShowableValue('image', this.infoFormGroup.get('image').value);
@@ -328,12 +376,21 @@ export class AppComponent implements OnInit {
     return files;
   }
 
+  private getMediaUrlsFromShowable(showable: FormGroup): { file: File, name: string }[] {
+    const mediaUrls = [];
+    if (showable.get('audio').value?.length && showable.get('audio').value.data === undefined) {
+      mediaUrls.push(showable.get('audio').value);
+    }
+    if (showable.get('image').value?.length && showable.get('image').value.data === undefined) {
+      mediaUrls.push(showable.get('image').value);
+    }
+    return mediaUrls;
+  }
+
   private loadGame(): void {
     const customConfig = (this._resource.properties as MicroLessonResourceProperties).customConfig;
-    this.loadMedia.emit(customConfig.customMedia.map( x => {
-      return {name: x};
-    }));
-    console.log('sending medioa to load', customConfig.customMedia.map( x => {
+    this.originalPreviewImage = this._resource.customTextTranslations[this.textsLanguage].previewData.path;
+    this.loadMedia.emit(customConfig.customMedia.map(x => {
       return {name: x};
     }));
     this.gameConfig = {
@@ -346,7 +403,6 @@ export class AppComponent implements OnInit {
       choices: customConfig.microLessonLevelConfigurations[0].sublevelConfigurations[0].exercises,
       resourceUid: this._resource.uid
     };
-    console.log('loaded config', this.gameConfig);
     this.initForms();
   }
 }

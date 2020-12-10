@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-game-info-form',
@@ -8,7 +9,7 @@ import {FormGroup} from '@angular/forms';
 })
 export class GameInfoFormComponent implements OnInit {
 
-
+  @Input() mediaFilesAlreadyLoaded: Map<string, Observable<string>>;
   @Input() form: FormGroup;
   @Input() resourceUid: string;
   public $image: string;
