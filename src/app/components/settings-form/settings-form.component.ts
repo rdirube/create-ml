@@ -10,14 +10,21 @@ export class SettingsFormComponent implements OnInit {
 
 
   public form: FormGroup;
+
   @Input('form')
-  set setForm(form: FormGroup){
+  set setForm(form: FormGroup) {
     this.form = form;
-    this.updateTheme('circus');
+    if (!form.get('theme') || !form.get('theme').value) {
+      this.updateTheme('circus');
+    } else {
+      this.setSrcImageByTheme(form.get('theme').value);
+    }
   }
+
   @Input() public infoFormGroup: FormGroup;
   @Input() public exercisesQuantity: number;
   public triviaTypes: { name: string, value: 'classic' | 'test' }[];
+  currentSrcByTheme: string;
 
   constructor() {
   }
@@ -28,22 +35,26 @@ export class SettingsFormComponent implements OnInit {
     // console.log(this.infoFormGroup)
   }
 
-  updateTheme(imagePath: string): void {
-    let imgPh;
-    switch (imagePath) {
-      case 'lab':
-        imgPh = 'assets/lab-theme.jpg';
-        break;
-      case 'circus':
-        imgPh = 'assets/circus-theme.jpg';
-        break;
-      case 'boat':
-        imgPh = 'assets/boat-theme.jpg';
-        break;
-    }
-    this.form.get('theme').patchValue(imgPh);
+  updateTheme(theme: string): void {
+    this.setSrcImageByTheme(theme);
+    this.form.get('theme').patchValue(theme);
     this.form.get('theme').markAsDirty();
   }
 
 
+  private setSrcImageByTheme(theme: string): void {
+    const baseURl = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/theme-images/';
+    switch (theme) {
+      case 'lab':
+        this.currentSrcByTheme = 'lab-theme.jpg';
+        break;
+      case 'circus':
+        this.currentSrcByTheme = 'circus-theme.jpg';
+        break;
+      case 'boat':
+        this.currentSrcByTheme = 'boat-theme.jpg';
+        break;
+    }
+    this.currentSrcByTheme = baseURl + this.currentSrcByTheme;
+  }
 }

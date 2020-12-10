@@ -5,6 +5,7 @@ import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 import {ChoiceExercise, LiftGame, LiftGameExercise, Showable} from './models/types';
 import {MicroLessonResourceProperties, Resource, ResourceType} from 'ox-types';
 import {CreatorService} from './services/creator.service';
+import {reflectObjectLiteral} from '@angular/compiler-cli/src/ngtsc/reflection';
 
 @Component({
   selector: 'app-root',
@@ -14,10 +15,11 @@ import {CreatorService} from './services/creator.service';
 export class AppComponent implements OnInit {
   title = 'create-ml';
 
+  private transLanguage = 'es';
+
   public form: FormGroup;
   public infoFormGroup: FormGroup;
   public exercisesQuantity: number;
-  public triviaTypes: { name: string, value: 'classic' | 'test' }[];
   public saving: boolean;
   currentChoice: number;
   choicesFormArray: FormArray;
@@ -44,8 +46,16 @@ export class AppComponent implements OnInit {
   @Input()
   set receivedResource(resource: Resource) {
     console.log('Me llego resource', resource);
+    console.log(JSON.parse(JSON.stringify(resource)));
+    console.log(JSON.stringify(resource));
     this._resource = resource;
-    this.setNewGame();
+    if (!resource.properties) {
+      console.log('creating game');
+      this.setNewGame();
+    } else {
+      console.log('loading game');
+      this.loadGame();
+    }
   }
 
   private _resource: Resource;
@@ -88,27 +98,17 @@ export class AppComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.triviaTypes = [{name: 'Clásico', value: 'classic'}, {name: 'Examen', value: 'test'}];
+
+    // timer(1000).subscribe( x => {
+    //   const asd = {"ownerUid":"oQPbggIFzLcEHuDjp5ZNbkkVOlZ2","libraryItemType":"resource","customTextTranslations":{"es":{"previewData":{"path":""},"name":{"text":" game name "},"description":{"text":"game description"}}},"tagIds":{},"properties":{"format":"lift-game","miniLessonVersion":"with-custom-config-v2","customConfig":{"extraInfo":{"theme":"assets/boat-theme.jpg","exerciseCase":"created","gameUrl":"https://ml-creators.firebaseapp.com","randomOrder":true},"microLessonLevelConfigurations":[{"sublevelConfigurations":[{"exercises":[{"options":[{"showable":{"image":"","id":0,"video":"","audio":"","text":"Correcta"},"isCorrect":true,"id":0},{"showable":{"audio":"","text":"Incorrecta 1","video":"","id":0,"image":""},"isCorrect":false,"id":0},{"id":0,"isCorrect":false,"showable":{"id":0,"image":"","text":"Incorrecta 2","video":"","audio":""}}],"statement":{"image":"","id":0,"audio":"","video":"","text":"Un titulo"},"id":1},{"id":1,"statement":{"audio":"","text":"Imagen","id":0,"video":"","image":"1607600206040image-placeholder3.png"},"options":[{"isCorrect":false,"showable":{"image":"1607600219155record-audio-icon.png","text":"","video":"","audio":"","id":0},"id":0},{"showable":{"id":0,"video":"","text":"","image":"1607600222772lab-theme.jpg","audio":""},"id":0,"isCorrect":false},{"isCorrect":true,"id":0,"showable":{"text":"","video":"","image":"1607600233792image-placeholder3.png","id":0,"audio":""}}]}]}],"minScore":500,"maxScore":10000,"types":[{"value":2,"mode":"challenges"}],"exercisesToUpSubLevel":[2]}],"customMedia":["1607600206040image-placeholder3.png","1607600219155record-audio-icon.png","1607600222772lab-theme.jpg","1607600233792image-placeholder3.png"]},"miniLessonUid":"Lift game","url":"https://ml-screen-manager.firebaseapp.com"},"uid":"1Sf6zNAUJSsIX6s8iBqw","isPublic":false,"type":"mini-lesson","backupReferences":"","supportedLanguages":{"es":true,"en":false},"inheritedPedagogicalObjectives":[]};
+    //   this.receivedResource = asd as Resource;
+    //   console.log('Forcing send resource')
+    // });
+
     this.currentChoice = 0;
-    // this.activatedRoute.paramMap.pipe(take(1)).subscribe(e => {
-    //   const triviaId = e.get('triviaId');
-    // this.triviaTypes = [{id: 1, name: '', requiredPropertyTypes: []}];
-    // if (triviaId) {
-    // this.loadTrivia(triviaId);
-    // } else {
     this.background = this.sanitizer.bypassSecurityTrustStyle(
       '#e0d6c6 url("https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/pattern-answer-hunters.png") repeat'
     );
-    // timer(1000).subscribe( x => {
-    //   this._resource = {
-    //     supportedLanguages: {es: true, en: false},
-    //     isPublic: false, ownerUid: 'ownerUidTest111111', // this.authService.currentUser.uid,
-    //     uid: 'idTest', // this.mueroPorSaberService.createId()
-    //     inheritedPedagogicalObjectives: [], properties: undefined,
-    //     customTextTranslations: {}, backupReferences: '', type: ResourceType.MiniLesson, libraryItemType: 'resource', tagIds: {},
-    //   };
-    //   this.setNewGame();
-    // });
   }
 
   private setNewGame(): void {
@@ -135,50 +135,59 @@ export class AppComponent implements OnInit {
 
 
   private initForms(): void {
+    console.log('initBasicInformation');
     this.initBasicInformation();
+    console.log('initChoicesInformation');
     this.initChoicesInformation();
+    console.log('initSettingsForm');
     this.initSettingsForm();
+    console.log('gameForm');
     this.gameForm = this.formBuilder.group({
       basic: this.infoFormGroup,
       exercises: this.choicesFormArray,
       settings: this.settingsFormGroup
     });
+    console.log('detectChanges');
     this.cdr.detectChanges();
+    console.log('finish loading');
   }
 
   private initSettingsForm(): void {
     this.settingsFormGroup = this.formBuilder.group({
       triviaType: [this.gameConfig.settings.type],
-      theme: ['boat'],
+      theme: [this.gameConfig.settings.theme],
       isRandom: [this.gameConfig.settings.randomOrder],
       exerciseCount: [this.gameConfig.settings.exerciseCount,
         [Validators.min(5), Validators.max(20), Validators.required]],
     });
-    // this.settingsSubscription = this.settingsFormGroup.valueChanges.subscribe((e) => {
-    //   this.background = this.sanitizer.bypassSecurityTrustStyle(
-    //     '#365074 url("https://storage.googleapis.com/common-ox-assets/mini-lessons/muero-por-saber/stars.jpg") repeat'
-    //   );
-    // });
   }
 
   private initChoicesInformation(): void {
     // this.choicesFormArray.insert(0, this.formBuilder.group({
     //   index: [0]
     // }));
+    this.choicesFormArray = this.formBuilder.array(this.gameConfig.choices.map((choice, index) => {
+      const form = this.formBuilder.group({'index': [index] });
+      this.createService.addControls(choice, form);
+      return form;
+    }));
     if (this.choicesFormArray.controls.length === 0) {
       this.addChoice();
     }
   }
 
+
   private initBasicInformation(): void {
+    const extraInfo = (this._resource.properties as MicroLessonResourceProperties).customConfig.extraInfo;
     this.infoFormGroup = this.formBuilder.group({
-      name: [' game name ', [Validators.required, Validators.maxLength(256)]],
+      name: [this._resource.customTextTranslations[this.transLanguage].name.text, [Validators.required, Validators.maxLength(256)]],
       // todo validator de max peso
-      image: [''],
+      image: [this._resource.customTextTranslations[this.transLanguage].previewData.path || ''],
       // tags: [this.game.tags || []],
-      language: ['ESP'],
+      language: [extraInfo ? extraInfo.language : 'ESP'],
       // level: [this.game.level || 1],
-      description: ['game description', [Validators.required, Validators.maxLength(500)]]
+      description: [this._resource.customTextTranslations[this.transLanguage].description.text,
+        [Validators.required, Validators.maxLength(500)]]
     });
   }
 
@@ -231,7 +240,6 @@ export class AppComponent implements OnInit {
   }
 
   saveGame(): void {
-    console.log('saveGame');
     const toUpload: { info: { type: 'options' | 'statement' | 'cover', fileName: string }, file: File }[] = [];
     const filesToSave: { file: File, name: string }[] = this.getFilesToSave();
     this.setInfoForm(toUpload);
@@ -244,18 +252,18 @@ export class AppComponent implements OnInit {
         minScore: 500,
         maxScore: 10000,
         sublevelConfigurations: [{
-            exercises: this.gameConfig.choices
-          }],
+          exercises: this.gameConfig.choices
+        }],
         exercisesToUpSubLevel: [this.gameConfig.settings.exerciseCount]
       }], extraInfo: {
         gameUrl: 'https://ml-creators.firebaseapp.com',
         theme: this.gameConfig.settings.theme,
         exerciseCase: 'created',
-        randomOrder: this.gameConfig.settings.randomOrder
+        randomOrder: this.gameConfig.settings.randomOrder,
+        language: this.infoFormGroup.get('language').value
       }
     };
     this.save.emit({resource: this._resource, value: filesToSave});
-    // console.log(JSON.stringify((this._resource.properties as MicroLessonResourceProperties).customConfig));
   }
 
   private setSettingsForm(): void {
@@ -270,19 +278,13 @@ export class AppComponent implements OnInit {
     this.gameConfig.choices = this.choicesFormArray.controls.map((choiceForm, choiceIndex) => {
       return {options: choiceForm.get('options').value, id: 1, statement: choiceForm.get('statement').value};
     });
-    // this.gameConfig.choices = this.choicesFormArray.controls.map((choiceForm, choiceIndex) => {
-    //   return { options: choiceForm.get('options'), id: 1, statement: choiceForm.get('statement')};
-    // });
-    // this.gameConfig.choices = this.choicesFormArray.controls.map((choiceForm, choiceIndex) => {
-    //   return this.makeChoiceExercise(choiceForm, toUpload);
-    // });
   }
 
   private setInfoForm(toUpload: { info: { type: 'options' | 'statement' | 'cover', fileName: string }, file: File }[]): void {
     // this.gam.level = this.infoFormGroup.get('level').value;
-    this._resource.customTextTranslations.es.name.text = this.infoFormGroup.get('name').value;
+    this._resource.customTextTranslations[this.transLanguage].name.text = this.infoFormGroup.get('name').value;
     // this.game.language = this.infoFormGroup.get('language').value;
-    this._resource.customTextTranslations.es.description.text = this.infoFormGroup.get('description').value;
+    this._resource.customTextTranslations[this.transLanguage].description.text = this.infoFormGroup.get('description').value;
     if (this.infoFormGroup.get('image').value.data) {
       const file = this.infoFormGroup.get('image').value.data.file;
       const fileName = 'file name';
@@ -291,7 +293,7 @@ export class AppComponent implements OnInit {
         info: {type: 'cover', fileName},
         file
       });
-      this._resource.customTextTranslations.es.previewData.path = 'library/items/' + this._resource.uid + '/preview-image-es';
+      this._resource.customTextTranslations[this.transLanguage].previewData.path = 'library/items/' + this._resource.uid + '/preview-image-es';
       // this.game.image = fileName;
     } else {
       // this.parseShowableValue('image', this.infoFormGroup.get('image').value);
@@ -310,10 +312,6 @@ export class AppComponent implements OnInit {
         });
       }
     }
-    console.log('files to save', files.map(f => f.name));
-    // [].concat(...[].concat(...this.gameConfig.choices
-    //   .map(x => [x.statement].concat(x.options.map(opt => opt.showable))))
-    //   .map(x => this.getFilesFromPropAndSetName(x)))
     return files;
   }
 
@@ -328,6 +326,28 @@ export class AppComponent implements OnInit {
       showable.get('image').setValue(showable.get('image').value.name);
     }
     return files;
+  }
+
+  private loadGame(): void {
+    const customConfig = (this._resource.properties as MicroLessonResourceProperties).customConfig;
+    this.loadMedia.emit(customConfig.customMedia.map( x => {
+      return {name: x};
+    }));
+    console.log('sending medioa to load', customConfig.customMedia.map( x => {
+      return {name: x};
+    }));
+    this.gameConfig = {
+      settings: {
+        exerciseCount: customConfig.microLessonLevelConfigurations[0].exercisesToUpSubLevel[0],
+        randomOrder: customConfig.extraInfo.randomOrder,
+        theme: customConfig.extraInfo.theme,
+        type: 'classic'
+      },
+      choices: customConfig.microLessonLevelConfigurations[0].sublevelConfigurations[0].exercises,
+      resourceUid: this._resource.uid
+    };
+    console.log('loaded config', this.gameConfig);
+    this.initForms();
   }
 }
 

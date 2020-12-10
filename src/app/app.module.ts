@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import {Injector, NgModule} from '@angular/core';
-
 import { AppComponent } from './app.component';
 import {ExtendedModule, FlexModule} from '@angular/flex-layout';
 import {createCustomElement} from '@angular/elements';

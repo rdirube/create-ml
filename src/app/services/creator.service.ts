@@ -14,7 +14,7 @@ export class CreatorService {
   public makeOptionForm(option?: Option, isCorrect = false): FormGroup {
     return this._formBuilder.group({
       id: [option ? option.id : 0],
-      showable: this.createShowableFormGroup(option ? option.showable[0] : undefined),
+      showable: this.createShowableFormGroup(option ? option.showable : undefined),
       isCorrect: [option ? option.isCorrect : isCorrect],
     });
   }
@@ -41,15 +41,16 @@ export class CreatorService {
 
   public addControls(data: LiftGameExercise, form: FormGroup): void {
     form.addControl('statement', this.createShowableFormGroup(data ? data.statement : undefined));
-    form.addControl('options', this._formBuilder.array([], Validators.compose([this.atLeastOneAnswerIsCorrect, this.atLeastOneProp])));
+    form.addControl('options', this._formBuilder.array(data ? data.options.map( x =>
+      this.makeOptionForm(x)) : [], Validators.compose([this.atLeastOneAnswerIsCorrect, this.atLeastOneProp])));
     const formArray = (form.get('options') as FormArray);
     if (!data) {
       formArray.push(this.makeOptionForm(undefined, true));
       formArray.push(this.makeOptionForm());
     } else {
-      data.options.forEach(option => {
-        formArray.push(this.makeOptionForm(option));
-      });
+      // data.options.forEach(option => {
+      //   formArray.push(this.makeOptionForm(option));
+      // });
     }
   }
 

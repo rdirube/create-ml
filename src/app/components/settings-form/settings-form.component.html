@@ -1,16 +1,16 @@
 <div fxLayout="row" fxFlex="grow" fxLayoutGap="2%" style="padding-bottom: 4%">
   <div fxFlex="50" fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap="1%">
     <div class="full-width" fxLayout="column" fxLayoutAlign="start start" fxLayoutGap="3%" fxFlexFill>
-      <img class="full-width" [src]="form.get('theme').value" alt="barco">
+      <img class="full-width" [src]="currentSrcByTheme" alt="barco">
       <div fxLayout="row wrap" class="full-width" fxLayoutAlign="center center" fxLayoutGap="1%">
         <span style="padding-right: 5%">Temática:</span>
-        <button color="primary" [class.selected]="form.get('theme').value === 'circus'" (click)="updateTheme('circus')"
+        <button color="primary" [class.selected]="form.get('theme').value.includes('circus')" (click)="updateTheme('circus')"
                 mat-stroked-button="">Circo
         </button>
-        <button color="primary" [class.selected]="form.get('theme').value === 'lab'" (click)="updateTheme('lab')"
+        <button color="primary" [class.selected]="form.get('theme').value.includes('lab')" (click)="updateTheme('lab')"
                 mat-stroked-button="">Laboratorio
         </button>
-        <button color="primary" [class.selected]="form.get('theme').value === 'boat'" (click)="updateTheme('boat')"
+        <button color="primary" [class.selected]="form.get('theme').value.includes('boat')" (click)="updateTheme('boat')"
                 mat-stroked-button="">Barco
         </button>
       </div>

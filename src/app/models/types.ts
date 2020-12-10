@@ -1,7 +1,7 @@
 export interface LiftGame {
   choices: LiftGameExercise [];
   // choices: ChoiceExercise [];
-  settings: TriviaSettings;
+  settings: LiftGameSettings;
   resourceUid?: string;
 }
 
@@ -16,9 +16,9 @@ export interface TriviaProperty {
   value: string;
 }
 
-export interface TriviaSettings {
-  triviaType?: TriviaType;
-  triviaProperties?: TriviaProperty[];
+export interface LiftGameSettings {
+  // triviaType?: TriviaType;
+  // triviaProperties?: TriviaProperty[];
   type?: 'classic' | 'test'; // 'Clásico' | 'Examen'
   theme: 'circus' | 'boat' | 'lab';
   exerciseCount: number;
