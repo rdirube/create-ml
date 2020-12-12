@@ -8,7 +8,6 @@ import {FormGroup} from '@angular/forms';
 })
 export class SettingsFormComponent implements OnInit {
 
-
   public form: FormGroup;
 
   @Input('form')
@@ -40,7 +39,6 @@ export class SettingsFormComponent implements OnInit {
     this.form.get('theme').patchValue(theme);
     this.form.get('theme').markAsDirty();
   }
-
 
   private setSrcImageByTheme(theme: string): void {
     const baseURl = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/theme-images/';

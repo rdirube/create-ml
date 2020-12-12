@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, HostListener, Input, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {UploadOutput} from 'ngx-uploader';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
@@ -9,8 +9,8 @@ import {Observable} from 'rxjs';
   templateUrl: './showable-form.component.html',
   styleUrls: ['./showable-form.component.scss']
 })
-export class ShowableFormComponent implements OnInit {
-
+export class ShowableFormComponent implements OnChanges, OnInit, AfterViewInit {
+  @ViewChild('audio') audio: ElementRef;
   @Input() mediaFilesAlreadyLoaded: Map<string, Observable<string>>;
   private _form: FormGroup;
   get form(): FormGroup {
@@ -19,7 +19,6 @@ export class ShowableFormComponent implements OnInit {
 
   @Input()
   set form(value: FormGroup) {
-    console.log('setting form in showable', value);
     this._form = value;
     // this.currentShowableType = this._form.get('showableTypes').value
     //   .map( x => this.showableTypes.find(e => e.value === x.type).name).join(', ');
@@ -36,21 +35,36 @@ export class ShowableFormComponent implements OnInit {
   public currentAudioTest: SafeResourceUrl;
   @Input() maxTextLength;
 
+  private previousAudioValue: string;
+
   constructor(private cdr: ChangeDetectorRef,
               private formBuilder: FormBuilder,
               public sanitize: DomSanitizer) {
     this.currentShowableType = [];
-    // this.form = this.formBuilder.group({
-    //   image: '',
-    //   text: '',
-    //   audio: '',
-    //   video: ''
-    // });
   }
 
+
+  ngAfterViewInit(): void {
+    this.checkAudioLoaded();
+  }
   ngOnInit(): void {
-    // this._form.get('showableTypes').valueChanges.subscribe(value => {
-    // });
+    this.checkAudioLoaded();
+  }
+  ngOnChanges(): void {
+   this.checkAudioLoaded();
+  }
+
+  private checkAudioLoaded(): void {
+    console.log('checkAudioLoaded');
+    if (this._form.get('audio').value?.data === undefined
+      && this._form.get('audio').value.length > 0
+      && this._form.get('audio').value !== this.previousAudioValue) {
+      if (this.audio) {
+        this.previousAudioValue = this._form.get('audio').value;
+        (this.audio.nativeElement as HTMLAudioElement).load();
+        console.log('Loading new audio');
+      }
+    }
   }
 
   getCurrentStatementValueValue(): any {

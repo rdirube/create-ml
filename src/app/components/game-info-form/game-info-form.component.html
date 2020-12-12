@@ -32,7 +32,7 @@
   <div fxLayout="column" fxFlexFill fxFlex="40" fxLayoutAlign="center center" fxLayoutGap="2%">
     <img *ngIf="form.get('image').value"
          [src]="form.get('image').value.data?.base64 ||
-                         (mediaFilesAlreadyLoaded.get(form.get('image').value) | async)"
+                         (mediaFilesAlreadyLoaded.get('preview-image') | async)"
          class="cover-image-size" alt="">
     <!--    <img  style="max-width: 50%"  [src]=" form.get('image').value.data ? form.get('image').value.data.base64-->
     <!--              : (mediaFilesAlreadyLoaded.get(form.get('image').value) | async)"/>-->

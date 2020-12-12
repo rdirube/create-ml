@@ -60,8 +60,8 @@
                    controlsList="novolume"
                    class="full-width"
                    controlsList="nodownload">
-              <source [src]="sanitize.bypassSecurityTrustResourceUrl(form.get('audio').value.data ? form.get('audio').value.data.base64
-              : (mediaFilesAlreadyLoaded.get(form.get('audio').value) | async))"
+              <source  [src]="sanitize.bypassSecurityTrustResourceUrl( form.get('audio').value.data ?
+              form.get('audio').value.data.base64 : (mediaFilesAlreadyLoaded.get(form.get('audio').value) | async))"
                       type="audio/mpeg">
               Tu navegador no puede reproducir este audio.
             </audio>

@@ -9,7 +9,7 @@
 <div class="create-container"
      fxFlex="grow" fxLayout="column" fxLayoutGap="1%" fxLayoutAlign="start center">
   <div class="full-width header-creator-logo" fxFlex="25" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1%">
-    <img fxFlex="grow"  src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/answer-hunters.png" />
+    <img fxFlex="grow"  src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/answer-hunter.svg" />
   </div>
   <mat-horizontal-stepper *ngIf="gameConfig && gameForm" [selectedIndex]="0" [linear]="!gameForm.valid"
                           [ngClass.lt-lg]="{'full-width': true}" [ngClass.gt-md]="{'three-quarter-width': true}" #stepper
@@ -17,7 +17,9 @@
     <mat-step [stepControl]="infoFormGroup">
       <ng-template matStepLabel>Información</ng-template>
       <div fxFlex="grow" fxLayout="column" fxLayoutAlign="center center" style="padding-top: 2%" fxLayoutGap="2%">
-        <app-game-info-form fxFlex="90" class="three-quarter-width" [resourceUid]="gameConfig.resourceUid" [form]="infoFormGroup"></app-game-info-form>
+        <app-game-info-form
+          [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
+          fxFlex="90" class="three-quarter-width" [resourceUid]="gameConfig.resourceUid" [form]="infoFormGroup"></app-game-info-form>
         <div fxLayout="row" class="full-width" fxLayoutAlign="end center"> <!--style="position: absolute; bottom: 2vh; right: 2vh"-->
           <button class="navigate-button" matStepperNext mat-raised-button >Continuar <mat-icon>navigate_next</mat-icon></button>
         </div>
