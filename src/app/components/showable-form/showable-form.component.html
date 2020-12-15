@@ -42,7 +42,7 @@
              fxLayout="column" fxLayoutAlign="start start" fxLayoutGap="2%">
 
           <div *ngIf="form.get('image').value !== ''; else imageElse" class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
-            <img style="max-width: 50%"  [src]=" form.get('image').value.data ? form.get('image').value.data.base64
+            <img style="max-width: 50%"  [src]=" form.get('image').value.data ? sanitize.bypassSecurityTrustResourceUrl(form.get('image').value.data.base64)
               : (mediaFilesAlreadyLoaded.get(form.get('image').value) | async)"/>
             <img (click)="removeProp('image')" style=" width: 10%" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/trash-icon.png"/>
           </div>

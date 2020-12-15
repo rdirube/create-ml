@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Observable, of} from 'rxjs';
+import {Observable, of, timer} from 'rxjs';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 import {LiftGame, LiftGameExercise} from './models/types';
 import {MicroLessonResourceProperties, Resource} from 'ox-types';
