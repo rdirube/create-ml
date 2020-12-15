@@ -1,10 +1,11 @@
 import {ChangeDetectorRef, Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 import {LiftGame, LiftGameExercise} from './models/types';
 import {MicroLessonResourceProperties, Resource} from 'ox-types';
 import {CreatorService} from './services/creator.service';
+import {MediaService} from './services/media.service';
 
 @Component({
   selector: 'app-root',
@@ -52,9 +53,8 @@ export class AppComponent implements OnInit {
         x.value.subscribe(ss => {
           console.log('audioooooooooooo');
           console.log(x.name);
-          console.log(x.name);
-          console.log(x.name);
           console.log(ss);
+          this.mediaService.audioFileLoaded.emit({name: x.name, value: ss});
         });
       }
     });
@@ -88,6 +88,7 @@ export class AppComponent implements OnInit {
   public background: SafeStyle;
 
   constructor(private formBuilder: FormBuilder,
+              private mediaService: MediaService,
               private sanitizer: DomSanitizer,
               private createService: CreatorService,
               private cdr: ChangeDetectorRef) {
@@ -270,7 +271,8 @@ export class AppComponent implements OnInit {
     };
     const mediaDeleted = this.getMediaLoadedAndNotAssigned(allMediaUtilised)
       .filter(x => x !== 'preview-image');
-    this.mediaFilesAlreadyLoaded.get('preview-image').subscribe(previewImageValue => {
+    console.log(this.mediaFilesAlreadyLoaded);
+    (this.mediaFilesAlreadyLoaded.get('preview-image') || of('')).subscribe(previewImageValue => {
       const objToSave = {
         resource: this._resource,
         value: {
