@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {CreatorService} from '../creator.service';
+import {CreatorService, getFilesFromPropAndSetName, getMediaUrlsFromShowable} from '../creator.service';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {LiftGame, LiftGameExercise} from '../../models/creators/lift-game-creator';
 import {MicroLessonResourceProperties, Resource} from 'ox-types';
@@ -7,16 +7,21 @@ import {MicroLessonResourceProperties, Resource} from 'ox-types';
 @Injectable({
   providedIn: 'root'
 })
-export class LiftGameService extends CreatorService {
-
-  public infoFormGroup: FormGroup;
-  choicesFormArray: FormArray;
-  settingsFormGroup: FormGroup;
-  currentChoice: number;
-  gameConfig: LiftGame;
+export class LiftGameService extends CreatorService<LiftGame, LiftGameExercise> {
 
   constructor(private formBuilder: FormBuilder) {
     super(formBuilder);
+  }
+
+  protected newExercise(): LiftGameExercise {
+    return {
+      options: [
+        {isCorrect: true, showable: {audio: '', image: '', text: '', video: ''}, id: 0},
+        {isCorrect: false, showable: {audio: '', image: '', text: '', video: ''}, id: 0}
+      ],
+      statement: {audio: '', image: '', text: '', video: '', id: 0},
+      id: 0
+    };
   }
 
   public loadGame(resource: Resource): void {
@@ -28,7 +33,7 @@ export class LiftGameService extends CreatorService {
         theme: customConfig.extraInfo.theme,
         type: 'classic'
       },
-      choices: customConfig.microLessonLevelConfigurations[0].sublevelConfigurations[0].exercises,
+      exercises: customConfig.microLessonLevelConfigurations[0].sublevelConfigurations[0].exercises,
       resourceUid: resource.uid
     };
     this.initForms(resource);
@@ -43,7 +48,7 @@ export class LiftGameService extends CreatorService {
     (resource.properties as MicroLessonResourceProperties).url = 'https://ml-screen-manager.firebaseapp.com';
     resource.customTextTranslations = {es: {name: {text: ''}, description: {text: ''}, previewData: {path: ''}}};
     this.gameConfig = {
-      choices: [],
+      exercises: [],
       settings: {
         exerciseCount: 10,
         randomOrder: false,
@@ -72,7 +77,7 @@ export class LiftGameService extends CreatorService {
 
   public addChoice(index?: number): void {
     if (index === undefined) {
-      index = this.gameConfig.choices.length;
+      index = this.gameConfig.exercises.length;
     }
     this.choicesFormArray.insert(index >= 0 ? index : this.choicesFormArray.length, this.formBuilder.group({
       index: [index || 0]
@@ -85,7 +90,7 @@ export class LiftGameService extends CreatorService {
       statement: {audio: '', image: '', text: '', video: '', id: 0},
       id: 0
     };
-    this.gameConfig.choices = this.gameConfig.choices.slice(0, index).concat([choice]).concat(this.gameConfig.choices.slice(index));
+    this.gameConfig.exercises = this.gameConfig.exercises.slice(0, index).concat([choice]).concat(this.gameConfig.exercises.slice(index));
     this.currentChoice = index >= 0 ? index : (this.choicesFormArray.length - 1);
     // this.cdr.detectChanges();
   }
@@ -102,11 +107,10 @@ export class LiftGameService extends CreatorService {
     this.initBasicInformation(resource);
     this.initChoicesInformation();
     this.initSettingsForm();
-    // this.cdr.detectChanges();
   }
 
   private initChoicesInformation(): void {
-    this.choicesFormArray = this.formBuilder.array(this.gameConfig.choices.map((choice, index) => {
+    this.choicesFormArray = this.formBuilder.array(this.gameConfig.exercises.map((choice, index) => {
       const form = this.formBuilder.group({index: [index]});
       this.addControls(choice, form);
       return form;
@@ -114,20 +118,6 @@ export class LiftGameService extends CreatorService {
     if (this.choicesFormArray.controls.length === 0) {
       this.addChoice();
     }
-  }
-
-  private initBasicInformation(resource: Resource, textLanguage = 'es'): void {
-    const extraInfo = (resource.properties as MicroLessonResourceProperties).customConfig.extraInfo;
-    this.infoFormGroup = this.formBuilder.group({
-      name: [resource.customTextTranslations[textLanguage].name.text, [Validators.required, Validators.maxLength(256)]],
-      // todo validator de max peso
-      image: [resource.customTextTranslations[textLanguage].previewData.path || ''],
-      // tags: [this.game.tags || []],
-      language: [extraInfo ? extraInfo.language : 'ESP'],
-      // level: [this.game.level || 1],
-      description: [resource.customTextTranslations[textLanguage].description.text,
-        [Validators.required, Validators.maxLength(500)]]
-    });
   }
 
   private initSettingsForm(): void {
@@ -154,7 +144,7 @@ export class LiftGameService extends CreatorService {
   }
 
   private setChoicesForm(): void {
-    this.gameConfig.choices = this.choicesFormArray.controls.map((choiceForm, choiceIndex) => {
+    this.gameConfig.exercises = this.choicesFormArray.controls.map((choiceForm, choiceIndex) => {
       return {options: choiceForm.get('options').value, id: 1, statement: choiceForm.get('statement').value};
     });
   }
@@ -186,7 +176,7 @@ export class LiftGameService extends CreatorService {
           minScore: 500,
           maxScore: 10000,
           sublevelConfigurations: [{
-            exercises: this.gameConfig.choices
+            exercises: this.gameConfig.exercises
           }],
           exercisesToUpSubLevel: [this.gameConfig.settings.exerciseCount]
         }], extraInfo: {
@@ -200,60 +190,17 @@ export class LiftGameService extends CreatorService {
     };
   }
 
-
-  private getFilesToSave(): { file: File, name: string }[] {
-    const files = [];
+  protected getAllShowablesFormArray(): FormGroup[] {
+    const showables = [];
     for (let i = 0; i < this.choicesFormArray.length; i++) {
-      getFilesFromPropAndSetName(this.choicesFormArray.at(i).get('statement') as FormGroup).forEach(x => files.push(x));
+      showables.push(this.choicesFormArray.at(i).get('statement') as FormGroup);
       const options: FormArray = (this.choicesFormArray.at(i).get('options') as FormArray);
       for (let j = 0; j < options.length; j++) {
-        getFilesFromPropAndSetName(options.at(j).get('showable') as FormGroup).forEach(x => {
-          files.push(x);
-        });
+        showables.push(options.at(j).get('showable') as FormGroup);
       }
     }
-    return files;
+    return showables;
   }
-
-  public getUsedMedia(): string[] {
-    const media = [];
-    for (let i = 0; i < this.choicesFormArray.length; i++) {
-      getMediaUrlsFromShowable(this.choicesFormArray.at(i).get('statement') as FormGroup)
-        .forEach(x => media.push(x));
-      const options: FormArray = (this.choicesFormArray.at(i).get('options') as FormArray);
-      for (let j = 0; j < options.length; j++) {
-        getMediaUrlsFromShowable(options.at(j).get('showable') as FormGroup).forEach(x => {
-          media.push(x);
-        });
-      }
-    }
-    return media;
-  }
-
 
 }
 
-
-function getMediaUrlsFromShowable(showable: FormGroup): { file: File, name: string }[] {
-  const mediaUrls = [];
-  if (showable.get('audio').value?.length && showable.get('audio').value.data === undefined) {
-    mediaUrls.push(showable.get('audio').value);
-  }
-  if (showable.get('image').value?.length && showable.get('image').value.data === undefined) {
-    mediaUrls.push(showable.get('image').value);
-  }
-  return mediaUrls;
-}
-
-function getFilesFromPropAndSetName(showable: FormGroup): { file: File, name: string }[] {
-  const files = [];
-  if (showable.get('audio').value.data !== undefined) {
-    files.push({file: showable.get('audio').value.data.file, name: showable.get('audio').value.name});
-    showable.get('audio').setValue(showable.get('audio').value.name);
-  }
-  if (showable.get('image').value.data !== undefined) {
-    files.push({file: showable.get('image').value.data.file, name: showable.get('image').value.name});
-    showable.get('image').setValue(showable.get('image').value.name);
-  }
-  return files;
-}

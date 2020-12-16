@@ -1,9 +1,3 @@
-export interface ChoiceExercise extends ShowableElement {
-  id: number;
-  showable: Showable;
-  options: Option[];
-}
-
 export interface Showable {
   id?: number;
   video: string;

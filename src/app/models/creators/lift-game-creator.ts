@@ -1,10 +1,13 @@
 import {Option, Showable} from '../types';
 
-export interface LiftGame {
-  choices: LiftGameExercise [];
-  // choices: ChoiceExercise [];
-  settings: LiftGameSettings;
+export interface Game<E, S> {
+  exercises: E [];
+  // exercises: ChoiceExercise [];
+  settings: S;
   resourceUid?: string;
+}
+
+export interface LiftGame extends Game<LiftGameExercise, LiftGameSettings>{
 }
 
 export interface LiftGameExercise {

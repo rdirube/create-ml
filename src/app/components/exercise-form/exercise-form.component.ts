@@ -4,6 +4,7 @@ import {CreatorService} from '../../services/creator.service';
 import {MatExpansionPanel} from '@angular/material/expansion';
 import {Observable} from 'rxjs';
 import {LiftGameExercise} from '../../models/creators/lift-game-creator';
+import {LiftGameService} from '../../services/creators/lift-game.service';
 
 @Component({
   selector: 'app-exercise-form',
@@ -32,8 +33,7 @@ export class ExerciseFormComponent implements OnInit {
     }
   }
 
-
-  constructor(private creatorService: CreatorService,
+  constructor(private creatorService: LiftGameService,
               private cdr: ChangeDetectorRef,
               private formBuilder: FormBuilder) {
     this.optionPropertiesForm = this.formBuilder.group({
