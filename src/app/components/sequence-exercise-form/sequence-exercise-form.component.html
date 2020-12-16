@@ -1,0 +1,86 @@
+<form autocomplete="off" *ngIf="form" [formGroup]="form" fxLayout="column" fxLayoutGap="2%">
+
+          <span fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5px"><b>Enunciado</b>
+                                <span fxLayout="row" fxLayoutAlign="center center"
+                                      *ngIf="!form.get('statement').valid "
+                                      class="wrong-message"> El enunciado debe tener cargado al menos un texto, imágen o audio </span>
+            <mat-icon
+              *ngIf="form.get('statement').valid" class="valid-form-icon" matSuffix>check_circle</mat-icon></span>
+  <app-showable-form
+    [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
+    [maxTextLength]="20"
+    [form]="form.get('statement')"
+    class="statement-container"  fxFlex="grow"></app-showable-form>
+  <span
+    fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5px">
+                  <b>Correctas en orden</b>
+                </span>
+  <div cdkDropList class="full-width" fxLayout="column" fxLayoutGap="1%"
+       (cdkDropListDropped)="drop($event, 'corrects')">
+    <div *ngFor="let option of getFormArray('corrects').controls, let i = index"
+         cdkDrag
+         class="full-width options-container correct"  fxLayout="row"
+         fxLayoutAlign="start center">
+      <form class="full-width" [formGroup]="option" fxLayoutAlign="center start" fxLayoutGap="1%" fxLayout="column"
+            fxFlex="grow">
+        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="2%" class="full-width">
+          <b>{{ i + 1 + '.'}}</b>
+          <app-showable-form
+            [textArea]="false"
+            [resourcesFields]="true"
+            [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
+            [maxTextLength]="12"
+            [form]="option"
+            class="full-width"></app-showable-form>
+        </div>
+      </form>
+      <button mat-icon-button (click)="removeOption('corrects', i)"
+              [disabled]="getFormArray('corrects').controls.length === minOptions">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <mat-divider [inset]="true"></mat-divider>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <button class="add-button" mat-raised-button [disabled]="getFormArray('corrects').controls.length >= maxOptions"
+              (click)="addOption('corrects')" color="accent">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <span
+    fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5px">
+                  <b>Trampas</b>
+                </span>
+  <div cdkDropList class="full-width" fxLayout="column" fxLayoutGap="1%"
+       (cdkDropListDropped)="drop($event, 'traps')">
+    <div *ngFor="let trap of getFormArray('traps').controls, let i = index"
+         cdkDrag
+         class="full-width options-container"  fxLayout="row"
+         fxLayoutAlign="start center">
+      <form class="full-width" [formGroup]="trap" fxLayoutAlign="center start" fxLayoutGap="1%" fxLayout="column"
+            fxFlex="grow">
+        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="2%" class="full-width">
+          <b>{{ i + 1 + '.'}}</b>
+          <app-showable-form
+            [textArea]="false"
+            [resourcesFields]="true"
+            [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
+            [maxTextLength]="12"
+            [form]="trap"
+            class="full-width"></app-showable-form>
+        </div>
+      </form>
+      <button mat-icon-button (click)="removeOption('traps', i)">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <mat-divider [inset]="true"></mat-divider>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <button class="add-button" mat-raised-button [disabled]="getFormArray('traps').controls.length >= maxOptions"
+              (click)="addOption('traps')" color="accent">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </div>
+</form>

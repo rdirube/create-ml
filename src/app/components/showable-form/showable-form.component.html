@@ -11,7 +11,11 @@
             #withText appearance="standard" color="primary" fxFlex="75" class="full-width">
             <mat-label style="color: white">Texto:</mat-label>
             <!--      [formControlName]="'value'"  TODO CHECK THIS ONE  -->
-            <textarea matInput style="color: white;" maxlength="{{maxTextLength}}"
+            <input *ngIf="!textArea" matInput style="color: white;" maxlength="{{maxTextLength}}"
+                   [formControlName]="'text'"
+                   type="text"
+                   [placeholder]="'En verano suele llover.'">
+            <textarea *ngIf="textArea" matInput style="color: white;" maxlength="{{maxTextLength}}"
                       [formControlName]="'text'"
                       [placeholder]="'En verano suele llover.'"></textarea>
             <!--        <textarea style="color: white" maxlength="256" fxFlex="grow" fxFlexFill matInput-->
@@ -21,12 +25,10 @@
             </mat-hint>
           </mat-form-field>
         </div>
-
         <div fxFlex="45"
              fxFlex.xs="51"
               style="height: 100%; margin-top: 3%"
              fxLayout="column" fxLayoutAlign="start start" fxLayoutGap="2%">
-
           <div *ngIf="form.get('image').value !== ''; else imageElse" class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
             <img style="max-width: 50%"  [src]=" form.get('image').value.data ? sanitize.bypassSecurityTrustResourceUrl(form.get('image').value.data.base64)
               : (mediaFilesAlreadyLoaded.get(form.get('image').value) | async)"/>

@@ -4,7 +4,7 @@ import {Observable, of, timer} from 'rxjs';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 import {MicroLessonResourceProperties, Resource} from 'ox-types';
 import {MediaService} from './services/media.service';
-import {LiftGameService} from './services/creators/lift-game.service';
+import {SortElementsGameService} from './services/creators/sort-elements-game.service';
 
 @Component({
   selector: 'app-root',
@@ -76,7 +76,8 @@ export class AppComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
               private mediaService: MediaService,
               private sanitizer: DomSanitizer,
-              public createService: LiftGameService,
+              public createService: SortElementsGameService,
+              // public createService: LiftGameService,
               private cdr: ChangeDetectorRef) {
     this.currentChoice = 0;
   }
@@ -85,8 +86,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     timer(1000).subscribe( x => {
       const asd = {"ownerUid":"oQPbggIFzLcEHuDjp5ZNbkkVOlZ2","libraryItemType":"resource","customTextTranslations":{"es":{"previewData":{"path":""},"name":{"text":" game name "},"description":{"text":"game description"}}},"tagIds":{},"uid":"1Sf6zNAUJSsIX6s8iBqw","isPublic":false,"type":"mini-lesson","backupReferences":"","supportedLanguages":{"es":true,"en":false},"inheritedPedagogicalObjectives":[]};
-      this.receivedResource = asd as Resource;
-      console.log('Forcing send resource');
+      this.receivedResource = asd as any as Resource;
     });
     this.currentChoice = 0;
     this.background = this.sanitizer.bypassSecurityTrustStyle(

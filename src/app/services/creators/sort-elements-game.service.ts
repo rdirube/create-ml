@@ -1,25 +1,26 @@
 import {Injectable} from '@angular/core';
 import {CreatorService} from '../creator.service';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {LiftGame, LiftGameExercise} from '../../models/creators/lift-game-creator';
 import {MicroLessonResourceProperties, Resource} from 'ox-types';
+import {SequenceGame, SequenceGameExercise} from '../../models/creators/sort-elements';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LiftGameService extends CreatorService<LiftGame, LiftGameExercise> {
+export class SortElementsGameService extends CreatorService<SequenceGame, SequenceGameExercise> {
   constructor(private formBuilder: FormBuilder) {
     super(formBuilder);
-    this.creatorType = 'answer-hunter';
+    this.creatorType = 'sort-elements';
   }
 
-  protected newExercise(): LiftGameExercise {
+  protected newExercise(): SequenceGameExercise {
     return {
-      options: [
-        {isCorrect: true, showable: {audio: '', image: '', text: '', video: ''}, id: 0},
-        {isCorrect: false, showable: {audio: '', image: '', text: '', video: ''}, id: 0}
-      ],
       statement: {audio: '', image: '', text: '', video: '', id: 0},
+      corrects: [
+        {audio: '', image: '', text: '1', video: ''},
+        {audio: '', image: '', text: '2', video: ''},
+      ],
+      traps: [],
       id: 0
     };
   }
@@ -60,18 +61,17 @@ export class LiftGameService extends CreatorService<LiftGame, LiftGameExercise> 
     this.initForms(resource);
   }
 
-  public addControls(data: LiftGameExercise, form: FormGroup): void {
+  public addControls(data: SequenceGameExercise, form: FormGroup): void {
+    console.log('Adding sequence exercise', data);
     form.addControl('statement', this.makeShowableForm(data ? data.statement : undefined));
-    form.addControl('options', this.formBuilder.array(data ? data.options.map(x =>
-      this.makeOptionForm(x)) : [], Validators.compose([this.atLeastOneAnswerIsCorrect, this.atLeastOneProp])));
+    form.addControl('corrects', this.formBuilder.array(data ? data.corrects.map(x =>
+      this.makeShowableForm(x)) : [], Validators.compose([this.atLeastOnePropShowable])));
+    form.addControl('traps', this.formBuilder.array(data ? data.traps.map(x =>
+      this.makeShowableForm(x)) : [], Validators.compose([this.atLeastOnePropShowable])));
     const formArray = (form.get('options') as FormArray);
     if (!data) {
       formArray.push(this.makeOptionForm(undefined, true));
       formArray.push(this.makeOptionForm());
-    } else {
-      // data.options.forEach(option => {
-      //   formArray.push(this.makeOptionForm(option));
-      // });
     }
   }
 
@@ -125,7 +125,11 @@ export class LiftGameService extends CreatorService<LiftGame, LiftGameExercise> 
 
   private setChoicesForm(): void {
     this.gameConfig.exercises = this.choicesFormArray.controls.map((choiceForm, choiceIndex) => {
-      return {options: choiceForm.get('options').value, id: 1, statement: choiceForm.get('statement').value};
+      return {
+        corrects: choiceForm.get('corrects').value,
+        traps: choiceForm.get('traps').value,
+        id: 1, statement: choiceForm.get('statement').value
+      };
     });
   }
 
@@ -174,14 +178,15 @@ export class LiftGameService extends CreatorService<LiftGame, LiftGameExercise> 
     const showables = [];
     for (let i = 0; i < this.choicesFormArray.length; i++) {
       showables.push(this.choicesFormArray.at(i).get('statement') as FormGroup);
-      const options: FormArray = (this.choicesFormArray.at(i).get('options') as FormArray);
-      for (let j = 0; j < options.length; j++) {
-        showables.push(options.at(j).get('showable') as FormGroup);
+      const corrects: FormArray = (this.choicesFormArray.at(i).get('corrects') as FormArray);
+      for (let j = 0; j < corrects.length; j++) {
+        showables.push(corrects.at(j).get('showable') as FormGroup);
+      }
+      const traps: FormArray = (this.choicesFormArray.at(i).get('traps') as FormArray);
+      for (let j = 0; j < traps.length; j++) {
+        showables.push(traps.at(j).get('showable') as FormGroup);
       }
     }
     return showables;
   }
-
-
 }
-

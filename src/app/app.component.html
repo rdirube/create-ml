@@ -87,10 +87,17 @@
           <div
             class="full-width" fxLayout="column" fxLayoutAlign="center center">
             <app-exercise-form
+              *ngIf="createService.creatorType === 'answer-hunter'"
               [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
               [formData]="{form: createService.choicesFormArray.at(currentChoice),
                initialDatas: createService.gameConfig.exercises[currentChoice]}"
               class="full-width"></app-exercise-form>
+            <app-sequence-exercise-form
+              *ngIf="createService.creatorType === 'sort-elements'"
+              [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
+              [formData]="{form: createService.choicesFormArray.at(currentChoice),
+              initialDatas: createService.gameConfig.exercises[currentChoice]}" class="full-width"></app-sequence-exercise-form>
+
           </div>
           <div fxHide.lt-md fxLayout="column" (click)="changeCurrentChoice(1)" fxLayoutAlign="center center">
             <button matTooltip="Ejercicio siguiente" mat-icon-button

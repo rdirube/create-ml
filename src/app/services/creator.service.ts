@@ -15,6 +15,8 @@ export abstract class CreatorService<T extends Game<B, any>, B> {
   currentChoice: number;
   gameConfig: T;
 
+  public creatorType: 'answer-hunter' | 'sort-elements';
+
   protected constructor(private _formBuilder: FormBuilder) {
   }
 

@@ -36,7 +36,8 @@ export class ShowableFormComponent implements OnInit {
   @Input() maxTextLength;
 
   private previousAudioValue: string;
-
+  @Input() textArea = true;
+  @Input() resourcesFields = true;
   constructor(private cdr: ChangeDetectorRef,
               private formBuilder: FormBuilder,
               public sanitize: DomSanitizer) {
