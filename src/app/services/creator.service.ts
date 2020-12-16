@@ -1,25 +1,24 @@
 import {Injectable} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
-import {ChoiceExercise, LiftGameExercise, Option, Showable} from '../models/types';
-import {log} from 'util';
+import {FormArray, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
+import {Option, Showable} from '../models/types';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CreatorService {
+export abstract class CreatorService {
 
-  constructor(private _formBuilder: FormBuilder) {
+  protected constructor(private _formBuilder: FormBuilder) {
   }
 
   public makeOptionForm(option?: Option, isCorrect = false): FormGroup {
     return this._formBuilder.group({
       id: [option ? option.id : 0],
-      showable: this.createShowableFormGroup(option ? option.showable : undefined),
+      showable: this.makeShowableForm(option ? option.showable : undefined),
       isCorrect: [option ? option.isCorrect : isCorrect],
     });
   }
 
-  private createShowableFormGroup(data?: Showable): FormGroup {
+  public makeShowableForm(data?: Showable): FormGroup {
     return this._formBuilder.group({
       id: [data ? data.id : 0],
       audio: data ? data.audio : '',
@@ -39,37 +38,27 @@ export class CreatorService {
     };
   }
 
-  public addControls(data: LiftGameExercise, form: FormGroup): void {
-    form.addControl('statement', this.createShowableFormGroup(data ? data.statement : undefined));
-    form.addControl('options', this._formBuilder.array(data ? data.options.map( x =>
-      this.makeOptionForm(x)) : [], Validators.compose([this.atLeastOneAnswerIsCorrect, this.atLeastOneProp])));
-    const formArray = (form.get('options') as FormArray);
-    if (!data) {
-      formArray.push(this.makeOptionForm(undefined, true));
-      formArray.push(this.makeOptionForm());
-    } else {
-      // data.options.forEach(option => {
-      //   formArray.push(this.makeOptionForm(option));
-      // });
-    }
-  }
+  public abstract addControls(data: any, form: FormGroup): void;
 
 
   public atLeastOneProp(form: FormArray): { atLeastOneProp: boolean } {
-    // console.log('Testing... ', (form.get('options') && form.get('options').value.every(x => validProp(x.audio)
-    //   || validProp(x.text) || validProp(x.image))));
     return (form.value && form.value.map(x => x.showable).every(x => validProp(x.audio)
       || validProp(x.text) || validProp(x.image))) ? null : {
       atLeastOneProp: true
     };
   }
-
+  public atLeastOnePropShowable(form: FormArray): { atLeastOnePropShowable: boolean } {
+    return (form.value && form.value.every(x => validProp(x.audio)
+      || validProp(x.text) || validProp(x.image))) ? null : {
+      atLeastOnePropShowable: true
+    };
+  }
 }
 
-function validProp(prop): boolean {
+export function validProp(prop): boolean {
   return prop !== undefined && (prop.length || prop.data);
 }
-function oneValidPropValidator(control: FormGroup): ValidationErrors | null  {
+export function oneValidPropValidator(control: FormGroup): ValidationErrors | null  {
   const audio = control.get('audio').value;
   const image = control.get('image').value;
   const text = control.get('text').value;

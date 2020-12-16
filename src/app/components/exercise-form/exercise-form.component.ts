@@ -1,9 +1,9 @@
 import {ChangeDetectorRef, Component, HostListener, Input, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CreatorService} from '../../services/creator.service';
-import {ChoiceExercise, LiftGameExercise} from '../../models/types';
 import {MatExpansionPanel} from '@angular/material/expansion';
 import {Observable} from 'rxjs';
+import {LiftGameExercise} from '../../models/creators/lift-game-creator';
 
 @Component({
   selector: 'app-exercise-form',
@@ -82,11 +82,4 @@ export class ExerciseFormComponent implements OnInit {
     }
   }
 
-
-  @HostListener('document:keydown', ['$event'])
-  asdasda($event) {
-    if ($event.key.toLowerCase() === 'e') {
-      console.log(this.form);
-    }
-  }
 }

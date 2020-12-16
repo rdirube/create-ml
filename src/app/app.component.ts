@@ -2,10 +2,10 @@ import {ChangeDetectorRef, Component, EventEmitter, HostBinding, Input, OnInit, 
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Observable, of, timer} from 'rxjs';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
-import {LiftGame, LiftGameExercise} from './models/types';
 import {MicroLessonResourceProperties, Resource} from 'ox-types';
-import {CreatorService} from './services/creator.service';
 import {MediaService} from './services/media.service';
+import {LiftGame, LiftGameExercise} from './models/creators/lift-game-creator';
+import {LiftGameService} from './services/creators/lift-game.service';
 
 @Component({
   selector: 'app-root',
@@ -17,14 +17,15 @@ export class AppComponent implements OnInit {
   title = 'create-ml';
   private textsLanguage = 'es';
 
-  public form: FormGroup;
   public infoFormGroup: FormGroup;
-  public saving: boolean;
-  currentChoice: number;
+  settingsFormGroup: FormGroup;
   choicesFormArray: FormArray;
-  gameConfig: LiftGame;
   public gameForm: FormGroup;
-  // @Output() save: EventEmitter<{ resource: Resource, value: { name: string, file: File }[] }>
+
+  currentChoice: number;
+  gameConfig: LiftGame;
+
+  public saving: boolean;
   @Output() save: EventEmitter<{
     resource: Resource, value: {
       preview: { delete: boolean, file: File },
@@ -37,13 +38,9 @@ export class AppComponent implements OnInit {
       exercises: { delete: string[], toUpload: { file: File, name: string }[] }
     }
   }>();
-
-  // ver files names, sino un array de objetos nombres y file
   @Output() loadMedia: EventEmitter<{ name: string, value: Observable<string> }[]>
     = new EventEmitter<{ name: string, value: Observable<string> }[]>();
   private thereWasPreviewImageBefore: boolean;
-
-  // files names
   @Input()
   set mediaFilesLoaded(mediaFiles: { name: string, value: Observable<string> }[]) {
     console.log('media files loaded', mediaFiles);
@@ -51,9 +48,6 @@ export class AppComponent implements OnInit {
       this.mediaFilesAlreadyLoaded.set(x.name, x.value);
       if (x.name.includes('.mp3')) {
         x.value.subscribe(ss => {
-          console.log('audioooooooooooo');
-          console.log(x.name);
-          console.log(ss);
           this.mediaService.audioFileLoaded.emit({name: x.name, value: ss});
         });
       }
@@ -63,10 +57,8 @@ export class AppComponent implements OnInit {
         this.thereWasPreviewImageBefore = x.length > 0;
       });
   }
-
   public mediaFilesAlreadyLoaded: Map<string, Observable<string>> =
     new Map<string, Observable<string>>();
-
   @Input()
   set receivedResource(resource: Resource) {
     console.log('Me llego resource', resource);
@@ -83,46 +75,24 @@ export class AppComponent implements OnInit {
   }
 
   private _resource: Resource;
-  settingsFormGroup: FormGroup;
   @HostBinding('style.background')
   public background: SafeStyle;
 
   constructor(private formBuilder: FormBuilder,
               private mediaService: MediaService,
               private sanitizer: DomSanitizer,
-              private createService: CreatorService,
+              private createService: LiftGameService,
               private cdr: ChangeDetectorRef) {
     this.currentChoice = 0;
-    this.settingsFormGroup = this.formBuilder.group({
-      triviaType: ['classic'],
-      theme: ['boat'],
-      isRandom: [false],
-      exerciseCount: [6, [Validators.min(5), Validators.max(20), Validators.required]],
-    });
-    this.gameConfig = {
-      choices: [],
-      settings: {
-        exerciseCount: 10,
-        randomOrder: false,
-        type: 'classic',
-        theme: 'boat'
-      },
-      resourceUid: '123'
-    };
-    this.choicesFormArray = this.formBuilder.array(this.gameConfig.choices.map((choice, index) => {
-      const form = this.formBuilder.group({index: [index]});
-      this.createService.addControls(choice, form);
-      return form;
-    }));
   }
 
 
   ngOnInit(): void {
-    // timer(1000).subscribe( x => {
-    //   const asd = {"ownerUid":"oQPbggIFzLcEHuDjp5ZNbkkVOlZ2","libraryItemType":"resource","customTextTranslations":{"es":{"previewData":{"path":""},"name":{"text":" game name "},"description":{"text":"game description"}}},"tagIds":{},"properties":{"format":"lift-game","miniLessonVersion":"with-custom-config-v2","customConfig":{"extraInfo":{"theme":"assets/boat-theme.jpg","exerciseCase":"created","gameUrl":"https://ml-creators.firebaseapp.com","randomOrder":true},"microLessonLevelConfigurations":[{"sublevelConfigurations":[{"exercises":[{"options":[{"showable":{"image":"","id":0,"video":"","audio":"","text":"Correcta"},"isCorrect":true,"id":0},{"showable":{"audio":"","text":"Incorrecta 1","video":"","id":0,"image":""},"isCorrect":false,"id":0},{"id":0,"isCorrect":false,"showable":{"id":0,"image":"","text":"Incorrecta 2","video":"","audio":""}}],"statement":{"image":"","id":0,"audio":"","video":"","text":"Un titulo"},"id":1},{"id":1,"statement":{"audio":"","text":"Imagen","id":0,"video":"","image":"1607600206040image-placeholder3.png"},"options":[{"isCorrect":false,"showable":{"image":"1607600219155record-audio-icon.png","text":"","video":"","audio":"","id":0},"id":0},{"showable":{"id":0,"video":"","text":"","image":"1607600222772lab-theme.jpg","audio":""},"id":0,"isCorrect":false},{"isCorrect":true,"id":0,"showable":{"text":"","video":"","image":"1607600233792image-placeholder3.png","id":0,"audio":""}}]}]}],"minScore":500,"maxScore":10000,"types":[{"value":2,"mode":"challenges"}],"exercisesToUpSubLevel":[2]}],"customMedia":["1607600206040image-placeholder3.png","1607600219155record-audio-icon.png","1607600222772lab-theme.jpg","1607600233792image-placeholder3.png"]},"miniLessonUid":"Lift game","url":"https://ml-screen-manager.firebaseapp.com"},"uid":"1Sf6zNAUJSsIX6s8iBqw","isPublic":false,"type":"mini-lesson","backupReferences":"","supportedLanguages":{"es":true,"en":false},"inheritedPedagogicalObjectives":[]};
-    //   this.receivedResource = asd as Resource;
-    //   console.log('Forcing send resource')
-    // });
+    timer(1000).subscribe( x => {
+      const asd = {"ownerUid":"oQPbggIFzLcEHuDjp5ZNbkkVOlZ2","libraryItemType":"resource","customTextTranslations":{"es":{"previewData":{"path":""},"name":{"text":" game name "},"description":{"text":"game description"}}},"tagIds":{},"properties":{"format":"lift-game","miniLessonVersion":"with-custom-config-v2","customConfig":{"extraInfo":{"theme":"assets/boat-theme.jpg","exerciseCase":"created","gameUrl":"https://ml-creators.firebaseapp.com","randomOrder":true},"microLessonLevelConfigurations":[{"sublevelConfigurations":[{"exercises":[{"options":[{"showable":{"image":"","id":0,"video":"","audio":"","text":"Correcta"},"isCorrect":true,"id":0},{"showable":{"audio":"","text":"Incorrecta 1","video":"","id":0,"image":""},"isCorrect":false,"id":0},{"id":0,"isCorrect":false,"showable":{"id":0,"image":"","text":"Incorrecta 2","video":"","audio":""}}],"statement":{"image":"","id":0,"audio":"","video":"","text":"Un titulo"},"id":1},{"id":1,"statement":{"audio":"","text":"Imagen","id":0,"video":"","image":"1607600206040image-placeholder3.png"},"options":[{"isCorrect":false,"showable":{"image":"1607600219155record-audio-icon.png","text":"","video":"","audio":"","id":0},"id":0},{"showable":{"id":0,"video":"","text":"","image":"1607600222772lab-theme.jpg","audio":""},"id":0,"isCorrect":false},{"isCorrect":true,"id":0,"showable":{"text":"","video":"","image":"1607600233792image-placeholder3.png","id":0,"audio":""}}]}]}],"minScore":500,"maxScore":10000,"types":[{"value":2,"mode":"challenges"}],"exercisesToUpSubLevel":[2]}],"customMedia":["1607600206040image-placeholder3.png","1607600219155record-audio-icon.png","1607600222772lab-theme.jpg","1607600233792image-placeholder3.png"]},"miniLessonUid":"Lift game","url":"https://ml-screen-manager.firebaseapp.com"},"uid":"1Sf6zNAUJSsIX6s8iBqw","isPublic":false,"type":"mini-lesson","backupReferences":"","supportedLanguages":{"es":true,"en":false},"inheritedPedagogicalObjectives":[]};
+      this.receivedResource = asd as Resource;
+      console.log('Forcing send resource')
+    });
     this.currentChoice = 0;
     this.background = this.sanitizer.bypassSecurityTrustStyle(
       '#e0d6c6 url("https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/pattern-answer-hunters.png") repeat'
@@ -147,10 +117,9 @@ export class AppComponent implements OnInit {
       },
       resourceUid: this._resource.uid
     };
-    (this._resource.properties as MicroLessonResourceProperties).customConfig = this.gameConfig;
+    // (this._resource.properties as MicroLessonResourceProperties).customConfig = this.gameConfig;
     this.initForms();
   }
-
 
   private initForms(): void {
     this.initBasicInformation();
@@ -184,7 +153,6 @@ export class AppComponent implements OnInit {
       this.addChoice();
     }
   }
-
 
   private initBasicInformation(): void {
     const extraInfo = (this._resource.properties as MicroLessonResourceProperties).customConfig.extraInfo;
@@ -221,10 +189,6 @@ export class AppComponent implements OnInit {
   }
 
   removeChoice(index: number): void {
-    /*    const id = this.choicesFormArray.controls[index].get('id').value;
-        if (id) {
-          this.game.removedChoiceIds.push(id);
-        }*/
     this.choicesFormArray.markAsDirty();
     this.choicesFormArray.removeAt(index);
     if (this.currentChoice >= this.choicesFormArray.controls.length) {
@@ -377,11 +341,6 @@ export class AppComponent implements OnInit {
 
   private loadGame(): void {
     const customConfig = (this._resource.properties as MicroLessonResourceProperties).customConfig;
-    // // this.originalPreviewImage = this._resource.customTextTranslations[this.textsLanguage].previewData.path;
-    // console.log(customConfig.customMedia);
-    // this.loadMedia.emit(customConfig.customMedia.map(x => {
-    //   return {name: x};
-    // }));
     this.gameConfig = {
       settings: {
         exerciseCount: customConfig.microLessonLevelConfigurations[0].exercisesToUpSubLevel[0],
