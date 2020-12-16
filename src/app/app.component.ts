@@ -4,7 +4,6 @@ import {Observable, of, timer} from 'rxjs';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 import {MicroLessonResourceProperties, Resource} from 'ox-types';
 import {MediaService} from './services/media.service';
-import {LiftGame, LiftGameExercise} from './models/creators/lift-game-creator';
 import {LiftGameService} from './services/creators/lift-game.service';
 
 @Component({
