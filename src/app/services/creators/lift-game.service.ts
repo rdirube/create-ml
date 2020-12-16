@@ -164,7 +164,7 @@ export class LiftGameService extends CreatorService<LiftGame, LiftGameExercise> 
   } {
     const filesToSave: { file: File, name: string }[] = this.getFilesToSave();
     const allMediaUtilized = this.getUsedMedia();
-    const previousMedia = ((resource.properties as MicroLessonResourceProperties).customConfig.customMedia || [])
+    const previousMedia = ((resource.properties as MicroLessonResourceProperties).customConfig?.customMedia || [])
       .filter(x => allMediaUtilized.includes(x));
     return {
       allMediaUtilized,

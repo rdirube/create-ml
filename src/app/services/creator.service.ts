@@ -62,9 +62,8 @@ export abstract class CreatorService<T extends Game<B, any>, B> {
     };
   }
 
-
   protected initBasicInformation(resource: Resource, textLanguage = 'es'): void {
-    const extraInfo = (resource.properties as MicroLessonResourceProperties).customConfig.extraInfo;
+    const extraInfo = (resource.properties as MicroLessonResourceProperties).customConfig?.extraInfo || undefined;
     this.infoFormGroup = this._formBuilder.group({
       name: [resource.customTextTranslations[textLanguage].name.text, [Validators.required, Validators.maxLength(256)]],
       // todo validator de max peso
@@ -133,7 +132,6 @@ export abstract class CreatorService<T extends Game<B, any>, B> {
   protected abstract newExercise(): B;
   protected abstract getAllShowablesFormArray(): FormGroup[];
 }
-
 
 export function validProp(prop): boolean {
   return prop !== undefined && (prop.length || prop.data);

@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {UploadOutput} from 'ngx-uploader';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
@@ -9,7 +9,8 @@ import {Observable} from 'rxjs';
   templateUrl: './showable-form.component.html',
   styleUrls: ['./showable-form.component.scss']
 })
-export class ShowableFormComponent implements OnChanges, OnInit, AfterViewInit {
+export class ShowableFormComponent implements OnInit {
+
   @ViewChild('audio') audio: ElementRef;
   @Input() mediaFilesAlreadyLoaded: Map<string, Observable<string>>;
   private _form: FormGroup;
@@ -32,7 +33,6 @@ export class ShowableFormComponent implements OnChanges, OnInit, AfterViewInit {
   @Input() withText = true;
   @Input() withAudio = true;
 
-  public currentAudioTest: SafeResourceUrl;
   @Input() maxTextLength;
 
   private previousAudioValue: string;
@@ -43,15 +43,8 @@ export class ShowableFormComponent implements OnChanges, OnInit, AfterViewInit {
     this.currentShowableType = [];
   }
 
-
-  ngAfterViewInit(): void {
-    this.checkAudioLoaded();
-  }
   ngOnInit(): void {
-    this.checkAudioLoaded();
-  }
-  ngOnChanges(): void {
-   this.checkAudioLoaded();
+    // this.checkAudioLoaded();
   }
 
   private checkAudioLoaded(): void {
@@ -65,43 +58,6 @@ export class ShowableFormComponent implements OnChanges, OnInit, AfterViewInit {
         console.log('Loading new audio');
       }
     }
-  }
-
-  getCurrentStatementValueValue(): any {
-    return -5;
-    // return this._form.get('value').value;
-
-  }
-
-  getShowableValue(): string {
-    if (!this.getCurrentStatementValueValue()) {
-      return '';
-    }
-    switch (this.getCurrentStatementTypeValue()) {
-      case 'text':
-        return '';
-      case 'image':
-        return this.getCurrentStatementValueValue().data ? this.getCurrentStatementValueValue().data.base64 :
-          this.getCurrentStatementValueValue();
-      case 'video':
-        return this.getCurrentStatementValueValue();
-      case 'audio':
-        return this.getCurrentStatementValueValue().data ? this.getCurrentStatementValueValue().data.base64 :
-          this.getCurrentStatementValueValue();
-    }
-    return '';
-  }
-
-  clearStatementValue(): void {
-    console.log(this._form.get('showableTypes').value);
-    this.toShow = this.currentShowableType.map(x => x.name).join(', ');
-    // this.currentShowableType = this._form.get('showableTypes').value
-    //   .map( x => this.showableTypes.find(e => e.value === x).name).join(', ');
-    // this._form.get('value').setValue('');
-  }
-
-  getCurrentStatementTypeValue(): any {
-    return this._form.get('type').value;
   }
 
   uploadFile($event: UploadOutput, prop: string): void {
@@ -124,57 +80,8 @@ export class ShowableFormComponent implements OnChanges, OnInit, AfterViewInit {
     }
   }
 
-  // updateShowableTypes(): void {
-  //   this.toShow = this.currentShowableType.map(x => x.name).join(', ');
-  //   this.currentShowableType.forEach(x => {
-  //     console.log();
-  //     const originalValue: ShowableProperty[] = this.form.get('showableTypes').value;
-  //     const filtered = originalValue.filter(z => this.currentShowableType.some(st => z.type === st.value));
-  //     this.currentShowableType.filter(z => !filtered.some(f => f.type === z.value)).forEach(z => {
-  //       filtered.push({type: z.value as any, value: ''});
-  //     });
-  //     this.form.get('showableTypes').setValue(filtered);
-  //   });
-  // }
   removeProp(prop: string): void {
     this.form.get(prop).setValue('');
   }
-
-  // @HostListener('document:keydown', ['$event'])
-  // asdasda($event) {
-  //   if ($event.key.toLowerCase() === 'p') {
-  //     console.log(this.form);
-  //   }
-  //   if ($event.key.toLowerCase() === 'd') {
-  //     console.log( 'detectChanges');
-  //     this.cdr.detectChanges();
-  //   }
-  //   if ($event.key.toLowerCase() === 'c') {
-  //     console.log( 'markAsPristine');
-  //     this.form.markAsPristine();
-  //   }
-  //   if ($event.key.toLowerCase() === 'y') {
-  //     console.log( 'markAsDirty');
-  //     this.form.markAsDirty();
-  //   }
-  //   if ($event.key.toLowerCase() === 'g') {
-  //     console.log( 'markAsPending');
-  //     this.form.markAsPending();
-  //   }
-  //   if ($event.key.toLowerCase() === 'e') {
-  //     this.form.get('image').setValue('https://www.gstatic.com/images/branding/product/2x/photos_96dp.png');
-  //   }
-  //   if ($event.key.toLowerCase() === 'n') {
-  //     console.log( 'Printing el ng if');
-  //     console.log( this.form);
-  //     console.log( this.form.get('image').value);
-  //     console.log( this.form.get('image').value.data);
-  //     console.log( this.form.get('image').value.data ? this.form.get('image').value.data.base64
-  //       :
-  //       'https://www.gstatic.com/images/branding/product/2x/photos_96dp.png');
-  //
-  //
-  //   }
-  // }
 
 }

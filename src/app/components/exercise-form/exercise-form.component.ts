@@ -1,6 +1,5 @@
-import {ChangeDetectorRef, Component, HostListener, Input, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {CreatorService} from '../../services/creator.service';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {MatExpansionPanel} from '@angular/material/expansion';
 import {Observable} from 'rxjs';
 import {LiftGameExercise} from '../../models/creators/lift-game-creator';
@@ -18,8 +17,6 @@ export class ExerciseFormComponent implements OnInit {
 
   @Input() mediaFilesAlreadyLoaded: Map<string, Observable<string>>[];
 
-  optionPropertiesForm: FormGroup;
-
   get form(): FormGroup {
     return this._form;
   }
@@ -33,19 +30,11 @@ export class ExerciseFormComponent implements OnInit {
     }
   }
 
-  constructor(private creatorService: LiftGameService,
-              private cdr: ChangeDetectorRef,
-              private formBuilder: FormBuilder) {
-    this.optionPropertiesForm = this.formBuilder.group({
-      optionsWithAudio: false,
-      optionsWithText: true,
-      optionsWithImage: true,
-    });
+  constructor(private creatorService: LiftGameService) {
   }
 
   ngOnInit(): void {
   }
-
 
   public addOption(): void {
     this.getCurrentOptionsFormArray().push(this.creatorService.makeOptionForm());
@@ -58,28 +47,6 @@ export class ExerciseFormComponent implements OnInit {
 
   public getCurrentOptionsFormArray(): FormArray {
     return this._form.get('options') as FormArray;
-  }
-
-  getIconName(i: string): string {
-    switch (i) {
-      case 'optionsWithText':
-        return 'text_fields';
-      case 'optionsWithImage':
-        return 'image';
-      case 'optionsWithAudio':
-        return 'audiotrack';
-    }
-  }
-
-  getPropertyText(i: string): string {
-    switch (i) {
-      case 'optionsWithText':
-        return 'Texto';
-      case 'optionsWithImage':
-        return 'Imagen';
-      case 'optionsWithAudio':
-        return 'Audio';
-    }
   }
 
 }
