@@ -1,21 +1,21 @@
-<div class="create-container" style="overflow: scroll"
+<div class="create-container"
      fxFlex="grow" fxLayout="column" fxLayoutGap="1%" fxLayoutAlign="start center">
   <div class="full-width header-creator-logo" fxFlex="25" fxLayout="column" fxLayoutAlign="center center"
        fxLayoutGap="1%">
     <img fxFlex="grow"
          src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/answer-hunter.svg"/>
   </div>
-  <mat-horizontal-stepper *ngIf="createService.gameConfig && gameForm" [selectedIndex]="0" [linear]="!gameForm.valid"
+  <mat-horizontal-stepper *ngIf="creator && creator.gameConfig && gameForm" [selectedIndex]="0" [linear]="!gameForm.valid"
                           [ngClass.lt-lg]="{'full-width': true}" [ngClass.gt-md]="{'three-quarter-width': true}"
                           #stepper
                           style="position: relative; padding: 1%;">
-    <mat-step [stepControl]="createService.infoFormGroup">
+    <mat-step [stepControl]="creator.infoFormGroup">
       <ng-template matStepLabel>Información</ng-template>
       <div fxFlex="grow" fxLayout="column" fxLayoutAlign="center center" style="padding-top: 2%" fxLayoutGap="2%">
         <app-game-info-form
           [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
-          fxFlex="90" class="three-quarter-width" [resourceUid]="createService.gameConfig.resourceUid"
-          [form]="createService.infoFormGroup"></app-game-info-form>
+          fxFlex="90" class="three-quarter-width" [resourceUid]="creator.gameConfig.resourceUid"
+          [form]="creator.infoFormGroup"></app-game-info-form>
         <div fxLayout="row" class="full-width" fxLayoutAlign="end center">
           <!--style="position: absolute; bottom: 2vh; right: 2vh"-->
           <button class="navigate-button" matStepperNext mat-raised-button>Continuar
@@ -24,7 +24,7 @@
         </div>
       </div>
     </mat-step>
-    <mat-step [stepControl]="createService.choicesFormArray">
+    <mat-step [stepControl]="creator.choicesFormArray">
       <ng-template matStepLabel>Ejercicios</ng-template>
       <div fxFlex="grow" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px">
         <div class="full-width" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="4px">
@@ -37,14 +37,14 @@
             <button class="add-button" mat-raised-button (click)="addChoice()"> <mat-icon>add_circle_outline</mat-icon> Agregar ejercicio</button>
             <button class="add-button" mat-icon-button mat-raised-button [matMenuTriggerFor]="addMenu"><mat-icon>arrow_drop_down</mat-icon></button>
           </span>
-            <div fxFlex="grow" [fxLayout]="createService.choicesFormArray.controls.length > 25 ? 'row wrap' : 'row'"
-                 [fxLayout.sm]="createService.choicesFormArray.controls.length > 15 ? 'row wrap' : 'row'"
-                 [fxLayout.xs]="createService.choicesFormArray.controls.length > 11 ? 'row wrap' : 'row'"
+            <div fxFlex="grow" [fxLayout]="creator.choicesFormArray.controls.length > 25 ? 'row wrap' : 'row'"
+                 [fxLayout.sm]="creator.choicesFormArray.controls.length > 15 ? 'row wrap' : 'row'"
+                 [fxLayout.xs]="creator.choicesFormArray.controls.length > 11 ? 'row wrap' : 'row'"
                  fxLayoutAlign="start center" fxLayoutGap="4px">
               <a fxLayout="row wrap"
                  fxLayoutAlign="center center"
                  (click)="currentChoice = i"
-                 *ngFor="let choiceForm of createService.choicesFormArray.controls, let i = index"
+                 *ngFor="let choiceForm of creator.choicesFormArray.controls, let i = index"
                  [class.selected-index]="i === currentChoice" [class.index-form]="i !== currentChoice"
                  [ngClass]="{'valid-form-icon': choiceForm.valid}">
                 {{i + 1}}
@@ -52,7 +52,7 @@
             </div>
           </div>
           <button matTooltip="Ejercicio siguiente" fxHide.gt-sm (click)="changeCurrentChoice(1)" mat-icon-button
-                  [disabled]="currentChoice === createService.choicesFormArray.length - 1">
+                  [disabled]="currentChoice === creator.choicesFormArray.length - 1">
             <mat-icon>navigate_next</mat-icon>
           </button>
           <mat-menu #addMenu="matMenu">
@@ -60,14 +60,14 @@
             <button [matMenuTriggerFor]="positionsMenu" mat-menu-item>Agregar en</button>
             <mat-divider></mat-divider>
             <button mat-menu-item (click)="removeChoice(currentChoice)"
-                    [disabled]="createService.choicesFormArray.controls.length === 1">
+                    [disabled]="creator.choicesFormArray.controls.length === 1">
               <mat-icon>delete</mat-icon>
               Eliminar actual
             </button>
           </mat-menu>
           <mat-menu #positionsMenu="matMenu">
             <button (click)="addChoice(i)" mat-menu-item
-                    *ngFor="let _ of createService.choicesFormArray.controls, let i = index">{{i + 1}}</button>
+                    *ngFor="let _ of creator.choicesFormArray.controls, let i = index">{{i + 1}}</button>
           </mat-menu>
           <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="5px">
             <button color="primary" fxLayout="row" mat-raised-button [disabled]="saving || !gameForm.dirty"
@@ -87,21 +87,21 @@
           <div
             class="full-width" fxLayout="column" fxLayoutAlign="center center">
             <app-exercise-form
-              *ngIf="createService.creatorType === 'answer-hunter'"
+              *ngIf="creator.creatorType === 'answer-hunter'"
               [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
-              [formData]="{form: createService.choicesFormArray.at(currentChoice),
-               initialDatas: createService.gameConfig.exercises[currentChoice]}"
+              [formData]="{form: creator.choicesFormArray.at(currentChoice),
+               initialDatas: creator.gameConfig.exercises[currentChoice], creator: creator}"
               class="full-width"></app-exercise-form>
             <app-sequence-exercise-form
-              *ngIf="createService.creatorType === 'sort-elements'"
+              *ngIf="creator.creatorType === 'sort-elements'"
               [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
-              [formData]="{form: createService.choicesFormArray.at(currentChoice),
-              initialDatas: createService.gameConfig.exercises[currentChoice]}" class="full-width"></app-sequence-exercise-form>
+              [formData]="{form: creator.choicesFormArray.at(currentChoice),
+              initialDatas: creator.gameConfig.exercises[currentChoice], creator: creator}" class="full-width"></app-sequence-exercise-form>
 
           </div>
           <div fxHide.lt-md fxLayout="column" (click)="changeCurrentChoice(1)" fxLayoutAlign="center center">
             <button matTooltip="Ejercicio siguiente" mat-icon-button
-                    [disabled]="currentChoice === createService.choicesFormArray.length - 1">
+                    [disabled]="currentChoice === creator.choicesFormArray.length - 1">
               <mat-icon>navigate_next</mat-icon>
             </button>
           </div>
@@ -117,12 +117,12 @@
         </div>
       </div>
     </mat-step>
-    <mat-step [stepControl]="createService.infoFormGroup">
+    <mat-step [stepControl]="creator.infoFormGroup">
       <ng-template matStepLabel>Configuración</ng-template>
       <div class="full-width" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="2%">
         <app-settings-form
-          [infoFormGroup]="createService.infoFormGroup" [exercisesQuantity]="createService.choicesFormArray.length"
-          [form]="createService.settingsFormGroup" class="full-width"
+          [infoFormGroup]="creator.infoFormGroup" [exercisesQuantity]="creator.choicesFormArray.length"
+          [form]="{form: creator.settingsFormGroup, creator: creator}" class="full-width"
         ></app-settings-form>
         <div class="full-width" fxLayout="row" fxLayoutAlign="space-between center">
           <button class="navigate-button" mat-raised-button matStepperPrevious>
@@ -140,6 +140,6 @@
       </div>
     </mat-step>
   </mat-horizontal-stepper>
-  <mat-spinner *ngIf="!createService.gameConfig" color="accent"></mat-spinner>
+  <mat-spinner *ngIf="creator && !creator.gameConfig" color="accent"></mat-spinner>
 </div>
 

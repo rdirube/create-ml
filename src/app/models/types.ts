@@ -1,3 +1,5 @@
+import {SequenceGameTheme} from './creators/sort-elements';
+
 export interface Showable {
   id?: number;
   video: string;
@@ -13,4 +15,9 @@ export interface ShowableElement {
 
 export interface Option extends ShowableElement {
   isCorrect: boolean;
+}
+
+export interface ThemeInfo<T> {
+  theme: T;
+  text: string;
 }

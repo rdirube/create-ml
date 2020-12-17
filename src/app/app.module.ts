@@ -63,13 +63,13 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     DragDropModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
-  // entryComponents: [AppComponent]
+  // bootstrap: [AppComponent]
+  entryComponents: [AppComponent]
 })
 export class AppModule {
   constructor(private injector: Injector) {
     const myElement = createCustomElement(AppComponent, { injector });
     customElements.define('creator-ml', myElement);
   }
-  // ngDoBootstrap(): void {}
+  ngDoBootstrap(): void {}
 }

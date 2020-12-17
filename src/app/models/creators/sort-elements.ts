@@ -14,7 +14,8 @@ export interface SequenceGameExercise {
 
 export interface SequenceGameSettings {
   type?: 'classic' | 'test'; // 'Clásico' | 'Examen'
-  theme: 'circus' | 'boat' | 'lab';
+  theme: SequenceGameTheme;
   exerciseCount: number;
   randomOrder?: boolean;
 }
+export type SequenceGameTheme = 'train' | 'temple';

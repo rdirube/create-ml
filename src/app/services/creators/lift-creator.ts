@@ -1,26 +1,52 @@
 import {Injectable} from '@angular/core';
-import {CreatorService} from '../creator.service';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {LiftGame, LiftGameExercise, LiftGameTheme} from '../../models/creators/lift-game-creator';
 import {MicroLessonResourceProperties, Resource} from 'ox-types';
-import {SequenceGame, SequenceGameExercise} from '../../models/creators/sort-elements';
+import {Creator} from './creator';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SortElementsGameService extends CreatorService<SequenceGame, SequenceGameExercise> {
-  constructor(private formBuilder: FormBuilder) {
+export class LiftCreator extends Creator<LiftGame, LiftGameExercise, LiftGameTheme> {
+  constructor(formBuilder: FormBuilder) {
     super(formBuilder);
-    this.creatorType = 'sort-elements';
+    this.creatorType = 'answer-hunter';
+    this.themeInfo = [
+      {
+        text: 'Circo',
+        theme: 'circus'
+      },
+      {
+        text: 'Barco',
+        theme: 'boat'
+      },
+      {
+        text: 'Laboratorio',
+        theme: 'lab'
+      }
+    ];
   }
 
-  protected newExercise(): SequenceGameExercise {
+
+  public getSrcImageByTheme(theme: LiftGameTheme): string {
+    const baseURl = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/theme-images/';
+    switch (theme) {
+      case 'lab':
+        return baseURl + 'lab-theme.jpg';
+      case 'circus':
+        return baseURl + 'circus-theme.jpg';
+      case 'boat':
+        return baseURl + 'boat-theme.jpg';
+    }
+  }
+
+  protected newExercise(): LiftGameExercise {
     return {
-      statement: {audio: '', image: '', text: '', video: '', id: 0},
-      corrects: [
-        {audio: '', image: '', text: '1', video: ''},
-        {audio: '', image: '', text: '2', video: ''},
+      options: [
+        {isCorrect: true, showable: {audio: '', image: '', text: '', video: ''}, id: 0},
+        {isCorrect: false, showable: {audio: '', image: '', text: '', video: ''}, id: 0}
       ],
-      traps: [],
+      statement: {audio: '', image: '', text: '', video: '', id: 0},
       id: 0
     };
   }
@@ -61,25 +87,18 @@ export class SortElementsGameService extends CreatorService<SequenceGame, Sequen
     this.initForms(resource);
   }
 
-  public addControls(data: SequenceGameExercise, form: FormGroup): void {
-    console.log('Adding sequence exercise', data);
+  public addControls(data: LiftGameExercise, form: FormGroup): void {
     form.addControl('statement', this.makeShowableForm(data ? data.statement : undefined));
-    form.addControl('corrects', this.formBuilder.array(data ? data.corrects.map(x =>
-      this.makeShowableForm(x)) : [], Validators.compose([this.atLeastOnePropShowable])));
-    form.addControl('traps', this.formBuilder.array(data ? data.traps.map(x =>
-      this.makeShowableForm(x)) : [], Validators.compose([this.atLeastOnePropShowable])));
+    form.addControl('options', this.formBuilder.array(data ? data.options.map(x =>
+      this.makeOptionForm(x)) : [], Validators.compose([this.atLeastOneAnswerIsCorrect, this.atLeastOneProp])));
     const formArray = (form.get('options') as FormArray);
     if (!data) {
       formArray.push(this.makeOptionForm(undefined, true));
       formArray.push(this.makeOptionForm());
-    }
-  }
-
-  public removeChoice(index: number): void {
-    this.choicesFormArray.markAsDirty();
-    this.choicesFormArray.removeAt(index);
-    if (this.currentChoice >= this.choicesFormArray.controls.length) {
-      this.currentChoice = this.choicesFormArray.length - 1;
+    } else {
+      // data.options.forEach(option => {
+      //   formArray.push(this.makeOptionForm(option));
+      // });
     }
   }
 
@@ -125,11 +144,7 @@ export class SortElementsGameService extends CreatorService<SequenceGame, Sequen
 
   private setChoicesForm(): void {
     this.gameConfig.exercises = this.choicesFormArray.controls.map((choiceForm, choiceIndex) => {
-      return {
-        corrects: choiceForm.get('corrects').value,
-        traps: choiceForm.get('traps').value,
-        id: 1, statement: choiceForm.get('statement').value
-      };
+      return {options: choiceForm.get('options').value, id: 1, statement: choiceForm.get('statement').value};
     });
   }
 
@@ -178,15 +193,14 @@ export class SortElementsGameService extends CreatorService<SequenceGame, Sequen
     const showables = [];
     for (let i = 0; i < this.choicesFormArray.length; i++) {
       showables.push(this.choicesFormArray.at(i).get('statement') as FormGroup);
-      const corrects: FormArray = (this.choicesFormArray.at(i).get('corrects') as FormArray);
-      for (let j = 0; j < corrects.length; j++) {
-        showables.push(corrects.at(j).get('showable') as FormGroup);
-      }
-      const traps: FormArray = (this.choicesFormArray.at(i).get('traps') as FormArray);
-      for (let j = 0; j < traps.length; j++) {
-        showables.push(traps.at(j).get('showable') as FormGroup);
+      const options: FormArray = (this.choicesFormArray.at(i).get('options') as FormArray);
+      for (let j = 0; j < options.length; j++) {
+        showables.push(options.at(j).get('showable') as FormGroup);
       }
     }
     return showables;
   }
+
+
 }
+

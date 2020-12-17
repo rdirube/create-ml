@@ -3,7 +3,7 @@ import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {SequenceGameExercise} from '../../models/creators/sort-elements';
-import {SortElementsGameService} from '../../services/creators/sort-elements-game.service';
+import {Creator} from '../../services/creators/creator';
 
 @Component({
   selector: 'app-sequence-exercise-form',
@@ -24,19 +24,19 @@ export class SequenceExerciseFormComponent implements OnInit {
     return this._form;
   }
 
+  public creator: Creator<any, any, any>;
   @Input()
-  public set formData(value: { form: FormGroup, initialDatas: SequenceGameExercise }) {
+  public set formData(value: { form: FormGroup, initialDatas: SequenceGameExercise, creator: Creator<any, any, any> }) {
     this._form = value.form;
-    console.log(this.form);
+    this.creator = value.creator;
     if (!value.form.get('statement')) {
       const initialData = value.initialDatas;
-      this.creatorService.addControls(initialData, value.form);
+      this.creator.addControls(initialData, value.form);
     }
   }
 
 
-  constructor(private creatorService: SortElementsGameService,
-              private cdr: ChangeDetectorRef,
+  constructor(private cdr: ChangeDetectorRef,
               private formBuilder: FormBuilder) {
     this.optionPropertiesForm = this.formBuilder.group({
       optionsWithAudio: false,
@@ -50,7 +50,7 @@ export class SequenceExerciseFormComponent implements OnInit {
 
 
   public addOption(form: string): void {
-    this.getFormArray(form).push(this.creatorService.makeShowableForm());
+    this.getFormArray(form).push(this.creator.makeShowableForm());
   }
 
   removeOption(form: string, index: number): void {

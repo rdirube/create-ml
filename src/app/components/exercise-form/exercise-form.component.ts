@@ -3,7 +3,7 @@ import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {MatExpansionPanel} from '@angular/material/expansion';
 import {Observable} from 'rxjs';
 import {LiftGameExercise} from '../../models/creators/lift-game-creator';
-import {LiftGameService} from '../../services/creators/lift-game.service';
+import {Creator} from '../../services/creators/creator';
 
 @Component({
   selector: 'app-exercise-form',
@@ -20,24 +20,25 @@ export class ExerciseFormComponent implements OnInit {
   get form(): FormGroup {
     return this._form;
   }
-
+  public creator: Creator<any, any, any>;
   @Input()
-  public set formData(value: { form: FormGroup, initialDatas: LiftGameExercise }) {
+  public set formData(value: { form: FormGroup, initialDatas: LiftGameExercise, creator: Creator<any, any, any> }) {
     this._form = value.form;
+    this.creator = value.creator;
     if (!value.form.get('statement')) {
       const initialData = value.initialDatas;
-      this.creatorService.addControls(initialData, value.form);
+      this.creator.addControls(initialData, value.form);
     }
   }
 
-  constructor(private creatorService: LiftGameService) {
+  constructor() {
   }
 
   ngOnInit(): void {
   }
 
   public addOption(): void {
-    this.getCurrentOptionsFormArray().push(this.creatorService.makeOptionForm());
+    this.getCurrentOptionsFormArray().push(this.creator.makeOptionForm());
   }
 
   removeOption(index: number): void {

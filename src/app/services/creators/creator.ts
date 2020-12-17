@@ -1,27 +1,28 @@
-import {Injectable} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
-import {Option, Showable} from '../models/types';
+import {Option, Showable, ThemeInfo} from '../../models/types';
 import {MicroLessonResourceProperties, Resource} from 'ox-types';
-import {Game} from '../models/creators/lift-game-creator';
+import {Game} from '../../models/creators/lift-game-creator';
 
-@Injectable({
-  providedIn: 'root'
-})
-export abstract class CreatorService<T extends Game<B, any>, B> {
+
+export abstract class Creator<GameCfg extends Game<GameExercise, any>, GameExercise, Themes> {
 
   public infoFormGroup: FormGroup;
   choicesFormArray: FormArray;
   settingsFormGroup: FormGroup;
   currentChoice: number;
-  gameConfig: T;
+  gameConfig: GameCfg;
 
   public creatorType: 'answer-hunter' | 'sort-elements';
+  themeInfo: ThemeInfo<Themes>[];
 
-  protected constructor(private _formBuilder: FormBuilder) {
+  protected constructor(protected formBuilder: FormBuilder) {
   }
 
+
+  public abstract getSrcImageByTheme(theme: Themes): string;
+
   public makeOptionForm(option?: Option, isCorrect = false): FormGroup {
-    return this._formBuilder.group({
+    return this.formBuilder.group({
       id: [option ? option.id : 0],
       showable: this.makeShowableForm(option ? option.showable : undefined),
       isCorrect: [option ? option.isCorrect : isCorrect],
@@ -29,7 +30,7 @@ export abstract class CreatorService<T extends Game<B, any>, B> {
   }
 
   public makeShowableForm(data?: Showable): FormGroup {
-    return this._formBuilder.group({
+    return this.formBuilder.group({
       id: [data ? data.id : 0],
       audio: data ? data.audio : '',
       image: data ? data.image : '',
@@ -66,7 +67,7 @@ export abstract class CreatorService<T extends Game<B, any>, B> {
 
   protected initBasicInformation(resource: Resource, textLanguage = 'es'): void {
     const extraInfo = (resource.properties as MicroLessonResourceProperties).customConfig?.extraInfo || undefined;
-    this.infoFormGroup = this._formBuilder.group({
+    this.infoFormGroup = this.formBuilder.group({
       name: [resource.customTextTranslations[textLanguage].name.text, [Validators.required, Validators.maxLength(256)]],
       // todo validator de max peso
       image: [resource.customTextTranslations[textLanguage].previewData.path || ''],
@@ -81,15 +82,22 @@ export abstract class CreatorService<T extends Game<B, any>, B> {
   public addChoice(index?: number): void {
     if (index === undefined) {
       index = this.choicesFormArray.length;
-      // index = this.gameConfig.exercises.length;
     }
-    this.choicesFormArray.insert(index >= 0 ? index : this.choicesFormArray.length, this._formBuilder.group({
+    this.choicesFormArray.insert(index >= 0 ? index : this.choicesFormArray.length, this.formBuilder.group({
       index: [index || 0]
     }));
-    const choice: B = this.newExercise();
+    const choice: GameExercise = this.newExercise();
     this.gameConfig.exercises = this.gameConfig.exercises.slice(0, index).concat([choice]).concat(this.gameConfig.exercises.slice(index));
     this.currentChoice = index >= 0 ? index : (this.choicesFormArray.length - 1);
-    // this.cdr.detectChanges();
+  }
+
+
+  public removeChoice(index: number): void {
+    this.choicesFormArray.markAsDirty();
+    this.choicesFormArray.removeAt(index);
+    if (this.currentChoice >= this.choicesFormArray.controls.length) {
+      this.currentChoice = this.choicesFormArray.length - 1;
+    }
   }
 
   protected getFilesToSave(): { file: File, name: string }[] {
@@ -131,8 +139,14 @@ export abstract class CreatorService<T extends Game<B, any>, B> {
     // return media;
   }
 
-  protected abstract newExercise(): B;
+  protected abstract newExercise(): GameExercise;
   protected abstract getAllShowablesFormArray(): FormGroup[];
+  public abstract setNewGame(resource: Resource): void;
+  public abstract loadGame(resource: Resource): void;
+  public abstract setFormsBeforeSave(resource: Resource): void;
+  public abstract getResourceCustomConfig(resource: Resource): {
+    customConfig: any, filesToSave: { file: File, name: string }[], allMediaUtilized: string[]
+  };
 }
 
 export function validProp(prop): boolean {

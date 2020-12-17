@@ -20,7 +20,8 @@ export interface LiftGameSettings {
   // triviaType?: TriviaType;
   // triviaProperties?: TriviaProperty[];
   type?: 'classic' | 'test'; // 'Clásico' | 'Examen'
-  theme: 'circus' | 'boat' | 'lab';
+  theme: LiftGameTheme;
   exerciseCount: number;
   randomOrder?: boolean;
 }
+export type LiftGameTheme = 'circus' | 'boat' | 'lab';
