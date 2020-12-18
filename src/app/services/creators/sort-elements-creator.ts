@@ -158,7 +158,7 @@ export class SortElementsCreator extends Creator<SequenceGame, SequenceGameExerc
           }],
           exercisesToUpSubLevel: [this.gameConfig.settings.exerciseCount]
         }], extraInfo: {
-          gameUrl: 'https://ml-creators.firebaseapp.com',
+          gameUrl: 'https://sort-elements.firebaseapp.com/',
           theme: this.gameConfig.settings.theme,
           exerciseCase: 'created',
           randomOrder: this.gameConfig.settings.randomOrder,
@@ -185,10 +185,10 @@ export class SortElementsCreator extends Creator<SequenceGame, SequenceGameExerc
   }
 
   getSrcImageByTheme(theme: SequenceGameTheme): string {
-    const baseURl = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/theme-images/';
+    const baseURl = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/themes/train/';
     switch (theme) {
       case 'train':
-        return baseURl + 'lab-theme.jpg';
+        return baseURl + 'train-theme.jpg';
       // case 'circus':
       //   return baseURl +  'circus-theme.jpg';
       // case 'boat':

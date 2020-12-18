@@ -179,7 +179,7 @@ export class LiftCreator extends Creator<LiftGame, LiftGameExercise, LiftGameThe
           }],
           exercisesToUpSubLevel: [this.gameConfig.settings.exerciseCount]
         }], extraInfo: {
-          gameUrl: 'https://ml-creators.firebaseapp.com',
+          gameUrl: 'https://lift-game-creator.firebaseapp.com/',
           theme: this.gameConfig.settings.theme,
           exerciseCase: 'created',
           randomOrder: this.gameConfig.settings.randomOrder,
