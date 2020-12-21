@@ -3,7 +3,8 @@
   <div class="full-width header-creator-logo" fxFlex="25" fxLayout="column" fxLayoutAlign="center center"
        fxLayoutGap="1%">
     <img fxFlex="grow"
-         src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/answer-hunter.svg"/>
+         style="filter: drop-shadow(3px 3px 3px black)"
+         [src]="creator?.logoPath || ''"/>
   </div>
   <mat-horizontal-stepper *ngIf="creator && creator.gameConfig && gameForm" [selectedIndex]="0" [linear]="!gameForm.valid"
                           [ngClass.lt-lg]="{'full-width': true}" [ngClass.gt-md]="{'three-quarter-width': true}"

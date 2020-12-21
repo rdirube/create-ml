@@ -8,6 +8,12 @@ import {Creator} from './creator';
   providedIn: 'root'
 })
 export class SortElementsCreator extends Creator<SequenceGame, SequenceGameExercise, SequenceGameTheme> {
+
+  readonly statementTextMaxLength = 85;
+  readonly patternPath = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/pattern-sort-elements.png';
+  readonly logoPath = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/sort-elements.svg';
+  readonly backgroundColour = '#F2EFED';
+
   constructor(formBuilder: FormBuilder) {
     super(formBuilder);
     this.creatorType = 'sort-elements';
@@ -144,6 +150,7 @@ export class SortElementsCreator extends Creator<SequenceGame, SequenceGameExerc
     const allMediaUtilized = this.getUsedMedia();
     const previousMedia = ((resource.properties as MicroLessonResourceProperties).customConfig?.customMedia || [])
       .filter(x => allMediaUtilized.includes(x));
+    this.setChoicesForm();
     return {
       allMediaUtilized,
       filesToSave,

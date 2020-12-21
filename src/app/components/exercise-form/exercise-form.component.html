@@ -6,7 +6,7 @@
             <mat-icon *ngIf="form.get('statement').valid" class="valid-form-icon" matSuffix>check_circle</mat-icon></span>
       <app-showable-form
         [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
-        [maxTextLength]="20"
+        [maxTextLength]="creator.statementTextMaxLength"
         [form]="form.get('statement')"
         class="statement-container"  fxFlex="grow"></app-showable-form>
                   <span

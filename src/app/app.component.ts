@@ -77,6 +77,10 @@ export class AppComponent implements OnInit {
       console.log('loading game');
       this.loadGame();
     }
+    console.log(this.creator.backgroundColour);
+    this.background = this.sanitizer.bypassSecurityTrustStyle(
+      this.creator.backgroundColour + ' url("' + this.creator.patternPath + '") repeat'
+    );
   }
 
   private _resource: Resource;
@@ -91,33 +95,30 @@ export class AppComponent implements OnInit {
     this.currentChoice = 0;
   }
 
-
   ngOnInit(): void {
-    // timer(1000).subscribe(x => {
-    //   const asd = {
-    //     'ownerUid': 'oQPbggIFzLcEHuDjp5ZNbkkVOlZ2',
-    //     'libraryItemType': 'resource',
-    //     'customTextTranslations': {
-    //       'es': {
-    //         'previewData': {'path': ''},
-    //         'name': {'text': ' game name '},
-    //         'description': {'text': 'game description'}
-    //       }
-    //     },
-    //     'tagIds': {},
-    //     'uid': '1Sf6zNAUJSsIX6s8iBqw',
-    //     'isPublic': false,
-    //     'type': 'mini-lesson',
-    //     'backupReferences': '',
-    //     'supportedLanguages': {'es': true, 'en': false},
-    //     'inheritedPedagogicalObjectives': []
-    //   };
-    //   this.receivedResource = asd as any as Resource;
-    // });
+    timer(1000).subscribe(x => {
+      const asd = {
+        'ownerUid': 'oQPbggIFzLcEHuDjp5ZNbkkVOlZ2',
+        'libraryItemType': 'resource',
+        'customTextTranslations': {
+          'es': {
+            'previewData': {'path': ''},
+            'name': {'text': ' game name '},
+            'description': {'text': 'game description'}
+          }
+        },
+        'tagIds': {},
+        'uid': '1Sf6zNAUJSsIX6s8iBqw',
+        'isPublic': false,
+        'type': 'mini-lesson',
+        'backupReferences': '',
+        'supportedLanguages': {'es': true, 'en': false},
+        'inheritedPedagogicalObjectives': []
+      };
+      this.receivedResource = asd as any as Resource;
+    });
     this.currentChoice = 0;
-    this.background = this.sanitizer.bypassSecurityTrustStyle(
-      '#e0d6c6 url("https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/pattern-answer-hunters.png") repeat'
-    );
+
   }
 
   private setNewGame(): void {
@@ -164,7 +165,7 @@ export class AppComponent implements OnInit {
     // const mediaDeleted = this.getMediaLoadedAndNotAssigned(allMediaUtilised)
     const mediaDeleted = this.getMediaLoadedAndNotAssigned(customConfigMediaAndFiles.allMediaUtilized)
       .filter(x => x !== 'preview-image');
-    console.log(this.mediaFilesAlreadyLoaded);
+    // console.log(this.mediaFilesAlreadyLoaded);
     (this.mediaFilesAlreadyLoaded.get('preview-image') || of('')).subscribe(previewImageValue => {
       const objToSave = {
         resource: this._resource,
@@ -200,7 +201,7 @@ export class AppComponent implements OnInit {
     console.log('resource properties...', JSON.stringify(resource.properties));
     if (!resource.properties) {
       resource.properties = {
-        format: 'answer-hunter'
+        format: 'sort-elements'
       } as any;
     }
     switch ((resource.properties as MicroLessonResourceProperties).format) {

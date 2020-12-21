@@ -11,6 +11,10 @@ export abstract class Creator<GameCfg extends Game<GameExercise, any>, GameExerc
   settingsFormGroup: FormGroup;
   currentChoice: number;
   gameConfig: GameCfg;
+  public abstract readonly statementTextMaxLength;
+  public abstract readonly patternPath;
+  public abstract readonly logoPath;
+  public abstract readonly backgroundColour;
 
   public creatorType: 'answer-hunter' | 'sort-elements';
   themeInfo: ThemeInfo<Themes>[];

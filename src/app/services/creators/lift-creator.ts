@@ -8,6 +8,12 @@ import {Creator} from './creator';
   providedIn: 'root'
 })
 export class LiftCreator extends Creator<LiftGame, LiftGameExercise, LiftGameTheme> {
+
+  readonly statementTextMaxLength = 85;
+  readonly patternPath = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/pattern-answer-hunters.png';
+  readonly logoPath = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/answer-hunter.svg';
+  readonly backgroundColour = '#e0d6c6';
+
   constructor(formBuilder: FormBuilder) {
     super(formBuilder);
     this.creatorType = 'answer-hunter';
@@ -165,6 +171,7 @@ export class LiftCreator extends Creator<LiftGame, LiftGameExercise, LiftGameThe
     const allMediaUtilized = this.getUsedMedia();
     const previousMedia = ((resource.properties as MicroLessonResourceProperties).customConfig?.customMedia || [])
       .filter(x => allMediaUtilized.includes(x));
+    this.setChoicesForm();
     return {
       allMediaUtilized,
       filesToSave,
@@ -200,6 +207,7 @@ export class LiftCreator extends Creator<LiftGame, LiftGameExercise, LiftGameThe
     }
     return showables;
   }
+
 
 
 }
