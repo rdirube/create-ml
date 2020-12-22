@@ -1,9 +1,9 @@
-import {ChangeDetectorRef, Component, HostListener, Input, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {CreatorService} from '../../services/creator.service';
-import {ChoiceExercise, LiftGameExercise} from '../../models/types';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {MatExpansionPanel} from '@angular/material/expansion';
 import {Observable} from 'rxjs';
+import {LiftGameExercise} from '../../models/creators/lift-game-creator';
+import {Creator} from '../../services/creators/creator';
 
 @Component({
   selector: 'app-exercise-form',
@@ -17,38 +17,28 @@ export class ExerciseFormComponent implements OnInit {
 
   @Input() mediaFilesAlreadyLoaded: Map<string, Observable<string>>[];
 
-  optionPropertiesForm: FormGroup;
-
   get form(): FormGroup {
     return this._form;
   }
-
+  public creator: Creator<any, any, any>;
   @Input()
-  public set formData(value: { form: FormGroup, initialDatas: LiftGameExercise }) {
+  public set formData(value: { form: FormGroup, initialDatas: LiftGameExercise, creator: Creator<any, any, any> }) {
     this._form = value.form;
+    this.creator = value.creator;
     if (!value.form.get('statement')) {
       const initialData = value.initialDatas;
-      this.creatorService.addControls(initialData, value.form);
+      this.creator.addControls(initialData, value.form);
     }
   }
 
-
-  constructor(private creatorService: CreatorService,
-              private cdr: ChangeDetectorRef,
-              private formBuilder: FormBuilder) {
-    this.optionPropertiesForm = this.formBuilder.group({
-      optionsWithAudio: false,
-      optionsWithText: true,
-      optionsWithImage: true,
-    });
+  constructor() {
   }
 
   ngOnInit(): void {
   }
 
-
   public addOption(): void {
-    this.getCurrentOptionsFormArray().push(this.creatorService.makeOptionForm());
+    this.getCurrentOptionsFormArray().push(this.creator.makeOptionForm());
   }
 
   removeOption(index: number): void {
@@ -60,33 +50,4 @@ export class ExerciseFormComponent implements OnInit {
     return this._form.get('options') as FormArray;
   }
 
-  getIconName(i: string): string {
-    switch (i) {
-      case 'optionsWithText':
-        return 'text_fields';
-      case 'optionsWithImage':
-        return 'image';
-      case 'optionsWithAudio':
-        return 'audiotrack';
-    }
-  }
-
-  getPropertyText(i: string): string {
-    switch (i) {
-      case 'optionsWithText':
-        return 'Texto';
-      case 'optionsWithImage':
-        return 'Imagen';
-      case 'optionsWithAudio':
-        return 'Audio';
-    }
-  }
-
-
-  @HostListener('document:keydown', ['$event'])
-  asdasda($event) {
-    if ($event.key.toLowerCase() === 'e') {
-      console.log(this.form);
-    }
-  }
 }

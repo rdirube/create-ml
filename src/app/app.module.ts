@@ -25,6 +25,8 @@ import { ExerciseFormComponent } from './components/exercise-form/exercise-form.
 import { ShowableFormComponent } from './components/showable-form/showable-form.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { RecordAudioComponent } from './components/record-audio/record-audio.component';
+import { SequenceExerciseFormComponent } from './components/sequence-exercise-form/sequence-exercise-form.component';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -33,7 +35,8 @@ import { RecordAudioComponent } from './components/record-audio/record-audio.com
     SettingsFormComponent,
     ExerciseFormComponent,
     ShowableFormComponent,
-    RecordAudioComponent
+    RecordAudioComponent,
+    SequenceExerciseFormComponent
   ],
   imports: [
     BrowserModule,
@@ -56,16 +59,17 @@ import { RecordAudioComponent } from './components/record-audio/record-audio.com
     NgxUploaderModule,
     MatSelectModule,
     FormsModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    DragDropModule
   ],
   providers: [],
-  // bootstrap: [AppComponent]
-  entryComponents: [AppComponent]
+  bootstrap: [AppComponent]
+  // entryComponents: [AppComponent]
 })
 export class AppModule {
   constructor(private injector: Injector) {
     const myElement = createCustomElement(AppComponent, { injector });
     customElements.define('creator-ml', myElement);
   }
-  ngDoBootstrap(): void {}
+  // ngDoBootstrap(): void {}
 }

@@ -6,26 +6,16 @@
         fxLayout="row"
         class="full-width" fxLayoutAlign="start space-between" fxLayoutGap="2%">
         <div fxFlex="45" fxFlex.xs="70" fxLayout="column" fxLayoutAlign="start start">
-<!--          <div style="height: 35%; margin-top: 3%" fxLayout="row" fxLayoutAlign="space-evenly center">-->
-<!--            <input-->
-<!--              [accept]="'image/*'" class="input-file" #imageInput type="file" ngFileSelect-->
-<!--              (uploadOutput)="uploadFile($event, 'image'); form.markAsDirty()">-->
-<!--            <img (click)="imageInput.click()" class="showable-add-property-icon" style="width: 15%" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/image-icon.png"/>-->
-<!--            <input-->
-<!--              [accept]="'audio/mpeg'" class="input-file" #audioInput type="file" ngFileSelect-->
-<!--              (uploadOutput)="uploadFile($event, 'audio'); form.markAsDirty()">-->
-<!--            <img (click)="audioInput.click()" class="showable-add-property-icon" style="width: 15%" src="https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/sound.png"/>-->
-<!--&lt;!&ndash;            <img class="showable-add-property-icon" style="width: 15%" src="assets/record-audio-icon.png"/>&ndash;&gt;-->
-<!--            <app-record-audio class="showable-add-property-icon"-->
-<!--                              style="width: 17%;"-->
-<!--                              (endAudio)="uploadFile($event, 'audio'); form.markAsDirty()"></app-record-audio>-->
-<!--          </div>-->
           <mat-form-field
             *ngIf="withText"
             #withText appearance="standard" color="primary" fxFlex="75" class="full-width">
             <mat-label style="color: white">Texto:</mat-label>
             <!--      [formControlName]="'value'"  TODO CHECK THIS ONE  -->
-            <textarea matInput style="color: white;" maxlength="{{maxTextLength}}"
+            <input *ngIf="!textArea" matInput style="color: white;" maxlength="{{maxTextLength}}"
+                   [formControlName]="'text'"
+                   type="text"
+                   [placeholder]="'En verano suele llover.'">
+            <textarea *ngIf="textArea" matInput style="color: white;" maxlength="{{maxTextLength}}"
                       [formControlName]="'text'"
                       [placeholder]="'En verano suele llover.'"></textarea>
             <!--        <textarea style="color: white" maxlength="256" fxFlex="grow" fxFlexFill matInput-->
@@ -35,12 +25,10 @@
             </mat-hint>
           </mat-form-field>
         </div>
-
         <div fxFlex="45"
              fxFlex.xs="51"
               style="height: 100%; margin-top: 3%"
              fxLayout="column" fxLayoutAlign="start start" fxLayoutGap="2%">
-
           <div *ngIf="form.get('image').value !== ''; else imageElse" class="full-width" style="max-height: 40%;" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="3%">
             <img style="max-width: 50%"  [src]=" form.get('image').value.data ? sanitize.bypassSecurityTrustResourceUrl(form.get('image').value.data.base64)
               : (mediaFilesAlreadyLoaded.get(form.get('image').value) | async)"/>

@@ -1,5 +1,8 @@
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
+import {SequenceGameTheme} from '../../models/creators/sort-elements';
+import {SortElementsCreator} from '../../services/creators/sort-elements-creator';
+import {Creator} from '../../services/creators/creator';
 
 @Component({
   selector: 'app-settings-form',
@@ -9,14 +12,17 @@ import {FormGroup} from '@angular/forms';
 export class SettingsFormComponent implements OnInit {
 
   public form: FormGroup;
+  public creator: Creator<any, any, any>;
 
   @Input('form')
-  set setForm(form: FormGroup) {
-    this.form = form;
-    if (!form.get('theme') || !form.get('theme').value) {
-      this.updateTheme('circus');
+  set setForm(value: { form: FormGroup, creator: Creator<any, any, any> }) {
+    this.creator = value.creator;
+    this.themesInfo = this.creator.themeInfo;
+    this.form = value.form;
+    if (!this.form.get('theme') || !this.form.get('theme').value) {
+      // this.updateTheme('circus');
     } else {
-      this.setSrcImageByTheme(form.get('theme').value);
+      this.setSrcImageByTheme(this.form.get('theme').value);
     }
   }
 
@@ -24,8 +30,13 @@ export class SettingsFormComponent implements OnInit {
   @Input() public exercisesQuantity: number;
   public triviaTypes: { name: string, value: 'classic' | 'test' }[];
   currentSrcByTheme: string;
+  themesInfo: {
+    theme: SequenceGameTheme,
+    text: string
+  }[];
 
   constructor() {
+;
   }
 
   ngOnInit(): void {
@@ -41,18 +52,7 @@ export class SettingsFormComponent implements OnInit {
   }
 
   private setSrcImageByTheme(theme: string): void {
-    const baseURl = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/answer-hunter/creator/theme-images/';
-    switch (theme) {
-      case 'lab':
-        this.currentSrcByTheme = 'lab-theme.jpg';
-        break;
-      case 'circus':
-        this.currentSrcByTheme = 'circus-theme.jpg';
-        break;
-      case 'boat':
-        this.currentSrcByTheme = 'boat-theme.jpg';
-        break;
-    }
-    this.currentSrcByTheme = baseURl + this.currentSrcByTheme;
+    this.currentSrcByTheme = this.creator.getSrcImageByTheme(theme as any);
+
   }
 }

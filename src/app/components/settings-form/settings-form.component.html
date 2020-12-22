@@ -4,15 +4,19 @@
       <img class="full-width" [src]="currentSrcByTheme" alt="barco">
       <div fxLayout="row wrap" class="full-width" fxLayoutAlign="center center" fxLayoutGap="1%">
         <span style="padding-right: 5%">Temática:</span>
-        <button color="primary" [class.selected]="form.get('theme').value.includes('circus')" (click)="updateTheme('circus')"
-                mat-stroked-button="">Circo
+
+        <button
+          *ngFor="let theme of themesInfo"
+          color="primary" [class.selected]="form.get('theme').value.includes(theme.theme)"
+          (click)="updateTheme(theme.theme)"
+                mat-stroked-button="">{{theme.text}}
         </button>
-        <button color="primary" [class.selected]="form.get('theme').value.includes('lab')" (click)="updateTheme('lab')"
-                mat-stroked-button="">Laboratorio
-        </button>
-        <button color="primary" [class.selected]="form.get('theme').value.includes('boat')" (click)="updateTheme('boat')"
-                mat-stroked-button="">Barco
-        </button>
+<!--        <button color="primary" [class.selected]="form.get('theme').value.includes('lab')" (click)="updateTheme('lab')"-->
+<!--                mat-stroked-button="">Laboratorio-->
+<!--        </button>-->
+<!--        <button color="primary" [class.selected]="form.get('theme').value.includes('boat')" (click)="updateTheme('boat')"-->
+<!--                mat-stroked-button="">Barco-->
+<!--        </button>-->
       </div>
     </div>
   </div>
@@ -28,12 +32,6 @@
       <mat-divider [inset]="true"></mat-divider>
       <div><b>Cantidad de ejercicios:</b> {{exercisesQuantity}}</div>
       <!--      <div *ngIf="exercisesQuantity / form.get('exerciseCount').value < 2" style="color: #ff7633">-->
-      <div *ngIf="form.get('exerciseCount').value > exercisesQuantity" style="color: #ff7633">
-        <b>¡Atención!</b> Hay  {{exercisesQuantity}} {{exercisesQuantity > 1 ? ' ejercicios cargados ' :
-        ' ejercicio cargado '}} y se pide resolver {{form.get('exerciseCount').value}}, esto generara ejercicios repetidos en el mismo juego.
-        Se recomienda que no se repitan ejercicios para una mejor experiencia. Puedes guardar y luego cargar
-        más.
-      </div>
     </div>
     <mat-divider></mat-divider>
     <mat-accordion class="full-width">
@@ -57,6 +55,12 @@
                    placeholder="Objetivo de respuestas">
             <mat-hint align="start">La cantidad de ejercicios a resolver debe ser mayor o igual a 1</mat-hint>
           </mat-form-field>
+          <div *ngIf="form.get('exerciseCount').value > exercisesQuantity" style="color: #ff7633">
+            <b>¡Atención!</b> Hay  {{exercisesQuantity}} {{exercisesQuantity > 1 ? ' ejercicios cargados ' :
+            ' ejercicio cargado '}} y se pide resolver {{form.get('exerciseCount').value}}, esto generara ejercicios repetidos en el mismo juego.
+            Se recomienda que no se repitan ejercicios para una mejor experiencia. Puedes guardar y luego cargar
+            más.
+          </div>
         </form>
       </mat-expansion-panel>
     </mat-accordion>
