@@ -27,6 +27,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { RecordAudioComponent } from './components/record-audio/record-audio.component';
 import { SequenceExerciseFormComponent } from './components/sequence-exercise-form/sequence-exercise-form.component';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import { RelationsFormComponent } from './components/relations-form/relations-form.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     ExerciseFormComponent,
     ShowableFormComponent,
     RecordAudioComponent,
-    SequenceExerciseFormComponent
+    SequenceExerciseFormComponent,
+    RelationsFormComponent
   ],
   imports: [
     BrowserModule,

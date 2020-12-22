@@ -30,4 +30,13 @@
   padding: 1%;
   background: #a5e3ff;
   border-radius: 3px;
+  max-width: 6vh;
+  max-height: 6vh;
+}
+.showable-container {
+  max-height: 18vh;
+}
+
+img {
+  max-height: 100%;
 }

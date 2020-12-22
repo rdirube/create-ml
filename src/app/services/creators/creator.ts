@@ -16,7 +16,7 @@ export abstract class Creator<GameCfg extends Game<GameExercise, any>, GameExerc
   public abstract readonly logoPath;
   public abstract readonly backgroundColour;
 
-  public creatorType: 'answer-hunter' | 'sort-elements';
+  public creatorType: 'answer-hunter' | 'sort-elements' | 'memotest';
   themeInfo: ThemeInfo<Themes>[];
 
   protected constructor(protected formBuilder: FormBuilder) {
@@ -32,6 +32,7 @@ export abstract class Creator<GameCfg extends Game<GameExercise, any>, GameExerc
       isCorrect: [option ? option.isCorrect : isCorrect],
     });
   }
+
 
   public makeShowableForm(data?: Showable): FormGroup {
     return this.formBuilder.group({
@@ -144,13 +145,24 @@ export abstract class Creator<GameCfg extends Game<GameExercise, any>, GameExerc
   }
 
   protected abstract newExercise(): GameExercise;
+
   protected abstract getAllShowablesFormArray(): FormGroup[];
+
   public abstract setNewGame(resource: Resource): void;
+
   public abstract loadGame(resource: Resource): void;
+
   public abstract setFormsBeforeSave(resource: Resource): void;
+
   public abstract getResourceCustomConfig(resource: Resource): {
     customConfig: any, filesToSave: { file: File, name: string }[], allMediaUtilized: string[]
   };
+
+  makeRelationForm(data: any): FormArray {
+    return this.formBuilder.array(data.relation
+      ? data.relation.map(r => this.makeShowableForm(r))
+      : [], Validators.compose([this.atLeastOnePropShowable]));
+  }
 }
 
 export function validProp(prop): boolean {

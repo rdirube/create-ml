@@ -7,6 +7,7 @@ import {MediaService} from './services/media.service';
 import {Creator} from './services/creators/creator';
 import {SortElementsCreator} from './services/creators/sort-elements-creator';
 import {LiftCreator} from './services/creators/lift-creator';
+import {MemotestCreator} from './services/creators/memotest-creator';
 
 @Component({
   selector: 'app-root',
@@ -115,6 +116,7 @@ export class AppComponent implements OnInit {
         'supportedLanguages': {'es': true, 'en': false},
         'inheritedPedagogicalObjectives': []
       };
+      // const asd = undefined;
       this.receivedResource = asd as any as Resource;
     });
     this.currentChoice = 0;
@@ -197,18 +199,20 @@ export class AppComponent implements OnInit {
     this.formsReady();
   }
 
-  private instanciateCreatorByResource(resource: Resource): LiftCreator | SortElementsCreator {
+  private instanciateCreatorByResource(resource: Resource): Creator<any, any, any> {
     console.log('resource properties...', JSON.stringify(resource.properties));
     if (!resource.properties) {
       resource.properties = {
-        format: 'sort-elements'
+        format: 'memotest'
       } as any;
-    }
-    switch ((resource.properties as MicroLessonResourceProperties).format) {
+    } //  TODO change that any and add memotest to ox types
+    switch ((resource.properties as MicroLessonResourceProperties).format as any) {
       case 'answer-hunter':
         return new LiftCreator(this.formBuilder);
       case 'sort-elements':
         return new SortElementsCreator(this.formBuilder);
+      case 'memotest':
+        return new MemotestCreator(this.formBuilder);
     }
   }
 }

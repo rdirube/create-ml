@@ -1,5 +1,3 @@
-import {SequenceGameTheme} from './creators/sort-elements';
-
 export interface Showable {
   id?: number;
   video: string;

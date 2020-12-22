@@ -1,4 +1,5 @@
 <div class="create-container"
+     style="overflow: scroll"
      fxFlex="grow" fxLayout="column" fxLayoutGap="1%" fxLayoutAlign="start center">
   <div class="full-width header-creator-logo" fxFlex="25" fxLayout="column" fxLayoutAlign="center center"
        fxLayoutGap="1%">
@@ -98,6 +99,11 @@
               [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
               [formData]="{form: creator.choicesFormArray.at(currentChoice),
               initialDatas: creator.gameConfig.exercises[currentChoice], creator: creator}" class="full-width"></app-sequence-exercise-form>
+            <app-relations-form
+              *ngIf="creator.creatorType === 'memotest'"
+              [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
+              [formData]="{form: creator.choicesFormArray.at(currentChoice),
+              initialDatas: creator.gameConfig.exercises[currentChoice], creator: creator}" class="full-width"></app-relations-form>
 
           </div>
           <div fxHide.lt-md fxLayout="column" (click)="changeCurrentChoice(1)" fxLayoutAlign="center center">
