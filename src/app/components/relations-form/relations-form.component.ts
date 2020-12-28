@@ -12,7 +12,6 @@ import {SequenceGameExercise} from '../../models/creators/sort-elements';
 export class RelationsFormComponent implements OnInit {
 
   private _form: FormGroup;
-
   @Input() mediaFilesAlreadyLoaded: Map<string, Observable<string>>[];
 
   optionPropertiesForm: FormGroup;
@@ -37,7 +36,6 @@ export class RelationsFormComponent implements OnInit {
     console.log('relations', this.getFormArray('relations').controls);
   }
 
-
   constructor(private cdr: ChangeDetectorRef,
               private formBuilder: FormBuilder) {
     this.optionPropertiesForm = this.formBuilder.group({
@@ -49,7 +47,6 @@ export class RelationsFormComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
 
   public addOption(form: string): void {
     console.log('THIS MUST BE DONE IN THE CREATOR. FIX');

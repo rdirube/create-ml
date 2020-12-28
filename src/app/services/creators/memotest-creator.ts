@@ -74,9 +74,10 @@ export class MemotestCreator extends Creator<MemotestGame, MemotestGameExercise,
     console.log('Adding MemotestGameExercise', data);
     form.addControl('statement', this.makeShowableForm(data ? data.statement : undefined));
     form.addControl('relations', this.formBuilder.array(data ? data.relations.map(x =>
-      this.formBuilder.array(x.relation.map( r => this.makeShowableForm(r)))) : [], Validators.compose([this.atLeastOnePropShowable])));
-    form.addControl('traps', this.formBuilder.array(data ? data.traps.map(x =>
-      this.makeShowableForm(x)) : [], Validators.compose([this.atLeastOnePropShowable])));
+      this.formBuilder.array(x.relation.map( r => this.makeShowableForm(r)))) : []));
+      // this.formBuilder.array(x.relation.map( r => this.makeShowableForm(r)))) : [], Validators.compose([this.atLeastOnePropShowable])));
+    // form.addControl('traps', this.formBuilder.array(data ? data.traps.map(x =>
+    //   this.makeShowableForm(x)) : [], Validators.compose([this.atLeastOnePropShowable])));
     // const formArray = (form.get('relations') as FormArray);
     // if (!data) {
     //   formArray.push(this.makeOptionForm(undefined, true));
