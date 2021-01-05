@@ -7,7 +7,7 @@ import {MediaService} from './services/media.service';
 import {Creator} from './services/creators/creator';
 import {SortElementsCreator} from './services/creators/sort-elements-creator';
 import {LiftCreator} from './services/creators/lift-creator';
-import {MemotestCreator} from './services/creators/memotest-creator';
+import {RelationsCreator} from './services/creators/relations-creator';
 
 @Component({
   selector: 'app-root',
@@ -126,6 +126,7 @@ export class AppComponent implements OnInit {
   private setNewGame(): void {
     this.creator.setNewGame(this._resource);
     this.formsReady();
+    console.log(this.creator.choicesFormArray);
   }
 
   private formsReady(): void {
@@ -212,7 +213,7 @@ export class AppComponent implements OnInit {
       case 'sort-elements':
         return new SortElementsCreator(this.formBuilder);
       case 'memotest':
-        return new MemotestCreator(this.formBuilder);
+        return new RelationsCreator(this.formBuilder);
     }
   }
 }

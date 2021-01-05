@@ -33,7 +33,8 @@ export class RelationsFormComponent implements OnInit {
       this.creator.addControls(initialData, value.form);
     }
     console.log('form', this.form);
-    console.log('relations', this.getFormArray('relations').controls);
+    console.log('relation array', this.getFormArray('relations').controls);
+    // console.log('relatio', this.getFormArray('relations').controls.map( x => x.get('relation')));
   }
 
   constructor(private cdr: ChangeDetectorRef,

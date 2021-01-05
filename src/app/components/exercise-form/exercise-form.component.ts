@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import {Component, Input, OnInit} from '@angular/core';
+import {FormArray, FormGroup} from '@angular/forms';
 import {MatExpansionPanel} from '@angular/material/expansion';
 import {Observable} from 'rxjs';
 import {LiftGameExercise} from '../../models/creators/lift-game-creator';
@@ -49,5 +49,4 @@ export class ExerciseFormComponent implements OnInit {
   public getCurrentOptionsFormArray(): FormArray {
     return this._form.get('options') as FormArray;
   }
-
 }

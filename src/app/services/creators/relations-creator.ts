@@ -3,7 +3,7 @@ import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MicroLessonResourceProperties, Resource} from 'ox-types';
 import {MemotestGame, MemotestGameExercise, MemotestGameTheme} from '../../models/creators/memotest';
 
-export class MemotestCreator extends Creator<MemotestGame, MemotestGameExercise, MemotestGameTheme> {
+export class RelationsCreator extends Creator<MemotestGame, MemotestGameExercise, MemotestGameTheme> {
 
   readonly statementTextMaxLength = 85;
   readonly patternPath = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/pattern-sort-elements.png';
@@ -74,8 +74,9 @@ export class MemotestCreator extends Creator<MemotestGame, MemotestGameExercise,
     console.log('Adding MemotestGameExercise', data);
     form.addControl('statement', this.makeShowableForm(data ? data.statement : undefined));
     form.addControl('relations', this.formBuilder.array(data ? data.relations.map(x =>
-      this.formBuilder.array(x.relation.map( r => this.makeShowableForm(r)))) : []));
-      // this.formBuilder.array(x.relation.map( r => this.makeShowableForm(r)))) : [], Validators.compose([this.atLeastOnePropShowable])));
+      this.formBuilder.array(x.relation.map(r => this.makeShowableForm(r)))) : []));
+    form.addControl('traps', this.formBuilder.array(data ? data.traps : []));
+    // this.formBuilder.array(x.relation.map( r => this.makeShowableForm(r)))) : [], Validators.compose([this.atLeastOnePropShowable])));
     // form.addControl('traps', this.formBuilder.array(data ? data.traps.map(x =>
     //   this.makeShowableForm(x)) : [], Validators.compose([this.atLeastOnePropShowable])));
     // const formArray = (form.get('relations') as FormArray);
@@ -164,6 +165,13 @@ export class MemotestCreator extends Creator<MemotestGame, MemotestGameExercise,
           maxScore: 10000,
           sublevelConfigurations: [{
             exercises: this.gameConfig.exercises
+              .map(exe => {
+                return {
+                  ...exe, relations: exe.relations.map(rel => {
+                    return {relation: rel};
+                  })
+                };
+              })
           }],
           exercisesToUpSubLevel: [this.gameConfig.settings.exerciseCount]
         }], extraInfo: {
@@ -178,17 +186,21 @@ export class MemotestCreator extends Creator<MemotestGame, MemotestGameExercise,
   }
 
   protected getAllShowablesFormArray(): FormGroup[] {
+    console.log('No se esta teniendo en cuenta tema trampas');
     const showables = [];
     for (let i = 0; i < this.choicesFormArray.length; i++) {
       showables.push(this.choicesFormArray.at(i).get('statement') as FormGroup);
-      const corrects: FormArray = (this.choicesFormArray.at(i).get('corrects') as FormArray);
-      for (let j = 0; j < corrects.length; j++) {
-        showables.push(corrects.at(j) as FormGroup);
-      }
-      const traps: FormArray = (this.choicesFormArray.at(i).get('traps') as FormArray);
-      for (let j = 0; j < traps.length; j++) {
-        showables.push(traps.at(j) as FormGroup);
-      }
+      const relations: FormArray[] = (this.choicesFormArray.at(i).get('relations') as FormArray).controls as FormArray[];
+      relations.map(x => x.controls)
+        .forEach(value => {
+          value.forEach(showable => {
+            showables.push(showable);
+          });
+        });
+      // const traps: FormArray = (this.choicesFormArray.at(i).get('traps') as FormArray);
+      // for (let j = 0; j < traps.length; j++) {
+      //   showables.push(traps.at(j) as FormGroup);
+      // }
     }
     return showables;
   }
