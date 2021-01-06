@@ -187,6 +187,7 @@ export class AppComponent implements OnInit {
       mediaDeleted.forEach(mediaDed => {
         this.mediaFilesAlreadyLoaded.delete(mediaDed);
       });
+      console.log(JSON.stringify(objToSave.resource));
     });
   }
 

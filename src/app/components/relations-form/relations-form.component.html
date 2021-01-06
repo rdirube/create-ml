@@ -15,6 +15,10 @@
   <span
     fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5px">
                   <b>Relaciones</b>
+    <mat-icon *ngIf="getFormArray('relations').valid" class="valid-form-icon" matSuffix>check_circle</mat-icon>
+    <span fxLayout="row" fxLayoutAlign="center center"
+          *ngIf="!getFormArray('relations').valid"
+          class="wrong-message"> Toda opción debe tener cargada al menos un texto, imágen o audio </span>
                 </span>
   <div class="full-width" fxLayout="column" fxLayoutGap="1%">
     <div *ngFor="let relationArray of getFormArray('relations').controls, let i = index"
