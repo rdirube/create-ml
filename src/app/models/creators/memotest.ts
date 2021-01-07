@@ -1,24 +1,25 @@
 import {Game} from './lift-game-creator';
 import {Showable} from '../types';
 
-export interface MemotestGame extends Game<MemotestGameExercise, MemotestGameSettings>{
+export interface RelationsGame<GameTheme> extends Game<RelationGameExercise, RelationsGameSettings<GameTheme>>{
 }
 
 
-export interface MemotestGameExercise {
+export interface RelationGameExercise {
   id: number;
   statement: Showable;
   relations: Relation[];
   traps: Showable[];
 }
 
-export interface MemotestGameSettings {
+export interface RelationsGameSettings<GameTheme> {
   type?: 'classic' | 'test'; // 'Clásico' | 'Examen'
-  theme: MemotestGameTheme;
+  theme: GameTheme;
   exerciseCount: number;
   randomOrder?: boolean;
 }
-export type MemotestGameTheme = 'monster';
+export type JoinWithArrowsGameTheme = 'ocean';
+export type MemotestGameTheme = 'vulcano';
 
 
 export interface Relation {

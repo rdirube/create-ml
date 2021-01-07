@@ -16,8 +16,8 @@ export abstract class Creator<GameCfg extends Game<GameExercise, any>, GameExerc
   public abstract readonly logoPath;
   public abstract readonly backgroundColour;
 
-  public creatorType: 'answer-hunter' | 'sort-elements' | 'memotest';
   themeInfo: ThemeInfo<Themes>[];
+  public creatorType: 'answer-hunter' | 'sort-elements' | 'memotest' | 'join-with-arrows';
 
   protected constructor(protected formBuilder: FormBuilder) {
   }

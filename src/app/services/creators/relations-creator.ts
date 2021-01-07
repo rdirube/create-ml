@@ -1,25 +1,17 @@
 import {Creator} from './creator';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MicroLessonResourceProperties, Resource} from 'ox-types';
-import {MemotestGame, MemotestGameExercise, MemotestGameTheme} from '../../models/creators/memotest';
+import {RelationsGame, RelationGameExercise} from '../../models/creators/memotest';
 
-export class RelationsCreator extends Creator<MemotestGame, MemotestGameExercise, MemotestGameTheme> {
-
-  readonly statementTextMaxLength = 85;
-  readonly patternPath = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/pattern-sort-elements.png';
-  readonly logoPath = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/sort-elements.svg';
-  readonly backgroundColour = '#F2EFED';
+export abstract class RelationsCreator<GameTheme> extends Creator<RelationsGame<GameTheme>,
+  RelationGameExercise, GameTheme> {
 
   constructor(formBuilder: FormBuilder) {
     super(formBuilder);
-    this.creatorType = 'memotest';
-    this.themeInfo = [{
-      text: 'Monsters',
-      theme: 'monster'
-    }];
+
   }
 
-  protected newExercise(): MemotestGameExercise {
+  protected newExercise(): RelationGameExercise {
     return {
       statement: {audio: '', image: '', text: '', video: '', id: 0},
       relations: [
@@ -55,23 +47,27 @@ export class RelationsCreator extends Creator<MemotestGame, MemotestGameExercise
       format: 'sort-elements', miniLessonVersion: 'with-custom-config-v2',
       miniLessonUid: 'Sort elements'
     };
+    console.log('resource', resource, JSON.stringify(resource));
     (resource.properties as MicroLessonResourceProperties).url = 'https://ml-screen-manager.firebaseapp.com';
-    resource.customTextTranslations = {es: {name: {text: ''}, description: {text: ''}, previewData: {path: ''}}};
+    resource.customTextTranslations =
+      (resource.customTextTranslations && Object.keys(resource.customTextTranslations).length) ?
+        resource.customTextTranslations
+        : {es: {name: {text: ''}, description: {text: ''}, previewData: {path: ''}}};
     this.gameConfig = {
       exercises: [],
       settings: {
         exerciseCount: 10,
         randomOrder: false,
         type: 'classic',
-        theme: 'monster'
+        theme: this.themeInfo[0].theme as GameTheme
       },
       resourceUid: resource.uid
     };
     this.initForms(resource);
   }
 
-  public addControls(data: MemotestGameExercise, form: FormGroup): void {
-    console.log('Adding MemotestGameExercise', data);
+  public addControls(data: RelationGameExercise, form: FormGroup): void {
+    console.log('Adding RelationGameExercise', data);
     form.addControl('statement', this.makeShowableForm(data ? data.statement : undefined));
     form.addControl('relations', this.formBuilder.array(data ? data.relations.map(x =>
       this.formBuilder.array(x.relation.map(r => this.makeShowableForm(r)))) : []));
@@ -205,11 +201,4 @@ export class RelationsCreator extends Creator<MemotestGame, MemotestGameExercise
     return showables;
   }
 
-  getSrcImageByTheme(theme: MemotestGameTheme): string {
-    const baseURl = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/themes/train/';
-    switch (theme) {
-      case 'monster':
-        return baseURl + 'train-theme.jpg';
-    }
-  }
 }

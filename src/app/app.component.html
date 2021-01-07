@@ -1,9 +1,9 @@
 <div class="create-container"
      style="overflow: scroll"
-     fxFlex="grow" fxLayout="column" fxLayoutGap="1%" fxLayoutAlign="start center">
-  <div class="full-width header-creator-logo" fxFlex="25" fxLayout="column" fxLayoutAlign="center center"
-       fxLayoutGap="1%">
-    <img fxFlex="grow"
+     fxFlex="grow" fxLayout="column"  fxLayoutAlign="start center">
+  <div style="margin: 1%" class="full-width header-creator-logo"
+       fxFlex="25" fxLayout="column" fxLayoutAlign="center center">
+    <img
          style="filter: drop-shadow(3px 3px 3px black)"
          [src]="creator?.logoPath || ''"/>
   </div>
@@ -100,7 +100,7 @@
               [formData]="{form: creator.choicesFormArray.at(currentChoice),
               initialDatas: creator.gameConfig.exercises[currentChoice], creator: creator}" class="full-width"></app-sequence-exercise-form>
             <app-relations-form
-              *ngIf="creator.creatorType === 'memotest'"
+              *ngIf="['memotest', 'join-with-arrows'].includes(creator.creatorType)"
               [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
               [formData]="{form: creator.choicesFormArray.at(currentChoice),
               initialDatas: creator.gameConfig.exercises[currentChoice], creator: creator}" class="full-width"></app-relations-form>

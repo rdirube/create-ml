@@ -8,6 +8,8 @@ import {Creator} from './services/creators/creator';
 import {SortElementsCreator} from './services/creators/sort-elements-creator';
 import {LiftCreator} from './services/creators/lift-creator';
 import {RelationsCreator} from './services/creators/relations-creator';
+import {JoinWithArrowsCreator} from './services/creators/join-with-arrows-creator';
+import {MemotestCreator} from './services/creators/memotest-creator';
 
 @Component({
   selector: 'app-root',
@@ -97,28 +99,24 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    timer(1000).subscribe(x => {
-      const asd = {
-        'ownerUid': 'oQPbggIFzLcEHuDjp5ZNbkkVOlZ2',
-        'libraryItemType': 'resource',
-        'customTextTranslations': {
-          'es': {
-            'previewData': {'path': ''},
-            'name': {'text': ' game name '},
-            'description': {'text': 'game description'}
-          }
-        },
-        'tagIds': {},
-        'uid': '1Sf6zNAUJSsIX6s8iBqw',
-        'isPublic': false,
-        'type': 'mini-lesson',
-        'backupReferences': '',
-        'supportedLanguages': {'es': true, 'en': false},
-        'inheritedPedagogicalObjectives': []
-      };
-      // const asd = undefined;
-      this.receivedResource = asd as any as Resource;
-    });
+    // timer(1000).subscribe(x => {
+    //   const asd = {
+    //       'supportedLanguages': {'es': true, 'en': false},
+    //       'isPublic': false,
+    //       'ownerUid': 'oQPbggIFzLcEHuDjp5ZNbkkVOlZ2',
+    //       'uid': 'dUKr5JJrsVDOD47oscop',
+    //       'inheritedPedagogicalObjectives': [],
+    //       'properties': {'format': 'memotest'},
+    //       'customTextTranslations': {},
+    //       'backupReferences': '',
+    //       'type': 'mini-lesson',
+    //       'libraryItemType': 'resource',
+    //       'tagIds': {}
+    //     }
+    //   ;
+    //   // const asd = undefined;
+    //   this.receivedResource = asd as any as Resource;
+    // });
     this.currentChoice = 0;
 
   }
@@ -206,15 +204,17 @@ export class AppComponent implements OnInit {
     if (!resource.properties) {
       resource.properties = {
         format: 'memotest'
-      } as any;
+      } as MicroLessonResourceProperties;
     } //  TODO change that any and add memotest to ox types
-    switch ((resource.properties as MicroLessonResourceProperties).format as any) {
+    switch ((resource.properties as MicroLessonResourceProperties).format) {
       case 'answer-hunter':
         return new LiftCreator(this.formBuilder);
       case 'sort-elements':
         return new SortElementsCreator(this.formBuilder);
       case 'memotest':
-        return new RelationsCreator(this.formBuilder);
+        return new MemotestCreator(this.formBuilder);
+      case 'join-with-arrows':
+        return new JoinWithArrowsCreator(this.formBuilder);
     }
   }
 }
