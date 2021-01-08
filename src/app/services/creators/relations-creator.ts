@@ -1,6 +1,6 @@
 import {Creator} from './creator';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MicroLessonResourceProperties, Resource} from 'ox-types';
+import {MicroLessonFormatType, MicroLessonResourceProperties, Resource} from 'ox-types';
 import {RelationsGame, RelationGameExercise} from '../../models/creators/memotest';
 
 export abstract class RelationsCreator<GameTheme> extends Creator<RelationsGame<GameTheme>,
@@ -44,8 +44,8 @@ export abstract class RelationsCreator<GameTheme> extends Creator<RelationsGame<
   public setNewGame(resource: Resource): void {
     resource.properties = {
       customConfig: undefined,
-      format: 'sort-elements', miniLessonVersion: 'with-custom-config-v2',
-      miniLessonUid: 'Sort elements'
+      format: this.getFormat(), miniLessonVersion: 'with-custom-config-v2',
+      miniLessonUid: this.getMiniLessonUid()
     };
     console.log('resource', resource, JSON.stringify(resource));
     (resource.properties as MicroLessonResourceProperties).url = 'https://ml-screen-manager.firebaseapp.com';
@@ -171,7 +171,7 @@ export abstract class RelationsCreator<GameTheme> extends Creator<RelationsGame<
           }],
           exercisesToUpSubLevel: [this.gameConfig.settings.exerciseCount]
         }], extraInfo: {
-          gameUrl: 'https://sort-elements.firebaseapp.com/',
+          gameUrl: this.getGameURl(),
           theme: this.gameConfig.settings.theme,
           exerciseCase: 'created',
           randomOrder: this.gameConfig.settings.randomOrder,
@@ -200,5 +200,9 @@ export abstract class RelationsCreator<GameTheme> extends Creator<RelationsGame<
     }
     return showables;
   }
+
+  protected abstract getGameURl(): string;
+  protected abstract getFormat(): MicroLessonFormatType;
+  protected abstract getMiniLessonUid(): string;
 
 }

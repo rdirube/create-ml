@@ -1,5 +1,6 @@
 import {RelationsCreator} from './relations-creator';
 import {JoinWithArrowsGameTheme} from '../../models/creators/memotest';
+import {MicroLessonFormatType} from 'ox-types';
 
 export class JoinWithArrowsCreator extends RelationsCreator<JoinWithArrowsGameTheme> {
   readonly statementTextMaxLength = 85;
@@ -24,13 +25,18 @@ export class JoinWithArrowsCreator extends RelationsCreator<JoinWithArrowsGameTh
     }
   }
 
-    // TODO este es de memotest
-  // getSrcImageByTheme(theme: JoinWithArrowsGameTheme): string {
-  //   const baseURl = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/themes/train/';
-  //   switch (theme) {
-  //     case 'monster':
-  //       return baseURl + 'train-theme.jpg';
-  //   }
-  // }
+  protected getGameURl(): string {
+    return 'https://join-with-arrows.firebaseapp.com/';
+  }
+
+
+  protected getFormat(): MicroLessonFormatType {
+    return 'join-with-arrows';
+  }
+
+  protected getMiniLessonUid(): string {
+    return 'Join with arrows';
+  }
+
 }
 

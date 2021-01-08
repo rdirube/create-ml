@@ -1,5 +1,6 @@
 import {RelationsCreator} from './relations-creator';
 import {MemotestGameTheme} from '../../models/creators/memotest';
+import {MicroLessonFormatType} from 'ox-types';
 
 export class MemotestCreator extends RelationsCreator<MemotestGameTheme> {
   readonly statementTextMaxLength = 85;
@@ -22,6 +23,18 @@ export class MemotestCreator extends RelationsCreator<MemotestGameTheme> {
       case 'vulcano':
         return baseURl + 'train-theme.jpg';
     }
+  }
+
+  protected getGameURl(): string {
+    return 'https://memotest-ox.firebaseapp.com/';
+  }
+
+  protected getFormat(): MicroLessonFormatType {
+    return 'memotest';
+  }
+
+  protected getMiniLessonUid(): string {
+    return 'Memotest';
   }
 }
 
