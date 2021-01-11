@@ -12,12 +12,14 @@ export abstract class Creator<GameCfg extends Game<GameExercise, any>, GameExerc
   currentChoice: number;
   gameConfig: GameCfg;
   public abstract readonly statementTextMaxLength;
+  public optionTextMaxLength = 12;
   public abstract readonly patternPath;
   public abstract readonly logoPath;
   public abstract readonly backgroundColour;
 
   themeInfo: ThemeInfo<Themes>[];
   public creatorType: 'answer-hunter' | 'sort-elements' | 'memotest' | 'join-with-arrows';
+  canAddExercises = true;
 
   protected constructor(protected formBuilder: FormBuilder) {
   }

@@ -67,7 +67,6 @@ export abstract class RelationsCreator<GameTheme> extends Creator<RelationsGame<
   }
 
   public addControls(data: RelationGameExercise, form: FormGroup): void {
-    console.log('Adding RelationGameExercise', data);
     form.addControl('statement', this.makeShowableForm(data ? data.statement : undefined));
     form.addControl('relations', this.formBuilder.array(data ? data.relations.map(x =>
       this.formBuilder.array(x.relation.map(r => this.makeShowableForm(r)))) : []));

@@ -1,6 +1,6 @@
-import { BrowserModule } from '@angular/platform-browser';
+import {BrowserModule} from '@angular/platform-browser';
 import {Injector, NgModule} from '@angular/core';
-import { AppComponent } from './app.component';
+import {AppComponent} from './app.component';
 import {ExtendedModule, FlexModule} from '@angular/flex-layout';
 import {createCustomElement} from '@angular/elements';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -16,18 +16,18 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatButtonModule} from '@angular/material/button';
 import {MatListModule} from '@angular/material/list';
 import {MatTooltipModule} from '@angular/material/tooltip';
-import { GameInfoFormComponent } from './components/game-info-form/game-info-form.component';
+import {GameInfoFormComponent} from './components/game-info-form/game-info-form.component';
 import {MatInputModule} from '@angular/material/input';
 import {NgxUploaderModule} from 'ngx-uploader';
 import {MatSelectModule} from '@angular/material/select';
-import { SettingsFormComponent } from './components/settings-form/settings-form.component';
-import { ExerciseFormComponent } from './components/exercise-form/exercise-form.component';
-import { ShowableFormComponent } from './components/showable-form/showable-form.component';
+import {SettingsFormComponent} from './components/settings-form/settings-form.component';
+import {ExerciseFormComponent} from './components/exercise-form/exercise-form.component';
+import {ShowableFormComponent} from './components/showable-form/showable-form.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import { RecordAudioComponent } from './components/record-audio/record-audio.component';
-import { SequenceExerciseFormComponent } from './components/sequence-exercise-form/sequence-exercise-form.component';
+import {RecordAudioComponent} from './components/record-audio/record-audio.component';
+import {SequenceExerciseFormComponent} from './components/sequence-exercise-form/sequence-exercise-form.component';
 import {DragDropModule} from '@angular/cdk/drag-drop';
-import { RelationsFormComponent } from './components/relations-form/relations-form.component';
+import {RelationsFormComponent} from './components/relations-form/relations-form.component';
 
 @NgModule({
   declarations: [
@@ -65,13 +65,15 @@ import { RelationsFormComponent } from './components/relations-form/relations-fo
     DragDropModule
   ],
   providers: [],
-  // bootstrap: [AppComponent]
-  entryComponents: [AppComponent]
+  bootstrap: [AppComponent]
+  // entryComponents: [AppComponent]
 })
 export class AppModule {
   constructor(private injector: Injector) {
-    const myElement = createCustomElement(AppComponent, { injector });
+    const myElement = createCustomElement(AppComponent, {injector});
     customElements.define('creator-ml', myElement);
   }
-  ngDoBootstrap(): void {}
+
+  // ngDoBootstrap(): void {
+  // }
 }

@@ -99,24 +99,24 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // timer(1000).subscribe(x => {
-    //   const asd = {
-    //       'supportedLanguages': {'es': true, 'en': false},
-    //       'isPublic': false,
-    //       'ownerUid': 'oQPbggIFzLcEHuDjp5ZNbkkVOlZ2',
-    //       'uid': 'dUKr5JJrsVDOD47oscop',
-    //       'inheritedPedagogicalObjectives': [],
-    //       'properties': {'format': 'memotest'},
-    //       'customTextTranslations': {},
-    //       'backupReferences': '',
-    //       'type': 'mini-lesson',
-    //       'libraryItemType': 'resource',
-    //       'tagIds': {}
-    //     }
-    //   ;
-    //   // const asd = undefined;
-    //   this.receivedResource = asd as any as Resource;
-    // });
+    timer(1000).subscribe(x => {
+      const asd = {
+          'supportedLanguages': {'es': true, 'en': false},
+          'isPublic': false,
+          'ownerUid': 'oQPbggIFzLcEHuDjp5ZNbkkVOlZ2',
+          'uid': 'dUKr5JJrsVDOD47oscop',
+          'inheritedPedagogicalObjectives': [],
+          // 'properties': {'format': 'memotest'},
+          'customTextTranslations': {},
+          'backupReferences': '',
+          'type': 'mini-lesson',
+          'libraryItemType': 'resource',
+          'tagIds': {}
+        }
+      ;
+      // const asd = undefined;
+      this.receivedResource = asd as any as Resource;
+    });
     this.currentChoice = 0;
 
   }
@@ -203,7 +203,7 @@ export class AppComponent implements OnInit {
     console.log('resource properties...', JSON.stringify(resource.properties));
     if (!resource.properties) {
       resource.properties = {
-        format: 'memotest'
+        format: 'join-with-arrows'
       } as MicroLessonResourceProperties;
     } //  TODO change that any and add memotest to ox types
     switch ((resource.properties as MicroLessonResourceProperties).format) {

@@ -10,6 +10,7 @@ export class JoinWithArrowsCreator extends RelationsCreator<JoinWithArrowsGameTh
 
   constructor(props) {
     super(props);
+    this.optionTextMaxLength = 50;
     this.creatorType = 'join-with-arrows';
     this.themeInfo = [{
       text: 'ocean',

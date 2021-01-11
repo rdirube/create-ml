@@ -10,6 +10,7 @@ export class MemotestCreator extends RelationsCreator<MemotestGameTheme> {
 
   constructor(props) {
     super(props);
+    this.canAddExercises = false;
     this.creatorType = 'join-with-arrows';
     this.themeInfo = [{
       text: 'Vólcan',
