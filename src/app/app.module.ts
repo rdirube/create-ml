@@ -65,8 +65,8 @@ import {RelationsFormComponent} from './components/relations-form/relations-form
     DragDropModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
-  // entryComponents: [AppComponent]
+  // bootstrap: [AppComponent]
+  entryComponents: [AppComponent]
 })
 export class AppModule {
   constructor(private injector: Injector) {
@@ -74,6 +74,6 @@ export class AppModule {
     customElements.define('creator-ml', myElement);
   }
 
-  // ngDoBootstrap(): void {
-  // }
+  ngDoBootstrap(): void {
+  }
 }

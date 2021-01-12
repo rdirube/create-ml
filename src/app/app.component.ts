@@ -99,24 +99,24 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    timer(1000).subscribe(x => {
-      const asd = {
-          'supportedLanguages': {'es': true, 'en': false},
-          'isPublic': false,
-          'ownerUid': 'oQPbggIFzLcEHuDjp5ZNbkkVOlZ2',
-          'uid': 'dUKr5JJrsVDOD47oscop',
-          'inheritedPedagogicalObjectives': [],
-          // 'properties': {'format': 'memotest'},
-          'customTextTranslations': {},
-          'backupReferences': '',
-          'type': 'mini-lesson',
-          'libraryItemType': 'resource',
-          'tagIds': {}
-        }
-      ;
-      // const asd = undefined;
-      this.receivedResource = asd as any as Resource;
-    });
+    // timer(1000).subscribe(x => {
+    //   const asd = {
+    //       'supportedLanguages': {'es': true, 'en': false},
+    //       'isPublic': false,
+    //       'ownerUid': 'oQPbggIFzLcEHuDjp5ZNbkkVOlZ2',
+    //       'uid': 'dUKr5JJrsVDOD47oscop',
+    //       'inheritedPedagogicalObjectives': [],
+    //       // 'properties': {'format': 'memotest'},
+    //       'customTextTranslations': {},
+    //       'backupReferences': '',
+    //       'type': 'mini-lesson',
+    //       'libraryItemType': 'resource',
+    //       'tagIds': {}
+    //     }
+    //   ;
+    //   // const asd = undefined;
+    //   this.receivedResource = asd as any as Resource;
+    // });
     this.currentChoice = 0;
 
   }
@@ -209,7 +209,10 @@ export class AppComponent implements OnInit {
     switch ((resource.properties as MicroLessonResourceProperties).format) {
       case 'answer-hunter':
         return new LiftCreator(this.formBuilder);
+      case 'anagram':
+      case 'sort-numbers':
       case 'sort-elements':
+      case 'sort-sentences':
         return new SortElementsCreator(this.formBuilder);
       case 'memotest':
         return new MemotestCreator(this.formBuilder);
