@@ -95,7 +95,10 @@
                initialDatas: creator.gameConfig.exercises[currentChoice], creator: creator}"
               class="full-width"></app-exercise-form>
             <app-sequence-exercise-form
-              *ngIf="creator.creatorType === 'sort-elements'"
+              *ngIf="creator.creatorType === 'sort-elements'
+              || creator.creatorType === 'anagram'
+              || creator.creatorType === 'sort-numbers'
+              || creator.creatorType === 'sort-sentences'"
               [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
               [formData]="{form: creator.choicesFormArray.at(currentChoice),
               initialDatas: creator.gameConfig.exercises[currentChoice], creator: creator}" class="full-width"></app-sequence-exercise-form>

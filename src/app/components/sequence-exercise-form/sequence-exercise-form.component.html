@@ -28,8 +28,10 @@
           <app-showable-form
             [textArea]="false"
             [resourcesFields]="true"
+            [withImage]="creator.optionWithImage"
+            [withAudio]="creator.optionWithAudio"
             [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
-            [maxTextLength]="12"
+            [maxTextLength]="creator.optionTextMaxLength"
             [form]="option"
             class="full-width"></app-showable-form>
         </div>

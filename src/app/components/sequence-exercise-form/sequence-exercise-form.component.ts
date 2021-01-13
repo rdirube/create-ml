@@ -16,7 +16,7 @@ export class SequenceExerciseFormComponent implements OnInit {
 
   @Input() mediaFilesAlreadyLoaded: Map<string, Observable<string>>[];
 
-  optionPropertiesForm: FormGroup;
+  // optionPropertiesForm: FormGroup;
   readonly maxOptions = 10;
   readonly minOptions = 2;
 
@@ -25,6 +25,7 @@ export class SequenceExerciseFormComponent implements OnInit {
   }
 
   public creator: Creator<any, any, any>;
+
   @Input()
   public set formData(value: { form: FormGroup, initialDatas: SequenceGameExercise, creator: Creator<any, any, any> }) {
     this._form = value.form;
@@ -38,14 +39,16 @@ export class SequenceExerciseFormComponent implements OnInit {
 
   constructor(private cdr: ChangeDetectorRef,
               private formBuilder: FormBuilder) {
-    this.optionPropertiesForm = this.formBuilder.group({
-      optionsWithAudio: false,
-      optionsWithText: true,
-      optionsWithImage: true,
-    });
+    // this.optionPropertiesForm = this.formBuilder.group({
+    //   optionsWithAudio: false,
+    //   optionsWithText: true,
+    //   optionsWithImage: true,
+    // });
   }
 
   ngOnInit(): void {
+    console.log(this.creator.optionWithImage);
+    console.log(this.creator.optionWithAudio);
   }
 
 

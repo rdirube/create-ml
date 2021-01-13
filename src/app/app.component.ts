@@ -5,11 +5,15 @@ import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 import {MicroLessonResourceProperties, Resource, ResourceProperties} from 'ox-types';
 import {MediaService} from './services/media.service';
 import {Creator} from './services/creators/creator';
-import {SortElementsCreator} from './services/creators/sort-elements-creator';
+import {SortElementsCreator} from './services/creators/sort/sort-elements-creator';
 import {LiftCreator} from './services/creators/lift-creator';
 import {RelationsCreator} from './services/creators/relations-creator';
 import {JoinWithArrowsCreator} from './services/creators/join-with-arrows-creator';
 import {MemotestCreator} from './services/creators/memotest-creator';
+import {AnagramCreator} from './services/creators/sort/anagram-creator';
+import {SortNumbersCreator} from './services/creators/sort/sort-numbers-creator';
+import {SortImagesCreator} from './services/creators/sort/sort-images-creator';
+import {SortSentencesCreator} from './services/creators/sort/sort-sentences-creator';
 
 @Component({
   selector: 'app-root',
@@ -80,7 +84,6 @@ export class AppComponent implements OnInit {
       console.log('loading game');
       this.loadGame();
     }
-    console.log(this.creator.backgroundColour);
     this.background = this.sanitizer.bypassSecurityTrustStyle(
       this.creator.backgroundColour + ' url("' + this.creator.patternPath + '") repeat'
     );
@@ -118,7 +121,6 @@ export class AppComponent implements OnInit {
     //   this.receivedResource = asd as any as Resource;
     // });
     this.currentChoice = 0;
-
   }
 
   private setNewGame(): void {
@@ -203,17 +205,21 @@ export class AppComponent implements OnInit {
     console.log('resource properties...', JSON.stringify(resource.properties));
     if (!resource.properties) {
       resource.properties = {
-        format: 'join-with-arrows'
+        format: 'anagram'
       } as MicroLessonResourceProperties;
     } //  TODO change that any and add memotest to ox types
     switch ((resource.properties as MicroLessonResourceProperties).format) {
       case 'answer-hunter':
         return new LiftCreator(this.formBuilder);
       case 'anagram':
+        return new AnagramCreator(this.formBuilder);
       case 'sort-numbers':
+        return new SortNumbersCreator(this.formBuilder);
       case 'sort-elements':
+        return new SortImagesCreator(this.formBuilder);
+        // return new SortElementsCreator(this.formBuilder);
       case 'sort-sentences':
-        return new SortElementsCreator(this.formBuilder);
+        return new SortSentencesCreator(this.formBuilder);
       case 'memotest':
         return new MemotestCreator(this.formBuilder);
       case 'join-with-arrows':

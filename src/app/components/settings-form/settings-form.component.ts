@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {SequenceGameTheme} from '../../models/creators/sort-elements';
-import {SortElementsCreator} from '../../services/creators/sort-elements-creator';
+import {SortElementsCreator} from '../../services/creators/sort/sort-elements-creator';
 import {Creator} from '../../services/creators/creator';
 
 @Component({

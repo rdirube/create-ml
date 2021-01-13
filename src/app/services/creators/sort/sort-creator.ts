@@ -1,39 +1,14 @@
-import {Injectable} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MicroLessonResourceProperties, Resource} from 'ox-types';
-import {SequenceGame, SequenceGameExercise, SequenceGameTheme} from '../../models/creators/sort-elements';
-import {Creator} from './creator';
+import {MicroLessonFormatType, MicroLessonResourceProperties, Resource} from 'ox-types';
+import {SequenceGame, SequenceGameExercise} from '../../../models/creators/sort-elements';
+import {Creator} from '../creator';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class SortElementsCreator extends Creator<SequenceGame, SequenceGameExercise, SequenceGameTheme> {
-
-  readonly statementTextMaxLength = 85;
-  readonly patternPath = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/pattern-sort-elements.png';
-  readonly logoPath = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/sort-elements.svg';
-  readonly backgroundColour = '#F2EFED';
+export abstract class SortCreator<T> extends Creator<SequenceGame, SequenceGameExercise, T> {
 
   constructor(formBuilder: FormBuilder) {
     super(formBuilder);
-    this.creatorType = 'sort-elements';
-    this.themeInfo = [{
-      text: 'Tren',
-      theme: 'train'
-    }];
   }
 
-  protected newExercise(): SequenceGameExercise {
-    return {
-      statement: {audio: '', image: '', text: '', video: '', id: 0},
-      corrects: [
-        {audio: '', image: '', text: '1', video: ''},
-        {audio: '', image: '', text: '2', video: ''},
-      ],
-      traps: [],
-      id: 0
-    };
-  }
   public loadGame(resource: Resource): void {
     const customConfig = (resource.properties as MicroLessonResourceProperties).customConfig;
     this.gameConfig = {
@@ -51,8 +26,8 @@ export class SortElementsCreator extends Creator<SequenceGame, SequenceGameExerc
   public setNewGame(resource: Resource): void {
     resource.properties = {
       customConfig: undefined,
-      format: 'sort-elements', miniLessonVersion: 'with-custom-config-v2',
-      miniLessonUid: 'Sort elements'
+      format: this.getGameFormat(), miniLessonVersion: 'with-custom-config-v2',
+      miniLessonUid: this.getMinilessonUId()
     };
     (resource.properties as MicroLessonResourceProperties).url = 'https://ml-screen-manager.firebaseapp.com';
     resource.customTextTranslations = {es: {name: {text: ''}, description: {text: ''}, previewData: {path: ''}}};
@@ -165,11 +140,12 @@ export class SortElementsCreator extends Creator<SequenceGame, SequenceGameExerc
           }],
           exercisesToUpSubLevel: [this.gameConfig.settings.exerciseCount]
         }], extraInfo: {
-          gameUrl: 'https://sort-elements.firebaseapp.com/',
+          gameUrl: this.getGameUrl(),
           theme: this.gameConfig.settings.theme,
           exerciseCase: 'created',
           randomOrder: this.gameConfig.settings.randomOrder,
-          language: this.infoFormGroup.get('language').value
+          language: this.infoFormGroup.get('language').value,
+          sortCreatorType: this.getGameFormat()
         }
       }
     };
@@ -191,15 +167,19 @@ export class SortElementsCreator extends Creator<SequenceGame, SequenceGameExerc
     return showables;
   }
 
-  getSrcImageByTheme(theme: SequenceGameTheme): string {
-    const baseURl = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/themes/train/';
-    switch (theme) {
-      case 'train':
-        return baseURl + 'train-theme.jpg';
-      // case 'circus':
-      //   return baseURl +  'circus-theme.jpg';
-      // case 'boat':
-      //   return baseURl + 'boat-theme.jpg';
-    }
-  }
+  protected abstract getGameFormat(): MicroLessonFormatType;
+  protected abstract getMinilessonUId(): string;
+  protected abstract getGameUrl(): string;
+
+  // getSrcImageByTheme(theme: T): string {
+  //   const baseURl = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/themes/train/';
+  //   switch (theme) {
+  //     case 'train':
+  //       return baseURl + 'train-theme.jpg';
+  //     // case 'circus':
+  //     //   return baseURl +  'circus-theme.jpg';
+  //     // case 'boat':
+  //     //   return baseURl + 'boat-theme.jpg';
+  //   }
+  // }
 }

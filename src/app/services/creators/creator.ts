@@ -13,17 +13,23 @@ export abstract class Creator<GameCfg extends Game<GameExercise, any>, GameExerc
   gameConfig: GameCfg;
   public abstract readonly statementTextMaxLength;
   public optionTextMaxLength = 12;
+  public allowTraps = true;
+  public optionWithImage = true;
+  public optionWithAudio = true;
   public abstract readonly patternPath;
   public abstract readonly logoPath;
   public abstract readonly backgroundColour;
 
   themeInfo: ThemeInfo<Themes>[];
-  public creatorType: 'answer-hunter' | 'sort-elements' | 'memotest' | 'join-with-arrows';
+  public creatorType: 'answer-hunter' | 'memotest' | 'join-with-arrows'
+    | 'anagram'
+    | 'sort-numbers'
+    | 'sort-elements'
+    | 'sort-sentences';
   canAddExercises = true;
 
   protected constructor(protected formBuilder: FormBuilder) {
   }
-
 
   public abstract getSrcImageByTheme(theme: Themes): string;
 
