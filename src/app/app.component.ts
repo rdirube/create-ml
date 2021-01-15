@@ -1,13 +1,11 @@
 import {ChangeDetectorRef, Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup} from '@angular/forms';
 import {Observable, of, timer} from 'rxjs';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
-import {MicroLessonResourceProperties, Resource, ResourceProperties} from 'ox-types';
+import {MicroLessonResourceProperties, Resource} from 'ox-types';
 import {MediaService} from './services/media.service';
 import {Creator} from './services/creators/creator';
-import {SortElementsCreator} from './services/creators/sort/sort-elements-creator';
 import {LiftCreator} from './services/creators/lift-creator';
-import {RelationsCreator} from './services/creators/relations-creator';
 import {JoinWithArrowsCreator} from './services/creators/join-with-arrows-creator';
 import {MemotestCreator} from './services/creators/memotest-creator';
 import {AnagramCreator} from './services/creators/sort/anagram-creator';
