@@ -3,6 +3,7 @@ import {MemotestGameTheme} from '../../models/creators/memotest';
 import {MicroLessonFormatType} from 'ox-types';
 
 export class MemotestCreator extends RelationsCreator<MemotestGameTheme> {
+
   readonly statementTextMaxLength = 85;
   readonly patternPath = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/pattern-sort-elements.png';
   readonly logoPath = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/memotest/memotest.svg';
