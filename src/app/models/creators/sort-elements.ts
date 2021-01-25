@@ -18,4 +18,8 @@ export interface SequenceGameSettings {
   exerciseCount: number;
   randomOrder?: boolean;
 }
+export type AnagramGameTheme = 'train';
+export type SortNumbersGameTheme = 'train';
+export type SortElementsGameTheme = 'temple';
+export type SortSentencesGameTheme = 'temple';
 export type SequenceGameTheme = 'train' | 'temple';

@@ -1,12 +1,17 @@
 import {ChangeDetectorRef, Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup} from '@angular/forms';
 import {Observable, of, timer} from 'rxjs';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
-import {MicroLessonResourceProperties, Resource, ResourceProperties} from 'ox-types';
+import {MicroLessonResourceProperties, Resource} from 'ox-types';
 import {MediaService} from './services/media.service';
 import {Creator} from './services/creators/creator';
-import {SortElementsCreator} from './services/creators/sort-elements-creator';
 import {LiftCreator} from './services/creators/lift-creator';
+import {JoinWithArrowsCreator} from './services/creators/join-with-arrows-creator';
+import {MemotestCreator} from './services/creators/memotest-creator';
+import {AnagramCreator} from './services/creators/sort/anagram-creator';
+import {SortNumbersCreator} from './services/creators/sort/sort-numbers-creator';
+import {SortImagesCreator} from './services/creators/sort/sort-images-creator';
+import {SortSentencesCreator} from './services/creators/sort/sort-sentences-creator';
 
 @Component({
   selector: 'app-root',
@@ -77,7 +82,6 @@ export class AppComponent implements OnInit {
       console.log('loading game');
       this.loadGame();
     }
-    console.log(this.creator.backgroundColour);
     this.background = this.sanitizer.bypassSecurityTrustStyle(
       this.creator.backgroundColour + ' url("' + this.creator.patternPath + '") repeat'
     );
@@ -96,34 +100,31 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    timer(1000).subscribe(x => {
-      const asd = {
-        'ownerUid': 'oQPbggIFzLcEHuDjp5ZNbkkVOlZ2',
-        'libraryItemType': 'resource',
-        'customTextTranslations': {
-          'es': {
-            'previewData': {'path': ''},
-            'name': {'text': ' game name '},
-            'description': {'text': 'game description'}
-          }
-        },
-        'tagIds': {},
-        'uid': '1Sf6zNAUJSsIX6s8iBqw',
-        'isPublic': false,
-        'type': 'mini-lesson',
-        'backupReferences': '',
-        'supportedLanguages': {'es': true, 'en': false},
-        'inheritedPedagogicalObjectives': []
-      };
-      this.receivedResource = asd as any as Resource;
-    });
+    // timer(1000).subscribe(x => {
+    //   const asd = {
+    //       'supportedLanguages': {'es': true, 'en': false},
+    //       'isPublic': false,
+    //       'ownerUid': 'oQPbggIFzLcEHuDjp5ZNbkkVOlZ2',
+    //       'uid': 'dUKr5JJrsVDOD47oscop',
+    //       'inheritedPedagogicalObjectives': [],
+    //       // 'properties': {'format': 'memotest'},
+    //       'customTextTranslations': {},
+    //       'backupReferences': '',
+    //       'type': 'mini-lesson',
+    //       'libraryItemType': 'resource',
+    //       'tagIds': {}
+    //     }
+    //   ;
+    //   // const asd = undefined;
+    //   this.receivedResource = asd as any as Resource;
+    // });
     this.currentChoice = 0;
-
   }
 
   private setNewGame(): void {
     this.creator.setNewGame(this._resource);
     this.formsReady();
+    console.log(this.creator.choicesFormArray);
   }
 
   private formsReady(): void {
@@ -184,6 +185,7 @@ export class AppComponent implements OnInit {
       mediaDeleted.forEach(mediaDed => {
         this.mediaFilesAlreadyLoaded.delete(mediaDed);
       });
+      console.log(JSON.stringify(objToSave.resource));
     });
   }
 
@@ -197,18 +199,29 @@ export class AppComponent implements OnInit {
     this.formsReady();
   }
 
-  private instanciateCreatorByResource(resource: Resource): LiftCreator | SortElementsCreator {
+  private instanciateCreatorByResource(resource: Resource): Creator<any, any, any> {
     console.log('resource properties...', JSON.stringify(resource.properties));
     if (!resource.properties) {
       resource.properties = {
-        format: 'sort-elements'
-      } as any;
-    }
+        format: 'anagram'
+      } as MicroLessonResourceProperties;
+    } //  TODO change that any and add memotest to ox types
     switch ((resource.properties as MicroLessonResourceProperties).format) {
       case 'answer-hunter':
         return new LiftCreator(this.formBuilder);
+      case 'anagram':
+        return new AnagramCreator(this.formBuilder);
+      case 'sort-numbers':
+        return new SortNumbersCreator(this.formBuilder);
       case 'sort-elements':
-        return new SortElementsCreator(this.formBuilder);
+        return new SortImagesCreator(this.formBuilder);
+        // return new SortElementsCreator(this.formBuilder);
+      case 'sort-sentences':
+        return new SortSentencesCreator(this.formBuilder);
+      case 'memotest':
+        return new MemotestCreator(this.formBuilder);
+      case 'join-with-arrows':
+        return new JoinWithArrowsCreator(this.formBuilder);
     }
   }
 }

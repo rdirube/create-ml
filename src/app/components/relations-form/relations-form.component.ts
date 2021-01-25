@@ -1,22 +1,20 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Observable} from 'rxjs';
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import {SequenceGameExercise} from '../../models/creators/sort-elements';
 import {Creator} from '../../services/creators/creator';
+import {SequenceGameExercise} from '../../models/creators/sort-elements';
 
 @Component({
-  selector: 'app-sequence-exercise-form',
-  templateUrl: './sequence-exercise-form.component.html',
-  styleUrls: ['./sequence-exercise-form.component.scss']
+  selector: 'app-relations-form',
+  templateUrl: './relations-form.component.html',
+  styleUrls: ['./relations-form.component.scss']
 })
-export class SequenceExerciseFormComponent implements OnInit {
+export class RelationsFormComponent implements OnInit {
 
   private _form: FormGroup;
-
   @Input() mediaFilesAlreadyLoaded: Map<string, Observable<string>>[];
 
-  // optionPropertiesForm: FormGroup;
+  optionPropertiesForm: FormGroup;
   readonly maxOptions = 10;
   readonly minOptions = 2;
 
@@ -34,39 +32,39 @@ export class SequenceExerciseFormComponent implements OnInit {
       const initialData = value.initialDatas;
       this.creator.addControls(initialData, value.form);
     }
+    console.log('form', this.form);
+    console.log('relation array', this.getFormArray('relations').controls);
+    // console.log('relatio', this.getFormArray('relations').controls.map( x => x.get('relation')));
   }
-
 
   constructor(private cdr: ChangeDetectorRef,
               private formBuilder: FormBuilder) {
-    // this.optionPropertiesForm = this.formBuilder.group({
-    //   optionsWithAudio: false,
-    //   optionsWithText: true,
-    //   optionsWithImage: true,
-    // });
+    this.optionPropertiesForm = this.formBuilder.group({
+      optionsWithAudio: false,
+      optionsWithText: true,
+      optionsWithImage: true,
+    });
   }
 
   ngOnInit(): void {
-    console.log(this.creator.optionWithImage);
-    console.log(this.creator.optionWithAudio);
   }
 
-
   public addOption(form: string): void {
-    this.getFormArray(form).push(this.creator.makeShowableForm());
+    console.log('THIS MUST BE DONE IN THE CREATOR. FIX');
+    console.log('THIS MUST BE DONE IN THE CREATOR. FIX');
+    console.log('THIS MUST BE DONE IN THE CREATOR. FIX');
+    console.log('THIS MUST BE DONE IN THE CREATOR. FIX');
+    this.getFormArray(form).push(this.creator.makeRelationForm({
+      relation: [
+        {audio: '', image: '', text: '1', video: ''},
+        {audio: '', image: '', text: '1', video: ''},
+      ]
+    }));
   }
 
   removeOption(form: string, index: number): void {
     this.getFormArray(form).removeAt(index);
     this.getFormArray(form).markAsDirty();
-  }
-
-  public getCurrentOptionsFormArray(): FormArray {
-    return this._form.get('options') as FormArray;
-  }
-
-  drop(event: CdkDragDrop<string[]>, form: string): void {
-    moveItemInArray(this.getFormArray(form).controls, event.previousIndex, event.currentIndex);
   }
 
   getFormArray(form: string): FormArray {

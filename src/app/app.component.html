@@ -1,8 +1,9 @@
 <div class="create-container"
-     fxFlex="grow" fxLayout="column" fxLayoutGap="1%" fxLayoutAlign="start center">
-  <div class="full-width header-creator-logo" fxFlex="25" fxLayout="column" fxLayoutAlign="center center"
-       fxLayoutGap="1%">
-    <img fxFlex="grow"
+     style="overflow: scroll"
+     fxFlex="grow" fxLayout="column"  fxLayoutAlign="start center">
+  <div style="margin: 1%" class="full-width header-creator-logo"
+       fxFlex="25" fxLayout="column" fxLayoutAlign="center center">
+    <img
          style="filter: drop-shadow(3px 3px 3px black)"
          [src]="creator?.logoPath || ''"/>
   </div>
@@ -28,12 +29,12 @@
     <mat-step [stepControl]="creator.choicesFormArray">
       <ng-template matStepLabel>Ejercicios</ng-template>
       <div fxFlex="grow" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px">
-        <div class="full-width" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="4px">
+        <div class="full-width" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="4px">
           <button matTooltip="Ejercicio anterior" fxHide.gt-sm mat-icon-button [disabled]="currentChoice === 0"
                   (click)="changeCurrentChoice(-1)">
             <mat-icon>navigate_before</mat-icon>
           </button>
-          <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="2%" class="full-width">
+          <div *ngIf="creator.canAddExercises" fxLayout="row" fxLayout.xs="column" fxLayoutGap="2%" class="full-width">
           <span fxLayout="row" fxLayoutGap="5px" style="padding-left: 10px; height: 100%;">
             <button class="add-button" mat-raised-button (click)="addChoice()"> <mat-icon>add_circle_outline</mat-icon> Agregar ejercicio</button>
             <button class="add-button" mat-icon-button mat-raised-button [matMenuTriggerFor]="addMenu"><mat-icon>arrow_drop_down</mat-icon></button>
@@ -94,10 +95,18 @@
                initialDatas: creator.gameConfig.exercises[currentChoice], creator: creator}"
               class="full-width"></app-exercise-form>
             <app-sequence-exercise-form
-              *ngIf="creator.creatorType === 'sort-elements'"
+              *ngIf="creator.creatorType === 'sort-elements'
+              || creator.creatorType === 'anagram'
+              || creator.creatorType === 'sort-numbers'
+              || creator.creatorType === 'sort-sentences'"
               [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
               [formData]="{form: creator.choicesFormArray.at(currentChoice),
               initialDatas: creator.gameConfig.exercises[currentChoice], creator: creator}" class="full-width"></app-sequence-exercise-form>
+            <app-relations-form
+              *ngIf="['memotest', 'join-with-arrows'].includes(creator.creatorType)"
+              [mediaFilesAlreadyLoaded]="mediaFilesAlreadyLoaded"
+              [formData]="{form: creator.choicesFormArray.at(currentChoice),
+              initialDatas: creator.gameConfig.exercises[currentChoice], creator: creator}" class="full-width"></app-relations-form>
 
           </div>
           <div fxHide.lt-md fxLayout="column" (click)="changeCurrentChoice(1)" fxLayoutAlign="center center">

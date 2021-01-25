@@ -1,0 +1,54 @@
+.wrong-message {
+  color: #ff614c
+}
+
+.valid-form-icon {
+  color: #2bb59d;
+}
+
+.options-container {
+  color: white;
+  max-height: 20vh;
+  background-color: #ff614c;
+  padding: 2%;
+  border-radius: 5px;
+}
+.statement-container {
+  border-radius: 5px;
+  background-color: #ffc31b; padding: 1%
+}
+.correct {
+  color: white;
+  background-color: #2bb59d;
+}
+.add-button {
+  min-height: 40px;
+  background-color: #87bbf9;
+  color: white;
+}
+.property-icon {
+  font-size: 50px;
+  width: 50px;
+  height: 50px;
+}
+
+.cdk-drag-placeholder {
+  opacity: .4;
+}
+
+.relation-form-showable {
+  max-height: 18vh;
+}
+.relation-form{
+  max-height: 18vh;
+}
+
+
+@media screen and (max-width: 599px) {
+  .relation-form {
+    max-height: 77vh;
+  }
+  .options-container {
+    max-height: 40vh;
+  }
+}

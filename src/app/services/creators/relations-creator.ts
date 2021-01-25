@@ -1,39 +1,31 @@
-import {Injectable} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MicroLessonResourceProperties, Resource} from 'ox-types';
-import {SequenceGame, SequenceGameExercise, SequenceGameTheme} from '../../models/creators/sort-elements';
 import {Creator} from './creator';
+import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MicroLessonFormatType, MicroLessonResourceProperties, Resource} from 'ox-types';
+import {RelationsGame, RelationGameExercise} from '../../models/creators/memotest';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class SortElementsCreator extends Creator<SequenceGame, SequenceGameExercise, SequenceGameTheme> {
-
-  readonly statementTextMaxLength = 85;
-  readonly patternPath = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/pattern-sort-elements.png';
-  readonly logoPath = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/sort-elements.svg';
-  readonly backgroundColour = '#F2EFED';
+export abstract class RelationsCreator<GameTheme> extends Creator<RelationsGame<GameTheme>,
+  RelationGameExercise, GameTheme> {
 
   constructor(formBuilder: FormBuilder) {
     super(formBuilder);
-    this.creatorType = 'sort-elements';
-    this.themeInfo = [{
-      text: 'Tren',
-      theme: 'train'
-    }];
+
   }
 
-  protected newExercise(): SequenceGameExercise {
+  protected newExercise(): RelationGameExercise {
     return {
       statement: {audio: '', image: '', text: '', video: '', id: 0},
-      corrects: [
-        {audio: '', image: '', text: '1', video: ''},
-        {audio: '', image: '', text: '2', video: ''},
-      ],
+      relations: [
+        {
+          relation: [
+            {audio: '', image: '', text: '1', video: ''},
+            {audio: '', image: '', text: '1', video: ''},
+          ]
+        }],
       traps: [],
       id: 0
     };
   }
+
   public loadGame(resource: Resource): void {
     const customConfig = (resource.properties as MicroLessonResourceProperties).customConfig;
     this.gameConfig = {
@@ -48,39 +40,45 @@ export class SortElementsCreator extends Creator<SequenceGame, SequenceGameExerc
     };
     this.initForms(resource);
   }
+
   public setNewGame(resource: Resource): void {
     resource.properties = {
       customConfig: undefined,
-      format: 'sort-elements', miniLessonVersion: 'with-custom-config-v2',
-      miniLessonUid: 'Sort elements'
+      format: this.getFormat(), miniLessonVersion: 'with-custom-config-v2',
+      miniLessonUid: this.getMiniLessonUid()
     };
+    console.log('resource', resource, JSON.stringify(resource));
     (resource.properties as MicroLessonResourceProperties).url = 'https://ml-screen-manager.firebaseapp.com';
-    resource.customTextTranslations = {es: {name: {text: ''}, description: {text: ''}, previewData: {path: ''}}};
+    resource.customTextTranslations =
+      (resource.customTextTranslations && Object.keys(resource.customTextTranslations).length) ?
+        resource.customTextTranslations
+        : {es: {name: {text: ''}, description: {text: ''}, previewData: {path: ''}}};
     this.gameConfig = {
       exercises: [],
       settings: {
         exerciseCount: 10,
         randomOrder: false,
         type: 'classic',
-        theme: 'train'
+        theme: this.themeInfo[0].theme as GameTheme
       },
       resourceUid: resource.uid
     };
     this.initForms(resource);
   }
 
-  public addControls(data: SequenceGameExercise, form: FormGroup): void {
-    console.log('Adding sequence exercise', data);
+  public addControls(data: RelationGameExercise, form: FormGroup): void {
     form.addControl('statement', this.makeShowableForm(data ? data.statement : undefined));
-    form.addControl('corrects', this.formBuilder.array(data ? data.corrects.map(x =>
-      this.makeShowableForm(x)) : [], Validators.compose([this.atLeastOnePropShowable])));
-    form.addControl('traps', this.formBuilder.array(data ? data.traps.map(x =>
-      this.makeShowableForm(x)) : [], Validators.compose([this.atLeastOnePropShowable])));
-    const formArray = (form.get('options') as FormArray);
-    if (!data) {
-      formArray.push(this.makeOptionForm(undefined, true));
-      formArray.push(this.makeOptionForm());
-    }
+    form.addControl('relations', this.formBuilder.array(data ? data.relations.map(x =>
+      this.formBuilder.array(x.relation.map(r => this.makeShowableForm(r)))) : []));
+    form.addControl('traps', this.formBuilder.array(data ? data.traps : []));
+    // this.formBuilder.array(x.relation.map( r => this.makeShowableForm(r)))) : [], Validators.compose([this.atLeastOnePropShowable])));
+    // form.addControl('traps', this.formBuilder.array(data ? data.traps.map(x =>
+    //   this.makeShowableForm(x)) : [], Validators.compose([this.atLeastOnePropShowable])));
+    // const formArray = (form.get('relations') as FormArray);
+    // if (!data) {
+    //   formArray.push(this.makeOptionForm(undefined, true));
+    //   formArray.push(this.makeOptionForm());
+    // }
   }
 
   private initForms(resource: Resource): void {
@@ -126,7 +124,7 @@ export class SortElementsCreator extends Creator<SequenceGame, SequenceGameExerc
   private setChoicesForm(): void {
     this.gameConfig.exercises = this.choicesFormArray.controls.map((choiceForm, choiceIndex) => {
       return {
-        corrects: choiceForm.get('corrects').value,
+        relations: choiceForm.get('relations').value,
         traps: choiceForm.get('traps').value,
         id: 1, statement: choiceForm.get('statement').value
       };
@@ -162,10 +160,17 @@ export class SortElementsCreator extends Creator<SequenceGame, SequenceGameExerc
           maxScore: 10000,
           sublevelConfigurations: [{
             exercises: this.gameConfig.exercises
+              .map(exe => {
+                return {
+                  ...exe, relations: exe.relations.map(rel => {
+                    return {relation: rel};
+                  })
+                };
+              })
           }],
           exercisesToUpSubLevel: [this.gameConfig.settings.exerciseCount]
         }], extraInfo: {
-          gameUrl: 'https://sort-elements.firebaseapp.com/',
+          gameUrl: this.getGameURl(),
           theme: this.gameConfig.settings.theme,
           exerciseCase: 'created',
           randomOrder: this.gameConfig.settings.randomOrder,
@@ -176,30 +181,27 @@ export class SortElementsCreator extends Creator<SequenceGame, SequenceGameExerc
   }
 
   protected getAllShowablesFormArray(): FormGroup[] {
+    console.log('No se esta teniendo en cuenta tema trampas');
     const showables = [];
     for (let i = 0; i < this.choicesFormArray.length; i++) {
       showables.push(this.choicesFormArray.at(i).get('statement') as FormGroup);
-      const corrects: FormArray = (this.choicesFormArray.at(i).get('corrects') as FormArray);
-      for (let j = 0; j < corrects.length; j++) {
-        showables.push(corrects.at(j) as FormGroup);
-      }
-      const traps: FormArray = (this.choicesFormArray.at(i).get('traps') as FormArray);
-      for (let j = 0; j < traps.length; j++) {
-        showables.push(traps.at(j) as FormGroup);
-      }
+      const relations: FormArray[] = (this.choicesFormArray.at(i).get('relations') as FormArray).controls as FormArray[];
+      relations.map(x => x.controls)
+        .forEach(value => {
+          value.forEach(showable => {
+            showables.push(showable);
+          });
+        });
+      // const traps: FormArray = (this.choicesFormArray.at(i).get('traps') as FormArray);
+      // for (let j = 0; j < traps.length; j++) {
+      //   showables.push(traps.at(j) as FormGroup);
+      // }
     }
     return showables;
   }
 
-  getSrcImageByTheme(theme: SequenceGameTheme): string {
-    const baseURl = 'https://storage.googleapis.com/common-ox-assets/mini-lessons/sort-elements/themes/train/';
-    switch (theme) {
-      case 'train':
-        return baseURl + 'train-theme.jpg';
-      // case 'circus':
-      //   return baseURl +  'circus-theme.jpg';
-      // case 'boat':
-      //   return baseURl + 'boat-theme.jpg';
-    }
-  }
+  protected abstract getGameURl(): string;
+  protected abstract getFormat(): MicroLessonFormatType;
+  protected abstract getMiniLessonUid(): string;
+
 }
